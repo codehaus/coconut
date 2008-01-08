@@ -5,6 +5,7 @@ package org.coconut.cache.internal.service.eviction;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
+import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
@@ -32,8 +33,6 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     private final AbstractCacheEntryFactoryService<K, V> entryFactory;
 
-    /** An EvictionSupport instance used for trimming the cache. */
-    private final EvictionSupport helper;
 
     /**
      * Creates a new AbstractEvictionService.
@@ -41,9 +40,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
      * @param evictionSupport
      *            the InternalCacheSupport for the cache
      */
-    public AbstractEvictionService(AbstractCacheEntryFactoryService<K, V> factory,
-            EvictionSupport evictionSupport) {
-        this.helper = evictionSupport;
+    public AbstractEvictionService(AbstractCacheEntryFactoryService<K, V> factory) {
         this.entryFactory = factory;
     }
 
@@ -75,11 +72,21 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     /** {@inheritDoc} */
     public void trimToSize(int size) {
-        helper.trimCache(size, Long.MAX_VALUE);
+        if (size < 0) {
+            throw new IllegalArgumentException("size cannot be a negative number, was "
+                    + size);
+        }
+        trimCache(size, Long.MAX_VALUE);
     }
 
     /** {@inheritDoc} */
-    public void trimToVolume(long capacity) {
-        helper.trimCache(Integer.MAX_VALUE, capacity);
+    public void trimToVolume(long volume) {
+        if (volume < 0) {
+            throw new IllegalArgumentException("volume cannot be a negative number, was "
+                    + volume);
+        }
+       trimCache(Integer.MAX_VALUE, volume);
     }
+
+    abstract void trimCache(int size, long capacity);
 }

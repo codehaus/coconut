@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
@@ -32,24 +33,25 @@ import org.coconut.operations.Ops.Predicate;
  */
 public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle implements
         InternalCacheLoadingService<K, V>, CompositeService, ManagedLifecycle {
+
     private final InternalCacheEntryService attributeFactory;
 
     private final InternalCacheExceptionService<K, V> exceptionHandler;
 
     private final CacheLoader<? super K, ? extends V> loader;
 
-    final LoadSupport<K, V> loadSupport;
+    final InternalCache<K, V> internal;
 
     private final Predicate<CacheEntry<K, V>> reloadFilter;
 
     public AbstractCacheLoadingService(CacheLoadingConfiguration<K, V> loadingConfiguration,
             InternalCacheEntryService attributeFactory,
-            InternalCacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
+            InternalCacheExceptionService<K, V> exceptionHandler, InternalCache<K, V> internal) {
         attributeFactory.setTimeToRefreshNs(LoadingUtils
                 .getInitialTimeToRefresh(loadingConfiguration));
         this.loader = loadingConfiguration.getLoader();
         reloadFilter = loadingConfiguration.getRefreshFilter();
-        this.loadSupport = loadSupport;
+        this.internal = internal;
         this.attributeFactory = attributeFactory;
         this.exceptionHandler = exceptionHandler;
     }
@@ -90,8 +92,10 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        loadSupport.loadAll(attributes, true);
+        loadAll(attributes, true);
     }
+
+    abstract void loadAll(AttributeMap attributes, boolean force);
 
     /** {@inheritDoc} */
     public final void forceLoadAll(Collection<? extends K> keys) {
@@ -143,8 +147,11 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         } else if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        loadSupport.load(key, attributes);
+        doLoad(key, attributes);
     }
+
+    /** {@inheritDoc} */
+    abstract void doLoad(K key, AttributeMap attributes);
 
     /** {@inheritDoc} */
     public final void loadAll() {
@@ -156,7 +163,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        loadSupport.loadAll(attributes, false);
+        loadAll(attributes, false);
     }
 
     /** {@inheritDoc} */
@@ -171,7 +178,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             }
             map.put(key, Attributes.EMPTY_ATTRIBUTE_MAP);
         }
-        loadSupport.loadAll(map);
+        doLoadAll(map);
     }
 
     /** {@inheritDoc} */
@@ -179,8 +186,10 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         if (mapsWithAttributes == null) {
             throw new NullPointerException("mapsWithAttributes is null");
         }
-        loadSupport.loadAll(mapsWithAttributes);
+        doLoadAll(mapsWithAttributes);
     }
+
+    abstract void doLoadAll(Map<? extends K, ? extends AttributeMap> attributes);
 
     /** {@inheritDoc} */
     public void loadAsyncAll(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
@@ -242,7 +251,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         } catch (Throwable e) {
             v = getExceptionHandler().loadFailed(e, loader, key, attributes);
         }
-        return loadSupport.valueLoaded(key, v, attributes);
+        return internal.put(key, v, attributes);
     }
 
     @Override

@@ -23,7 +23,7 @@ import java.util.Map.Entry;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.cache.InternalCache;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.internal.forkjoin.ParallelArray;
 import org.coconut.internal.util.CollectionUtils;
 import org.coconut.operations.CollectionPredicates;

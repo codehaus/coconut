@@ -16,6 +16,7 @@ import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
@@ -70,7 +71,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
         return result;
     }
 
-    abstract AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
+    public abstract AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
             InternalCacheEntry<K, V> existing);
 
     /**

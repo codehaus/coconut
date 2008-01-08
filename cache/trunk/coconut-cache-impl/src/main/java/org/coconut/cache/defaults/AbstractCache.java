@@ -11,7 +11,7 @@ import org.coconut.cache.CacheServices;
 /**
  * An abstract implementation of {@link Cache}. Currently not general usable, hence some
  * methods and constructors have package private access.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -20,10 +20,16 @@ import org.coconut.cache.CacheServices;
  *            the type of mapped values
  */
 public abstract class AbstractCache<K, V> implements Cache<K, V> {
+    private CacheServices<K, V> services;
 
     public CacheServices<K, V> services() {
-        return new CacheServices<K, V>(this);
+        if (services == null) {
+            services = new CacheServices<K, V>(this);
+        }
+        return services;
     }
+
+    public abstract void prestart();
 
     /**
      * Returns a string representation of this cache. The string representation consists
@@ -33,7 +39,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      * space). Each key-value mapping is rendered as the key followed by an equals sign (<tt>"="</tt>)
      * followed by the associated value. Keys and values are converted to strings as by
      * {@link String#valueOf(Object)}.
-     *
+     * 
      * @return a string representation of this cache
      */
     @Override

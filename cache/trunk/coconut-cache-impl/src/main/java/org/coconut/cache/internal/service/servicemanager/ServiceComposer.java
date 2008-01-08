@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
@@ -22,13 +22,13 @@ public class ServiceComposer {
     /** The picocontainer used to wire servicers. */
     private final MutablePicoContainer container = new DefaultPicoContainer();
 
-    private ServiceComposer(Cache<?, ?> cache, InternalCacheSupport<?, ?> cacheSupport,
+    private ServiceComposer(Cache<?, ?> cache, InternalCache internalCache, String name,
             CacheConfiguration<?, ?> conf, Collection<Class<?>> classes) {
         container.registerComponentInstance(this);
-        container.registerComponentInstance(cache.getName());
+        container.registerComponentInstance(internalCache);
+        container.registerComponentInstance(name);
         container.registerComponentInstance(conf.getClock());
         container.registerComponentInstance(cache);
-        container.registerComponentInstance(cacheSupport);
         container.registerComponentInstance(conf);
         for (AbstractCacheServiceConfiguration<?, ?> c : conf.getAllConfigurations()) {
             container.registerComponentInstance(c);
@@ -36,6 +36,10 @@ public class ServiceComposer {
         for (Class cla : removeUnusedServices(conf, classes)) {
             container.registerComponentImplementation(cla);
         }
+    }
+
+    public void registerInstance(AbstractCacheServiceManager o) {
+        container.registerComponentInstance(AbstractCacheServiceManager.class, o);
     }
 
     protected Collection<Class<?>> removeUnusedServices(CacheConfiguration<?, ?> conf,
@@ -74,8 +78,8 @@ public class ServiceComposer {
         return container.getComponentInstancesOfType(AbstractCacheLifecycle.class);
     }
 
-    public static ServiceComposer compose(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
-            CacheConfiguration<?, ?> conf, Collection<Class<?>> classes) {
-        return new ServiceComposer(cache, helper, conf, classes);
+    public static ServiceComposer compose(Cache<?, ?> cache, InternalCache internalCache,
+            String name, CacheConfiguration<?, ?> conf, Collection<Class<?>> classes) {
+        return new ServiceComposer(cache, internalCache, name, conf, classes);
     }
 }

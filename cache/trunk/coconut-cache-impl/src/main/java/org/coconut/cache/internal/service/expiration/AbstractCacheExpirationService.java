@@ -3,8 +3,6 @@
  */
 package org.coconut.cache.internal.service.expiration;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -12,19 +10,17 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
-import org.coconut.cache.internal.service.servicemanager.CompositeService;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.internal.util.CollectionUtils;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
-import org.coconut.operations.Ops.Predicate;
 
 /**
  * The default implementation of {@link CacheExpirationService}. This implementation can
@@ -42,35 +38,25 @@ import org.coconut.operations.Ops.Predicate;
  * @param <V>
  *            the type of mapped values
  */
-public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle implements
-        CacheExpirationService<K, V>, ManagedLifecycle, CompositeService {
+public abstract class AbstractCacheExpirationService<K, V> extends AbstractCacheLifecycle implements
+        CacheExpirationService<K, V>, ManagedLifecycle {
 
     /** Responsible for creating attribute maps. */
-    private final InternalCacheEntryService attributeFactory;
+    private final InternalCacheEntryService entryService;
 
     /** The user specified expiration filter. */
-    private final Predicate<CacheEntry<K, V>> expirationFilter;
+    private final InternalCache<K, V> cache;
 
-    private final InternalCacheSupport<K, V> helper;
-
-    public DefaultCacheExpirationService(CacheConfiguration<K, V> conf,
-            InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> confExpiration,
-            InternalCacheEntryService attributeFactory) {
-        this.helper = helper;
-        this.expirationFilter = confExpiration.getExpirationFilter();
-        this.attributeFactory = attributeFactory;
-        attributeFactory.setDefaultTimeToLiveNs(ExpirationUtils
-                .getInitialTimeToLiveNS(confExpiration));
-    }
-
-    /** {@inheritDoc} */
-    public Collection<?> getChildServices() {
-        return Arrays.asList(expirationFilter);
+    AbstractCacheExpirationService(InternalCache<K, V> cache,
+            CacheExpirationConfiguration<K, V> configuration, InternalCacheEntryService entryService) {
+        this.cache = cache;
+        this.entryService = entryService;
+        entryService.setDefaultTimeToLiveNs(ExpirationUtils.getInitialTimeToLiveNS(configuration));
     }
 
     /** {@inheritDoc} */
     public long getDefaultTimeToLive(TimeUnit unit) {
-        return ExpirationUtils.convertNanosToExpirationTime(attributeFactory
+        return ExpirationUtils.convertNanosToExpirationTime(entryService
                 .getDefaultTimeToLiveTimeNs(), unit);
     }
 
@@ -82,33 +68,19 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     }
 
     /** {@inheritDoc} */
-    public void purgeExpired() {
-        helper.purgeExpired();
-    }
-
-    /** {@inheritDoc} */
     public V put(K key, V value, long timeToLive, TimeUnit unit) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        } else if (value == null) {
-            throw new NullPointerException("value is null");
-        }
-        AttributeMap map = attributeFactory.createMap();
-        TimeToLiveAttribute.set(map, timeToLive, unit);
-        return helper.put(key, value, map);// checks for null key+value
+        CacheEntry<K, V> prev = cache.put(key, value, TimeToLiveAttribute.singleton(timeToLive, unit));
+        return prev == null ? null : prev.getValue();
     }
 
     /** {@inheritDoc} */
     public void putAll(Map<? extends K, ? extends V> t, long timeToLive, TimeUnit unit) {
-
-        HashMap<K, AttributeMap> attributes = new HashMap<K, AttributeMap>();
-        for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
-            K key = entry.getKey();
-            AttributeMap att = attributeFactory.createMap();
-            TimeToLiveAttribute.set(att, timeToLive, unit);
-            attributes.put(key, att);
+        AttributeMap am = TimeToLiveAttribute.singleton(timeToLive, unit);
+        HashMap map = new HashMap();
+        for (Map.Entry me : t.entrySet()) {
+            map.put(me.getKey(), new CollectionUtils.SimpleImmutableEntry(me.getValue(), am));
         }
-        helper.putAll(t, attributes);
+        cache.putAllWithAttributes(map);
     }
 
     /** {@inheritDoc} */
@@ -120,7 +92,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     /** {@inheritDoc} */
     public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
         long time = ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit);
-        attributeFactory.setDefaultTimeToLiveNs(time == 0 ? Long.MAX_VALUE : time);
+        entryService.setDefaultTimeToLiveNs(time == 0 ? Long.MAX_VALUE : time);
     }
 
     @Override

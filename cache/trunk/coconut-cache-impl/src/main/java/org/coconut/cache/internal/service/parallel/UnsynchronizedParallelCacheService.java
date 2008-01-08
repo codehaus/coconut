@@ -1,33 +1,31 @@
 package org.coconut.cache.internal.service.parallel;
 
-import java.util.Map;
-
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.EntryMap;
+import org.coconut.cache.internal.InternalCache;
+import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.service.parallel.ParallelCache;
 import org.coconut.cache.service.parallel.ParallelCache.WithFilter;
+import org.coconut.operations.Mappers;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
 
 public class UnsynchronizedParallelCacheService<K, V> extends AbstractParallelCacheService {
-    private final EntryMap<K, V> map;
+   private final MemoryStore<K, V> memoryStore;
 
-    private ParallelCache pc;
+    private final ParallelCache pc;
 
-    public UnsynchronizedParallelCacheService(EntryMap map) {
-        this.map = map;
+    private final InternalCache<K, V> ic;
+
+    public UnsynchronizedParallelCacheService(InternalCache<K, V> ic, MemoryStore<K, V> memoryStore) {
+        this.ic = ic;
+        this.memoryStore = memoryStore;
+        pc = new UnsynchronizedParallelCache();
     }
 
     public ParallelCache get() {
         return pc;
-    }
-
-    @Override
-    public void started(Cache<?, ?> cache) {
-        pc = new UnsynchronizedParallelCache((Map) cache);
     }
 
     static <K, V, T> void applyIterable(Iterable<? extends CacheEntry<K, V>> iterable,
@@ -44,27 +42,6 @@ public class UnsynchronizedParallelCacheService<K, V> extends AbstractParallelCa
         }
     }
 
-    static <T> void applyIterable(Iterable<T> iterable, Procedure<? super T> procedure) {
-        if (procedure == null) {
-            throw new NullPointerException("procedure is null");
-        }
-        for (T t : iterable) {
-            procedure.apply(t);
-        }
-    }
-
-    static <T> void applyIterable(Iterable<T> iterable, Procedure<? super T> procedure,
-            Predicate<? super T> selector) {
-        if (procedure == null) {
-            throw new NullPointerException("procedure is null");
-        }
-        for (T t : iterable) {
-            if (selector.evaluate(t)) {
-                procedure.apply(t);
-            }
-        }
-    }
-
     static <T> int calculateSize(Iterable<T> iterable, Predicate<? super T> selector) {
         int count = 0;
         for (T t : iterable) {
@@ -76,20 +53,15 @@ public class UnsynchronizedParallelCacheService<K, V> extends AbstractParallelCa
     }
 
     class UnsynchronizedParallelCache extends ParallelCache<K, V> {
-        private final Map<K, V> cache;
-
-        UnsynchronizedParallelCache(Map<K, V> cache) {
-            this.cache = cache;
-        }
 
         @Override
         public void apply(Procedure<? super CacheEntry<K, V>> procedure) {
-            applyIterable(map, procedure);
+            ic.apply(Predicates.TRUE, Mappers.CONSTANT_MAPPER, procedure);
         }
 
         @Override
         public int size() {
-            return cache.size();
+            return ic.size();
         }
 
         @Override
@@ -100,18 +72,18 @@ public class UnsynchronizedParallelCacheService<K, V> extends AbstractParallelCa
 
         @Override
         public ParallelCache.WithKeyValues<K> withKeys() {
-            return new UnsynchronizedWithKeys(cache);
+            return new UnsynchronizedWithKeys();
         }
 
         @Override
         public <U> ParallelCache.WithMapping<U> withMapping(
                 Mapper<? super CacheEntry<K, V>, ? extends U> mapper) {
-            return new UnsynchronizedWithMapping(cache, mapper);
+            return new UnsynchronizedWithMapping(mapper);
         }
 
         @Override
         public ParallelCache.WithKeyValues<V> withValues() {
-            return new UnsynchronizedWithValues(cache);
+            return new UnsynchronizedWithValues();
         }
     }
 
@@ -127,12 +99,12 @@ public class UnsynchronizedParallelCacheService<K, V> extends AbstractParallelCa
 
         @Override
         public void apply(Procedure<? super CacheEntry<K, V>> procedure) {
-            applyIterable(map, procedure, selector);
+            ic.apply(selector, Mappers.CONSTANT_MAPPER, procedure);
         }
 
         @Override
         public int size() {
-            return calculateSize(map, selector);
+            return memoryStore.withFilter(selector).size();
         }
 
         @Override
@@ -142,64 +114,55 @@ public class UnsynchronizedParallelCacheService<K, V> extends AbstractParallelCa
     }
 
     class UnsynchronizedWithKeys extends ParallelCache.WithKeyValues<K> {
-        private final Map<K, V> cache;
-
-        UnsynchronizedWithKeys(Map<K, V> cache) {
-            this.cache = cache;
-        }
 
         @Override
         public void apply(Procedure<? super K> procedure) {
-            applyIterable(cache.keySet(), procedure);
+            ic.apply(
+                    Predicates.mapAndEvaluate(Mappers.mapEntryToKey(), Predicates.TRUE),
+                    Mappers.CONSTANT_MAPPER, procedure);
         }
 
         @Override
         public int size() {
-            return cache.size();
+            return ic.size();
         }
     }
 
     class UnsynchronizedWithMapping<T> extends ParallelCache.WithMapping<T> {
-        private final Map<?, ?> cache;
 
         private final Mapper<? super CacheEntry<K, V>, ? extends T> mapper;
 
-        UnsynchronizedWithMapping(Map<?, ?> cache,
-                Mapper<? super CacheEntry<K, V>, ? extends T> mapper) {
+        UnsynchronizedWithMapping(Mapper<? super CacheEntry<K, V>, ? extends T> mapper) {
             if (mapper == null) {
                 throw new NullPointerException("mapper is null");
             }
             this.mapper = mapper;
-            this.cache = cache;
+
         }
 
         @Override
         public void apply(Procedure<? super T> procedure) {
-            applyIterable(map, procedure, Predicates.truePredicate(), mapper);
+            ic.apply(Predicates.TRUE, mapper, procedure);
         }
 
         @Override
         public int size() {
-            return cache.size();
+            return ic.size();
         }
 
     }
 
     class UnsynchronizedWithValues extends ParallelCache.WithKeyValues<V> {
-        private final Map<K, V> cache;
-
-        UnsynchronizedWithValues(Map<K, V> cache) {
-            this.cache = cache;
-        }
 
         @Override
         public void apply(Procedure<? super V> procedure) {
-            applyIterable(cache.values(), procedure);
+            ic.apply(Predicates.mapAndEvaluate(Mappers.mapEntryToValue(),
+                    Predicates.TRUE), Mappers.CONSTANT_MAPPER, procedure);
         }
 
         @Override
         public int size() {
-            return cache.size();
+            return ic.size();
         }
     }
 

@@ -37,7 +37,7 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
         InternalDebugService {
 
     /** The cache for which exceptions should be handled. */
-    private volatile Cache<K, V> cache;
+    private final Cache<K, V> cache;
 
     private final Logger debugLogger;
 
@@ -57,24 +57,24 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
      * @param configuration
      *            the configuration of CacheExceptionService
      */
-    public DefaultCacheExceptionService(String cacheName, CacheConfiguration<K, V> conf,
+    public DefaultCacheExceptionService(Cache cache, String name, CacheConfiguration conf,
             CacheExceptionHandlingConfiguration<K, V> configuration) {
-        // TODO resort to default logger if no exceptionLogger is defined?
+        this.cache = cache;
         Logger logger = configuration.getExceptionLogger();
+        Logger defaultLogger = conf.getDefaultLogger();
         if (logger == null) {
-            logger = conf.getDefaultLogger();
+            logger = defaultLogger;
         }
         startupLogger = logger;
         if (logger == null) {
-            String loggerName = Cache.class.getPackage().getName() + "." + cacheName;
-            String infoMsg = Resources.lookup(DefaultCacheExceptionService.class, "noLogger",
-                    cacheName, loggerName);
+            String loggerName = Cache.class.getPackage().getName() + "." + name;
+            String infoMsg = Resources.lookup(DefaultCacheExceptionService.class, "noLogger", name,
+                    loggerName);
             logger = new LazyLogger(loggerName, infoMsg);
         }
         this.logger = logger;
         // set debug logger
-        Logger debugLogger = conf.getDefaultLogger();
-        this.debugLogger = debugLogger == null ? Loggers.NULL_LOGGER : debugLogger;
+        debugLogger = defaultLogger == null ? Loggers.NULL_LOGGER : defaultLogger;
         // Set cache exception handler
         CacheExceptionHandler<K, V> exceptionHandler = configuration.getExceptionHandler();
         this.exceptionHandler = exceptionHandler == null ? new CacheExceptionHandler()
@@ -122,7 +122,6 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     }
 
     public void initialize(Cache<K, V> cache, CacheConfiguration<K, V> conf) {
-        this.cache = cache;
         exceptionHandler.initialize(conf);
     }
 

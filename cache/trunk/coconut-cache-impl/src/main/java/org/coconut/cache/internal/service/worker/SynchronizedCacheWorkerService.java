@@ -16,8 +16,6 @@ import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.cache.service.worker.CacheWorkerService;
 
 /**
- *
- *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -26,10 +24,11 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
 
     private final CacheWorkerManager worker;
 
-    public SynchronizedCacheWorkerService(String cacheName, CacheWorkerConfiguration conf) {
+    public SynchronizedCacheWorkerService(String name,
+            CacheWorkerConfiguration conf) {
         CacheWorkerManager worker = conf.getWorkerManager();
         if (worker == null) {
-            worker = new SharedCacheWorkerManager(cacheName);
+            worker = new SharedCacheWorkerManager(name);
         }
         this.worker = worker;
     }

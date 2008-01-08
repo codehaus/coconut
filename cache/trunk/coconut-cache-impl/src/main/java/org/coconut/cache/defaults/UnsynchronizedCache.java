@@ -11,12 +11,9 @@ import java.util.concurrent.TimeUnit;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheServices;
-import org.coconut.cache.internal.service.cache.AbstractInternalCache;
-import org.coconut.cache.internal.service.cache.UnsynchronizedInternalCache;
+import org.coconut.cache.internal.UnsynchronizedInternalCache;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -35,7 +32,7 @@ import org.coconut.cache.spi.ConfigurationValidator;
  * structural modification is any operation that adds, deletes or changes one or more
  * mappings.) This is typically accomplished by synchronizing on some object that
  * naturally encapsulates the cache.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -47,7 +44,7 @@ import org.coconut.cache.spi.ConfigurationValidator;
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class, CacheParallelService.class,
         CacheServiceManagerService.class, CacheStatisticsService.class })
-public class UnsynchronizedCache<K, V> implements Cache<K, V> {
+public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     private final UnsynchronizedInternalCache<K, V> cache;
 
     /**
@@ -59,7 +56,7 @@ public class UnsynchronizedCache<K, V> implements Cache<K, V> {
 
     /**
      * Creates a new UnsynchronizedCache from the specified configuration.
-     *
+     * 
      * @param conf
      *            the configuration to create the cache from
      * @throws NullPointerException
@@ -202,11 +199,6 @@ public class UnsynchronizedCache<K, V> implements Cache<K, V> {
     /** {@inheritDoc} */
     public V replace(K key, V value) {
         return cache.replace(key, value);
-    }
-
-    /** {@inheritDoc} */
-    public CacheServices<K, V> services() {
-        return new CacheServices<K, V>(this);
     }
 
     /** {@inheritDoc} */

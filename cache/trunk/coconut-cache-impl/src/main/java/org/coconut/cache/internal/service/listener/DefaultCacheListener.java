@@ -9,7 +9,7 @@ import java.util.Map;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.InternalCacheEntry;
+import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 
@@ -19,30 +19,34 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
 
     private final InternalCacheEventService<K, V> event;
 
-    public DefaultCacheListener(DefaultCacheStatisticsService<K, V> statistics) {
+    private final Cache cache;
+
+    public DefaultCacheListener(Cache cache, DefaultCacheStatisticsService<K, V> statistics) {
         this.statistics = statistics;
         this.event = null;
+        this.cache = cache;
     }
 
-    public DefaultCacheListener(DefaultCacheStatisticsService<K, V> statistics,
-            InternalCacheEventService<K, V> event) {
+    public DefaultCacheListener(Cache cache,
+            DefaultCacheStatisticsService<K, V> statistics, InternalCacheEventService<K, V> event) {
         this.statistics = statistics;
         this.event = event;
+        this.cache = cache;
     }
 
-    public void afterCacheClear(Cache<K, V> cache, long timestamp,
-            Collection<? extends CacheEntry<K, V>> entries, long previousVolume) {
+    public void afterCacheClear(long timestamp, Collection<? extends CacheEntry<K, V>> entries,
+            long previousVolume) {
         statistics.afterCacheClear(cache, timestamp, entries, previousVolume);
         if (event != null) {
             event.afterCacheClear(cache, timestamp, entries, previousVolume);
         }
     }
 
-    public long beforeCacheClear(Cache<K, V> cache) {
+    public long beforeCacheClear() {
         return statistics.beforeCacheClear(cache);
     }
 
-    public void afterRemoveAll(Cache<K, V> cache, long start, Collection<? extends K> keys,
+    public void afterRemoveAll(long start, Collection<? extends K> keys,
             Collection<CacheEntry<K, V>> removed) {
         statistics.afterRemoveAll(cache, start, removed);
         if (event != null) {
@@ -50,12 +54,11 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
         }
     }
 
-    public long beforeRemoveAll(Cache<K, V> cache, Collection<? extends K> keys) {
+    public long beforeRemoveAll(Collection<? extends K> keys) {
         return statistics.beforeRemoveAll(cache, keys);
     }
 
-    public void afterPut(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries,
+    public void afterPut(long started, Collection<? extends CacheEntry<K, V>> evictedEntries,
             InternalCacheEntry<K, V> oldEntry, InternalCacheEntry<K, V> newEntry, boolean fromLoader) {
         statistics.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
         if (event != null) {
@@ -63,17 +66,16 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
         }
     }
 
-    public long beforePut(Cache<K, V> cache, K key, V value, boolean fromLoader) {
+    public long beforePut(K key, V value, boolean fromLoader) {
         return statistics.beforePut(cache, key, value);
     }
 
-    public long beforePutAll(Cache<K, V> cache, Map<? extends K, ? extends V> map,
+    public long beforePutAll(Map<? extends K, ? extends V> map,
             Map<? extends K, AttributeMap> attributes, boolean fromLoader) {
         return statistics.beforePutAll(cache, map, attributes);
     }
 
-    public void afterPutAll(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries,
+    public void afterPutAll(long started, Collection<? extends CacheEntry<K, V>> evictedEntries,
             Map<InternalCacheEntry<K, V>, InternalCacheEntry<K, V>> newPrevEntries,
             boolean fromLoader) {
         statistics.afterPutAll(cache, started, evictedEntries, (Map) newPrevEntries);
@@ -82,17 +84,15 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
         }
     }
 
-    public void afterCachePurge(Cache<K, V> cache, long start,
-            Collection<? extends CacheEntry<K, V>> purgedEntries, int previousSize,
-            long previousVolume, int newSize, long newVolume) {
+    public void afterCachePurge(long start, Collection<? extends CacheEntry<K, V>> purgedEntries,
+            int previousSize, long previousVolume, int newSize, long newVolume) {
         if (event != null) {
             event.afterPurge(cache, purgedEntries);
         }
     }
 
-    public void afterTrimCache(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
-            long previousVolume, long newVolume) {
+    public void afterTrimCache(long started, Collection<? extends CacheEntry<K, V>> evictedEntries,
+            int previousSize, int newSize, long previousVolume, long newVolume) {
         statistics.afterTrimCache(cache, started, evictedEntries, previousSize, newSize,
                 previousVolume, newVolume);
         if (event != null) {
@@ -101,31 +101,30 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
         }
     }
 
-    public long beforeCachePurge(Cache<K, V> cache) {
+    public long beforeCachePurge() {
         return 0;
     }
 
-    public long beforeTrim(Cache<K, V> cache, int newSize, long newVolume) {
+    public long beforeTrim(int newSize, long newVolume) {
         return statistics.beforeTrim(cache, newSize, newVolume);
     }
 
-    public long beforeRemove(Cache<K, V> cache, Object key, Object value) {
+    public long beforeRemove(Object key, Object value) {
         return statistics.beforeRemove(cache, key);
     }
 
-    public void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry) {
+    public void afterRemove(long started, CacheEntry<K, V> entry) {
         statistics.afterRemove(cache, started, entry);
         if (event != null) {
             event.afterRemove(cache, started, entry);
         }
     }
 
-    public long beforeReplace(Cache<K, V> cache, K key, V value) {
+    public long beforeReplace(K key, V value) {
         return statistics.beforePut(cache, key, value);
     }
 
-    public void afterPut(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries,
+    public void afterPut(long started, Collection<? extends CacheEntry<K, V>> evictedEntries,
             InternalCacheEntry<K, V> oldEntry, InternalCacheEntry<K, V> newEntry) {
         statistics.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
         if (event != null && newEntry != null) {
@@ -133,38 +132,37 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
         }
     }
 
-    public long beforeGet(Cache<K, V> cache, K key) {
+    public long beforeGet(K key) {
         return statistics.beforeGet(cache, key);
     }
 
-    public void afterHit(Cache<K, V> cache, long started, K key, CacheEntry<K, V> entry) {
+    public void afterHit(long started, K key, CacheEntry<K, V> entry) {
         statistics.afterHit(cache, started, key, entry);
     }
 
-    public void afterMiss(Cache<K, V> cache, long started, K key, CacheEntry<K, V> previousEntry,
+    public void afterMiss(long started, K key, CacheEntry<K, V> previousEntry,
             CacheEntry<K, V> newEntry, boolean isExpired) {
         statistics.afterMiss(cache, started, key, previousEntry, newEntry, isExpired);
     }
 
-    public void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry) {
+    public void dexpired(long started, CacheEntry<K, V> entry) {
         if (event != null) {
             event.dexpired(cache, started, entry);
         }
     }
 
-    public void afterStart(Cache<K, V> cache) {
+    public void afterStart() {
         if (event != null) {
             event.afterStart(cache);
         }
     }
 
-    public long beforeGetAll(Cache<K, V> cache, Collection<? extends K> keys) {
+    public long beforeGetAll(Collection<? extends K> keys) {
         return statistics.beforeGetAll(cache, keys);
     }
 
-    public void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
-            CacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
-            Map<K, V> loadedEntries) {
+    public void afterGetAll(long started, Object[] keys, CacheEntry<K, V>[] entries,
+            boolean[] isHit, boolean[] isExpired, Map<K, V> loadedEntries) {
         statistics.afterGetAll(cache, started, keys, entries, isHit, isExpired, loadedEntries);
     }
 
@@ -173,7 +171,7 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
         return "Listener Service";
     }
 
-    public void afterStop(Cache<K, V> cache) {
+    public void afterStop() {
         if (event != null) {
             event.afterStop(cache);
         }

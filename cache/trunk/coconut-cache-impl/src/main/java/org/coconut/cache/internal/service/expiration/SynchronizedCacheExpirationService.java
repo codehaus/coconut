@@ -5,18 +5,18 @@ import java.util.List;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.defaults.SynchronizedCache;
+import org.coconut.cache.internal.InternalCache;
+import org.coconut.cache.internal.InternalCacheEntry;
+import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.EntryMap;
-import org.coconut.cache.internal.service.entry.InternalCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.core.Clock;
 
-public class SynchronizedCacheExpirationService<K, V> extends DefaultCacheExpirationService<K, V> {
+public class SynchronizedCacheExpirationService<K, V> extends AbstractCacheExpirationService<K, V> {
 
-    private final EntryMap<K, V> map;
+    private final MemoryStore<K, V> map;
 
     private final Clock clock;
 
@@ -24,21 +24,20 @@ public class SynchronizedCacheExpirationService<K, V> extends DefaultCacheExpira
 
     private final InternalCacheListener<K, V> listener;
 
-    public SynchronizedCacheExpirationService(Cache cache, Clock clock, EntryMap<K, V> entryMap,
+    public SynchronizedCacheExpirationService(Cache cache, Clock clock, MemoryStore<K, V> entryMap,
             InternalCacheListener<K, V> listener, CacheConfiguration<K, V> conf,
-            InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> confExpiration,
+            InternalCache<K, V> helper, CacheExpirationConfiguration<K, V> confExpiration,
             InternalCacheEntryService attributeFactory) {
-        super(conf, helper, confExpiration, attributeFactory);
+        super(helper, confExpiration, attributeFactory);
         this.listener = listener;
         this.cache = cache;
         this.clock = clock;
         this.map = entryMap;
     }
 
-    @Override
     public void purgeExpired() {
         List<InternalCacheEntry<K, V>> expired = Collections.EMPTY_LIST;
-        long start = listener.beforeCachePurge(cache);
+        long start = listener.beforeCachePurge();
         long timestamp = clock.timestamp();
         int size = 0;
         int newSize = 0;
@@ -46,14 +45,14 @@ public class SynchronizedCacheExpirationService<K, V> extends DefaultCacheExpira
         long newVolume = 0;
 
         synchronized (cache) {
-            size = map.peekSize();
+            size = map.size();
             volume = map.volume();
-            expired = map.purgeExpired(timestamp);
-            newSize = map.peekSize();
+           // expired = map.purgeExpired(timestamp);
+            newSize = map.size();
             newVolume = map.volume();
         }
 
-        listener.afterCachePurge(cache, start, expired, size, volume, newSize, newVolume);
+        listener.afterCachePurge(start, expired, size, volume, newSize, newVolume);
     }
 
 }

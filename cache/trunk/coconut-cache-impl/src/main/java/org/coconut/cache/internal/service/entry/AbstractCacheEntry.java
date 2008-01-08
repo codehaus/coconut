@@ -13,6 +13,7 @@ import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.memory.ChainingEntry;
 import org.coconut.core.Clock;
 import org.coconut.operations.Ops.Predicate;
 
@@ -29,7 +30,7 @@ import org.coconut.operations.Ops.Predicate;
  * @param <V>
  *            the type of mapped values
  */
-abstract class AbstractCacheEntry<K, V> implements InternalCacheEntry<K, V> {
+public abstract class AbstractCacheEntry<K, V> implements ChainingEntry<K, V> {
     private final AttributeMap attributes;
 
     /** The cost of this cache entry. */
@@ -57,9 +58,16 @@ abstract class AbstractCacheEntry<K, V> implements InternalCacheEntry<K, V> {
     private final V value;
 
     /** The next cache entry in the hash map. */
-    AbstractCacheEntry<K, V> next;
+    public AbstractCacheEntry<K, V> next;
 
     boolean isExpired;
+
+    public AbstractCacheEntry<K, V> next() {
+        return next;
+    }
+    public void setNext(ChainingEntry entry) {
+        this.next = (AbstractCacheEntry<K, V>) entry;
+    }
 
     /**
      * Creates a new AbstractCacheEntry.
@@ -82,7 +90,7 @@ abstract class AbstractCacheEntry<K, V> implements InternalCacheEntry<K, V> {
         if (value == null) {
             throw new NullPointerException("value is null");
         }
-        this.hash = EntryMap.hash(key.hashCode());
+        this.hash = hash(key.hashCode());
         this.key = key;
         this.value = value;
         this.cost = cost;
@@ -91,7 +99,13 @@ abstract class AbstractCacheEntry<K, V> implements InternalCacheEntry<K, V> {
         this.size = size;
         this.attributes = attributes;
     }
-
+    static int hash(int h) {
+        // This function ensures that hashCodes that differ only by
+        // constant multiples at each bit position have a bounded
+        // number of collisions (approximately 8 at default load factor).
+        h ^= h >>> 20 ^ h >>> 12;
+        return h ^ h >>> 7 ^ h >>> 4;
+    }
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Map.Entry)) {
@@ -167,7 +181,7 @@ abstract class AbstractCacheEntry<K, V> implements InternalCacheEntry<K, V> {
         return key.hashCode() ^ value.hashCode();
     }
 
-    public boolean isCachable() {
+    public boolean isDead() {
         return getPolicyIndex() > 0;
     }
 
@@ -179,7 +193,7 @@ abstract class AbstractCacheEntry<K, V> implements InternalCacheEntry<K, V> {
         return expTime == TimeToLiveAttribute.FOREVER ? false : Clock.isPassed(timestamp, expTime);
     }
 
-     boolean needsRefresh(Predicate<CacheEntry<K, V>> filter, long timestamp) {
+    boolean needsRefresh(Predicate<CacheEntry<K, V>> filter, long timestamp) {
         if (filter != null && filter.evaluate(this)) {
             return true;
         }
@@ -202,7 +216,7 @@ abstract class AbstractCacheEntry<K, V> implements InternalCacheEntry<K, V> {
         return getKey() + "=" + getValue();
     }
 
-    int getHash() {
+    public int getHash() {
         return hash;
     }
 

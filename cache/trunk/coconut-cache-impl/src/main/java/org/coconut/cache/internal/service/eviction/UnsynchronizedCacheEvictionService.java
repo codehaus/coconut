@@ -9,9 +9,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.coconut.attribute.Attributes;
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.internal.service.entry.EntryMap;
+import org.coconut.cache.internal.service.listener.InternalCacheListener;
+import org.coconut.cache.internal.service.servicemanager.AbstractCacheServiceManager;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
@@ -39,14 +43,24 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     /** The maximum size of this cache. */
     private int maxSize;
 
+    final Cache c;
+
+    final InternalCacheListener listener;
+
+    final AbstractCacheServiceManager manager;
+
     // @SuppressWarnings("unchecked")
-    public UnsynchronizedCacheEvictionService(AbstractCacheEntryFactoryService<K, V> factory,
-            CacheEvictionConfiguration<K, V> conf, InternalCacheSupport<K, V> helper) {
-        super(factory, helper);
+    public UnsynchronizedCacheEvictionService(AbstractCacheServiceManager manager, Cache c,
+            InternalCacheListener listener, AbstractCacheEntryFactoryService<K, V> factory,
+            CacheEvictionConfiguration<K, V> conf, InternalCache<K, V> helper) {
+        super(factory);
         cp = conf.getPolicy() == null ? new LRUPolicy<T>(1) : (ReplacementPolicy) conf.getPolicy();
         maxSize = EvictionUtils.getMaximumSizeFromConfiguration(conf);
         // System.out.println("maxSize " + maxSize);
         maxVolume = EvictionUtils.getMaximumVolumeFromConfiguration(conf);
+        this.c = c;
+        this.listener = listener;
+        this.manager = manager;
     }
 
     /** {@inheritDoc} */
@@ -148,6 +162,18 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 // index);
 // }
         cp.touch(index);
+    }
+
+    @Override
+    void trimCache(int toSize, long toVolume) {
+        long started = listener.beforeTrim(toSize, toVolume);
+
+        manager.lazyStart(true);
+      //  int size = map.size();
+      //  long volume = map.volume();
+      //  List<CacheEntry<K, V>> l = map.trimCache(toSize, toVolume);
+
+      //  listener.afterTrimCache(started, l, size, map.size(), volume, map.volume());
     }
 
 }

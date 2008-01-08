@@ -11,19 +11,66 @@ import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
+import org.coconut.cache.internal.service.servicemanager.AbstractCacheServiceManager;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoader.LoaderCallback;
+import org.coconut.internal.util.CollectionUtils.SimpleImmutableEntry;
 
 public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
     private final InternalCacheEntryService attributeFactory;
 
-    public UnsynchronizedCacheLoaderService(InternalCacheEntryService attributeFactory,
+    private final InternalCache c;
+
+    private final AbstractCacheServiceManager icsm;
+
+    public UnsynchronizedCacheLoaderService(AbstractCacheServiceManager icsm,
+            InternalCache c, InternalCacheEntryService attributeFactory,
             InternalCacheExceptionService<K, V> exceptionService,
-            CacheLoadingConfiguration<K, V> loadConf, final LoadSupport<K, V> cache) {
+            CacheLoadingConfiguration<K, V> loadConf, final InternalCache<K, V> cache) {
         super(loadConf, attributeFactory, exceptionService, cache);
         this.attributeFactory = attributeFactory;
+        this.icsm = icsm;
+      //  this.map = map;
+        this.c = c;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    void doLoadAll(Map<? extends K, ? extends AttributeMap> attributes) {
+        Map<K, AttributeMap> keys = new HashMap<K, AttributeMap>();
+
+        if (!icsm.lazyStart(false)) {
+            return;
+        }
+       // map.needsLoad(keys, attributes);
+        forceLoadAll(keys);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void doLoad(K key, AttributeMap attributes) {
+     //   if (icsm.lazyStart(false) && map.needsLoad(key)) {
+            forceLoad(key, attributes);
+     //   }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void loadAll(AttributeMap attributes, boolean force) {
+        final Map<K, AttributeMap> keys;
+        if (!icsm.lazyStart(false)) {
+            return;
+        }
+        if (force) {
+   //         keys = Attributes.toMap(new ArrayList(map.keySet(c)), attributes);
+        } else {
+   //         keys = map.whoNeedsLoading(attributes);
+        }
+
+   //     forceLoadAll(keys);
     }
 
     /** {@inheritDoc} */
@@ -65,8 +112,8 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
             getExceptionHandler().fatal(sb.toString(), re);
         }
         // all callbacks should be done in unsync version
-        Map<K, V> keyValues = new HashMap<K, V>();
-        Map<K, AttributeMap> keyAttributes = new HashMap<K, AttributeMap>();
+        Map<K, Map.Entry<? extends V, AttributeMap>> keyValues = new HashMap<K, Map.Entry<? extends V, AttributeMap>>();
+        Map<K, V> result = new HashMap<K, V>();
         for (UnsynchronizedCacheLoaderCallback<K, V> callback : col) {
             if (!callback.isDone()) {
                 getExceptionHandler().fatal(
@@ -79,12 +126,13 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
                     v = getExceptionHandler().loadFailed(callback.getCause(), getLoader(),
                             callback.getKey(), callback.getAttributes());
                 }
-                keyValues.put(callback.getKey(), v);
-                keyAttributes.put(callback.getKey(), callback.getAttributes());
+                keyValues.put(callback.getKey(), new SimpleImmutableEntry(v, callback
+                        .getAttributes()));
+                result.put(callback.getKey(), v);
             }
         }
-        loadSupport.valuesLoaded(keyValues, keyAttributes);
-        return keyValues;
+        internal.putAllWithAttributes((Map) keyValues);
+        return result;
     }
 
     /** {@inheritDoc} */

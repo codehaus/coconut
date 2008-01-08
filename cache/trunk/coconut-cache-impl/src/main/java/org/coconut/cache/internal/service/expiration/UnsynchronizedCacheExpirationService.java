@@ -1,51 +1,42 @@
 package org.coconut.cache.internal.service.expiration;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 
-import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.internal.service.entry.EntryMap;
-import org.coconut.cache.internal.service.entry.InternalCacheEntry;
+import org.coconut.cache.internal.InternalCache;
+import org.coconut.cache.internal.InternalCacheEntry;
+import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.core.Clock;
 
-public class UnsynchronizedCacheExpirationService<K, V> extends DefaultCacheExpirationService<K, V> {
+public class UnsynchronizedCacheExpirationService<K, V> extends
+        AbstractCacheExpirationService<K, V> {
 
-    private final EntryMap<K, V> map;
+    private final MemoryStore<K, V> map;
 
     private final Clock clock;
 
-    private final Cache cache;
-
     private final InternalCacheListener<K, V> listener;
 
-    public UnsynchronizedCacheExpirationService(Cache cache, Clock clock, EntryMap<K, V> entryMap,
-            InternalCacheListener<K, V> listener, CacheConfiguration<K, V> conf,
-            InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> confExpiration,
+    public UnsynchronizedCacheExpirationService(Clock clock, MemoryStore<K, V> entryMap,
+            InternalCacheListener<K, V> listener, InternalCache<K, V> helper,
+            CacheExpirationConfiguration<K, V> confExpiration,
             InternalCacheEntryService attributeFactory) {
-        super(conf, helper, confExpiration, attributeFactory);
+        super(helper, confExpiration, attributeFactory);
         this.listener = listener;
-        this.cache = cache;
         this.clock = clock;
         this.map = entryMap;
     }
 
-    @Override
     public void purgeExpired() {
-        long start = listener.beforeCachePurge(cache);
+        long start = listener.beforeCachePurge();
         long timestamp = clock.timestamp();
-        int size = map.peekSize();
+        int size = map.size();
         long volume = map.volume();
 
-        List<InternalCacheEntry<K, V>> expired = map.purgeExpired(timestamp);
-
-        listener.afterCachePurge(cache, start, expired, size, volume, map
-                .peekSize(), map.volume());
+        Collection<InternalCacheEntry<K, V>> expired = (Collection) map.withFilter(null)
+                .removeAll().asList();
+        listener.afterCachePurge(start, expired, size, volume, map.size(), map.volume());
     }
-
 }

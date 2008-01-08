@@ -10,17 +10,15 @@ import java.util.concurrent.TimeUnit;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheServices;
-import org.coconut.cache.internal.service.cache.AbstractInternalCache;
-import org.coconut.cache.internal.service.cache.old.SynchronizedCache2;
+import org.coconut.cache.internal.SynchronizedInternalCache;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.parallel.CacheParallelService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
@@ -32,7 +30,7 @@ import org.coconut.cache.spi.ConfigurationValidator;
  * <p>
  * It is imperative that the user manually synchronize on the cache when iterating over
  * any of its collection views:
- *
+ * 
  * <pre>
  *  Cache c = new SynchronizedCache();
  *      ...
@@ -44,9 +42,9 @@ import org.coconut.cache.spi.ConfigurationValidator;
  *          foo(i.next());
  *  }
  * </pre>
- *
+ * 
  * Failure to follow this advice may result in non-deterministic behavior.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -57,10 +55,10 @@ import org.coconut.cache.spi.ConfigurationValidator;
 @ThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
-        /* CacheParallelService.class, */CacheServiceManagerService.class,
-        CacheStatisticsService.class, CacheWorkerService.class })
-public class SynchronizedCache<K, V> implements Cache<K, V> {
-    private final SynchronizedCache2<K, V> cache;
+        CacheParallelService.class, CacheServiceManagerService.class, CacheStatisticsService.class,
+        CacheWorkerService.class })
+public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
+    private final SynchronizedInternalCache<K, V> cache;
 
     /**
      * Creates a new UnsynchronizedCache with a default configuration.
@@ -71,7 +69,7 @@ public class SynchronizedCache<K, V> implements Cache<K, V> {
 
     /**
      * Creates a new UnsynchronizedCache from the specified configuration.
-     *
+     * 
      * @param conf
      *            the configuration to create the cache from
      * @throws NullPointerException
@@ -79,7 +77,7 @@ public class SynchronizedCache<K, V> implements Cache<K, V> {
      */
     public SynchronizedCache(CacheConfiguration<K, V> conf) {
         ConfigurationValidator.getInstance().verify(conf, SynchronizedCache.class);
-        cache = new SynchronizedCache2(this, conf);
+        cache = new SynchronizedInternalCache(this, conf);
     }
 
     /** {@inheritDoc} */
@@ -218,11 +216,6 @@ public class SynchronizedCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public CacheServices<K, V> services() {
-        return new CacheServices<K, V>(this);
-    }
-
-    /** {@inheritDoc} */
     public void shutdown() {
         cache.shutdown();
     }
@@ -236,7 +229,7 @@ public class SynchronizedCache<K, V> implements Cache<K, V> {
     public int size() {
         return cache.size();
     }
-    
+
     /** {@inheritDoc} */
     public Collection<V> values() {
         return cache.values();

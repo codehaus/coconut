@@ -1,18 +1,24 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.eviction;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.internal.service.listener.InternalCacheListener;
+import org.coconut.cache.internal.service.servicemanager.AbstractCacheServiceManager;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 /**
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -23,10 +29,10 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 public class SynchronizedCacheEvictionService<K, V> extends UnsynchronizedCacheEvictionService {
     private final Object mutex;
 
-    public SynchronizedCacheEvictionService(Cache c,
-            AbstractCacheEntryFactoryService<K, V> factory, CacheEvictionConfiguration conf,
-            InternalCacheSupport<K, V> helper) {
-        super(factory, conf, helper);
+    public SynchronizedCacheEvictionService(AbstractCacheServiceManager manager, Cache c,
+            InternalCacheListener listener, AbstractCacheEntryFactoryService<K, V> factory,
+            CacheEvictionConfiguration conf, InternalCache<K, V> helper) {
+        super(manager, c, listener, factory, conf, helper);
         this.mutex = c;
     }
 
@@ -60,5 +66,26 @@ public class SynchronizedCacheEvictionService<K, V> extends UnsynchronizedCacheE
         synchronized (mutex) {
             super.setMaximumSize(size);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    void trimCache(int toSize, long toVolume) {
+        long started = listener.beforeTrim(toSize, toVolume);
+        int size = 0;
+        int newSize = 0;
+        long volume = 0;
+        long newVolume = 0;
+        List<CacheEntry<K, V>> l = Collections.EMPTY_LIST;
+
+        synchronized (this) {
+            manager.lazyStart(true);
+//            size = map.size();
+//            volume = map.volume();
+//            l = map.trimCache(toSize, toVolume);
+//            newSize = map.size();
+//            newVolume = map.volume();
+        }
+        listener.afterTrimCache(started, l, size, newSize, volume, newVolume);
     }
 }

@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.InternalCacheEntry;
+import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.service.event.CacheEventService;
 
 /**

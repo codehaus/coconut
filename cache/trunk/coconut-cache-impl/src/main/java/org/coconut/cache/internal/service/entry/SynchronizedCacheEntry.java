@@ -4,6 +4,7 @@
 package org.coconut.cache.internal.service.entry;
 
 import org.coconut.attribute.AttributeMap;
+import org.coconut.cache.CacheEntry;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -70,5 +71,9 @@ public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
     @Override
     public void setLastAccessTime(long lastAccessTime) {
         this.lastAccessedTime = lastAccessTime;
+    }
+
+    public CacheEntry<K, V> safe() {
+        return this;
     }
 }

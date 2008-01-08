@@ -9,6 +9,7 @@ import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 

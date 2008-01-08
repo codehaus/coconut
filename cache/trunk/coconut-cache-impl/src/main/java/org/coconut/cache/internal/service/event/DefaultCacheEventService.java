@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.InternalCacheEntry;
+import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
@@ -58,11 +58,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             InternalCacheExceptionService<K, V> exceptionHandling) {
         eb = new CacheEventBus<CacheEvent<K, V>>(exceptionHandling);
         this.offerable = eb;
-        this.doAdd = isIncluded(co, CacheEntryEvent.ItemAdded.class);
+        this.doAdd = isIncluded(co, CacheEntryEvent.ItemCreated.class);
         this.doClear = isIncluded(co, CacheEvent.CacheCleared.class);
-        this.doRemove = isIncluded(co, CacheEntryEvent.ItemRemoved.class);
-        this.doExpire = isIncluded(co, CacheEntryEvent.ItemRemoved.class);
-        this.doEvict = isIncluded(co, CacheEntryEvent.ItemRemoved.class);
+        this.doRemove = isIncluded(co, CacheEntryEvent.ItemDeleted.class);
+        this.doExpire = isIncluded(co, CacheEntryEvent.ItemDeleted.class);
+        this.doEvict = isIncluded(co, CacheEntryEvent.ItemDeleted.class);
         this.doUpdate = isIncluded(co, CacheEntryEvent.ItemUpdated.class);
         this.doStart = isIncluded(co, CacheEvent.CacheStarted.class);
         this.doStopped = isIncluded(co, CacheEvent.CacheStopped.class);
@@ -225,28 +225,12 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         offerable.apply(event);
     }
 
-// void _put(Cache<K, V> cache, InternalCacheEntry<K, V> prev, InternalCacheEntry<K, V>
-// newEntry) {
-// if (prev == null) {
-// if (doAdd && newEntry != null && newEntry.getPolicyIndex() >= 0) {
-// dispatch(added(cache, newEntry));
-// }
-// } else if (prev.getPolicyIndex() >= 0 && newEntry != null
-// && newEntry.getPolicyIndex() == -1) {
-// if (doRemove) {
-// dispatch(removed(cache, prev));
-// }
-// } else if (doUpdate) {
-// dispatch(updated(cache, newEntry, prev.getValue(), false));
-// }
-// }
-
-    void put(Cache<K, V> cache, InternalCacheEntry<K, V> prev, InternalCacheEntry<K, V> newEntry) {
+    private void put(Cache<K, V> cache, InternalCacheEntry<K, V> prev, InternalCacheEntry<K, V> newEntry) {
         if (prev == null) {
-            if (doAdd && newEntry != null && newEntry.isCachable()) {
+            if (doAdd && newEntry != null && newEntry.isDead()) {
                 dispatch(added(cache, newEntry));
             }
-        } else if (prev.isCachable() && newEntry != null && !newEntry.isCachable()) {
+        } else if (prev.isDead() && newEntry != null && !newEntry.isDead()) {
             if (doRemove) {
                 dispatch(removed(cache, prev));
             }

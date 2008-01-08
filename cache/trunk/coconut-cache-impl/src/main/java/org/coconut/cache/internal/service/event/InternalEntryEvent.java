@@ -64,21 +64,21 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         return builder.toString();
     }
 
-    static <K, V> CacheEntryEvent.ItemAdded<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry) {
+    static <K, V> CacheEntryEvent.ItemCreated<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry) {
         return new AddedEvent<K, V>(cache, entry);
     }
 
-    static <K, V> CacheEntryEvent.ItemRemoved<K, V> evicted(Cache<K, V> cache,
+    static <K, V> CacheEntryEvent.ItemDeleted<K, V> evicted(Cache<K, V> cache,
             CacheEntry<K, V> entry) {
         return new RemovedEvent<K, V>(cache, entry, false);
     }
 
-    static <K, V> CacheEntryEvent.ItemRemoved<K, V> expired(Cache<K, V> cache,
+    static <K, V> CacheEntryEvent.ItemDeleted<K, V> expired(Cache<K, V> cache,
             CacheEntry<K, V> entry) {
         return new RemovedEvent<K, V>(cache, entry, true);
     }
 
-    static <K, V> CacheEntryEvent.ItemRemoved<K, V> removed(Cache<K, V> cache,
+    static <K, V> CacheEntryEvent.ItemDeleted<K, V> removed(Cache<K, V> cache,
             CacheEntry<K, V> entry) {
         return new RemovedEvent<K, V>(cache, entry, false);
     }
@@ -89,10 +89,10 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
     }
 
     /**
-     * An Implementation of {@link CacheEntryEvent.ItemAdded}.
+     * An Implementation of {@link CacheEntryEvent.ItemCreated}.
      */
     static class AddedEvent<K, V> extends InternalEntryEvent<K, V> implements
-            CacheEntryEvent.ItemAdded<K, V> {
+            CacheEntryEvent.ItemCreated<K, V> {
 
         /**
          * Creates a new RemovedEvent.
@@ -108,7 +108,7 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
 
         /** {@inheritDoc} */
         public String getName() {
-            return CacheEntryEvent.ItemAdded.NAME;
+            return CacheEntryEvent.ItemCreated.NAME;
         }
     }
 
@@ -162,10 +162,10 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
     }
 
     /**
-     * An Implementation of {@link CacheEntryEvent.ItemRemoved}.
+     * An Implementation of {@link CacheEntryEvent.ItemDeleted}.
      */
     static final class RemovedEvent<K, V> extends InternalEntryEvent<K, V> implements
-            CacheEntryEvent.ItemRemoved<K, V> {
+            CacheEntryEvent.ItemDeleted<K, V> {
 
         /** Whether or not the item was removed because it expired. */
         private boolean hasExpired;
@@ -187,7 +187,7 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
 
         /** {@inheritDoc} */
         public String getName() {
-            return CacheEntryEvent.ItemRemoved.NAME;
+            return CacheEntryEvent.ItemDeleted.NAME;
         }
 
         /** {@inheritDoc} */

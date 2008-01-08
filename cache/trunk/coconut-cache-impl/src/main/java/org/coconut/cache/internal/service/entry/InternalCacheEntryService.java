@@ -4,6 +4,7 @@
 package org.coconut.cache.internal.service.entry;
 
 import org.coconut.attribute.AttributeMap;
+import org.coconut.cache.internal.InternalCacheEntry;
 
 public interface InternalCacheEntryService<K, V> {
     /**
