@@ -13,6 +13,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.SynchronizedInternalCache;
+import org.coconut.cache.internal.UnsynchronizedInternalCache;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -58,6 +59,8 @@ import org.coconut.cache.spi.ConfigurationValidator;
         CacheParallelService.class, CacheServiceManagerService.class, CacheStatisticsService.class,
         CacheWorkerService.class })
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
+    
+    /** The internal cache we are wrapping. */
     private final SynchronizedInternalCache<K, V> cache;
 
     /**
@@ -76,8 +79,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
      *             if the specified configuration is <code>null</code>
      */
     public SynchronizedCache(CacheConfiguration<K, V> conf) {
-        ConfigurationValidator.getInstance().verify(conf, SynchronizedCache.class);
-        cache = new SynchronizedInternalCache(this, conf);
+        ConfigurationValidator.getInstance().verify(conf, getClass());
+        cache = SynchronizedInternalCache.from(this, conf);
     }
 
     /** {@inheritDoc} */
@@ -132,7 +135,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** {@inheritDoc} */
     public long volume() {
-        return cache.getVolume();
+        return cache.volume();
     }
 
     /** {@inheritDoc} */

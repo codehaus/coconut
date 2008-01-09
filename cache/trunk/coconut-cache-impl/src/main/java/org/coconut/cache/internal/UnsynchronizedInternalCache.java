@@ -1,29 +1,22 @@
 package org.coconut.cache.internal;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.memory.UnlimitedSequentialMemoryStore;
+import org.coconut.cache.defaults.AbstractCache;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
-import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
-import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.expiration.UnsynchronizedCacheExpirationService;
-import org.coconut.cache.internal.service.listener.DefaultCacheListener;
 import org.coconut.cache.internal.service.loading.UnsynchronizedCacheLoaderService;
 import org.coconut.cache.internal.service.parallel.UnsynchronizedParallelCacheService;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
-import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.internal.forkjoin.ParallelArray;
 import org.coconut.internal.util.CollectionUtils;
+import org.coconut.operations.CollectionPredicates;
 import org.coconut.operations.Mappers;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Mapper;
@@ -31,29 +24,23 @@ import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
 
 public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V> {
-
-    private final static Collection<Class<?>> components;
-
-
-    static {
-        List<Class<?>> c = new ArrayList<Class<?>>();
-        c.add(DefaultCacheStatisticsService.class);
-        c.add(DefaultCacheListener.class);
-        c.add(UnsynchronizedCacheEvictionService.class);
-        c.add(UnsynchronizedCacheExpirationService.class);
-        c.add(UnsynchronizedCacheLoaderService.class);
-        c.add(DefaultCacheEventService.class);
-        c.add(UnsynchronizedParallelCacheService.class);
-        c.add(UnsynchronizedCacheServiceManager.class);
-        c.add(UnsynchronizedEntryFactoryService.class);
-        c.add(DefaultCacheExceptionService.class);
-        c.add(UnlimitedSequentialMemoryStore.class);
-        // c.add(DefaultHashMemoryStore.NoSynchronizationMemoryViewFactory.class);
-        components = Collections.unmodifiableCollection(c);
+    private UnsynchronizedInternalCache(AbstractCache cache, CacheConfiguration conf,
+            Collection<Class<?>> components) {
+        super(cache, conf, components);
     }
 
-    public UnsynchronizedInternalCache(Cache cache, CacheConfiguration conf) {
-        super(cache, conf, components);
+    public static <K, V> UnsynchronizedInternalCache<K, V> from(AbstractCache<K, V> cache,
+            CacheConfiguration<K, V> configuration) {
+        Collection<Class<?>> components = defaultComponents(configuration);
+        components.add(UnsynchronizedCacheEvictionService.class);
+        components.add(UnsynchronizedCacheExpirationService.class);
+        if (configuration.loading().getLoader() != null) {
+            components.add(UnsynchronizedCacheLoaderService.class);
+        }
+        components.add(UnsynchronizedParallelCacheService.class);
+        components.add(UnsynchronizedCacheServiceManager.class);
+        components.add(UnsynchronizedEntryFactoryService.class);
+        return new UnsynchronizedInternalCache(cache, configuration, components);
     }
 
     public Collection<V> values() {
@@ -74,7 +61,7 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
     public void clear() {
         long started = listener.beforeCacheClear();
 
-        serviceManager.lazyStart();
+        lazyStart();
         long volume = memoryCache.volume();
         ParallelArray<CacheEntry<K, V>> list = memoryCache.removeAll();
 
@@ -86,7 +73,7 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
     CacheEntry<K, V> doRemove(Object key, Object value) {
         long started = listener.beforeRemove(key, value);
 
-        serviceManager.lazyStart();
+        lazyStart();
         CacheEntry<K, V> e = memoryCache.remove(key, value);
 
         listener.afterRemove(started, e);
@@ -96,7 +83,7 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
     public boolean removeValue(Object value) {
         long started = listener.beforeRemove(null, value);
 
-        serviceManager.lazyStart();
+        lazyStart();
         CacheEntry<K, V> e = memoryCache.removeAny(Predicates.mapAndEvaluate(
                 Mappers.MAP_ENTRY_TO_VALUE_MAPPER, Predicates.isEquals(value)));
 
@@ -111,7 +98,7 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
         CollectionUtils.checkCollectionForNulls(keys);
         long started = listener.beforeRemoveAll((Collection) keys);
 
-        serviceManager.lazyStart();
+        lazyStart();
         ParallelArray<CacheEntry<K, V>> list = memoryCache.removeAll(keys);
 
         listener.afterRemoveAll(started, (Collection) keys, list.asList());
@@ -126,7 +113,7 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
         CollectionUtils.checkCollectionForNulls(entries);
         long started = listener.beforeRemoveAll((Collection) entries);
 
-        serviceManager.lazyStart();
+        lazyStart();
         ParallelArray<CacheEntry<K, V>> list = memoryCache.removeEntries(entries);
 
         listener.afterRemoveAll(started, (Collection) entries, list.asList());
@@ -141,7 +128,7 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
         CollectionUtils.checkCollectionForNulls(values);
         long started = listener.beforeRemoveAll((Collection) values);
 
-        serviceManager.lazyStart();
+        lazyStart();
         ParallelArray<CacheEntry<K, V>> list = memoryCache.removeValues(values);
 
         listener.afterRemoveAll(started, (Collection) values, list.asList());
@@ -149,16 +136,17 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
         return list.size() > 0;
     }
 
-    public boolean retainAll(Mapper pre, Predicate selector, Collection<?> c) {
+    boolean retainAll(Mapper pre, Collection<?> c) {
         if (c == null) {
             throw new NullPointerException("collection is null");
         }
         CollectionUtils.checkCollectionForNulls(c);
         long started = listener.beforeRemoveAll((Collection) c);
 
-        serviceManager.lazyStart();
-        ParallelArray<CacheEntry<K, V>> list = null;
-        // ParallelArray<CacheEntry<K, V>> list = memoryCache.retainAll(pre, selector, c);
+        lazyStart();
+        ParallelArray<CacheEntry<K, V>> list = memoryCache.withFilter(
+                Predicates.mapAndEvaluate(pre, Predicates.not(CollectionPredicates
+                        .containedWithin(c)))).removeAll();
 
         listener.afterRemoveAll(started, (Collection) c, list.asList());
 
@@ -169,7 +157,7 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
     public CacheEntry<K, V> put(K key, V value, AttributeMap attributes, boolean OnlyIfAbsent) {
         long started = listener.beforePut(key, value, false);
 
-        serviceManager.lazyStartFailIfShutdown();
+        lazyStartFailIfShutdown();
         Map.Entry<CacheEntry<K, V>, CacheEntry<K, V>> prev = memoryCache.put(key, value,
                 attributes, OnlyIfAbsent);
         ParallelArray<CacheEntry<K, V>> trimmed = memoryCache.trim();
@@ -179,14 +167,14 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
         return prev.getKey();
     }
 
-    public void clearView(Mapper pre, Predicate p) {
+    public void clearView(Predicate p) {
         throw new UnsupportedOperationException();
     }
 
     public void putAllWithAttributes(Map<K, Map.Entry<V, AttributeMap>> data) {
         long started = listener.beforePutAll(null, null, false);
 
-        serviceManager.lazyStartFailIfShutdown();
+        lazyStartFailIfShutdown();
 
         Map<CacheEntry<K, V>, CacheEntry<K, V>> result = memoryCache.putAllWithAttributes(data);
         ParallelArray<CacheEntry<K, V>> trimmed = memoryCache.trim();
@@ -214,20 +202,9 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
         throw new UnsupportedOperationException();
     }
 
-    public void prestart() {
-        serviceManager.lazyStart();
-    }
-
     public <T> void apply(Predicate<? super CacheEntry<K, V>> selector,
             Mapper<? super CacheEntry<K, V>, T> mapper, Procedure<T> procedure) {
         memoryCache.withFilter(selector).withMapping(mapper).apply(procedure);
     }
 
-    public Object getMutex() {
-        return null;
-    }
-
-    public boolean isSynchronized() {
-        return false;
-    }
 }

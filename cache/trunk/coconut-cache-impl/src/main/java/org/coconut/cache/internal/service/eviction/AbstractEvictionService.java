@@ -4,6 +4,7 @@
 package org.coconut.cache.internal.service.eviction;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
@@ -19,7 +20,7 @@ import org.coconut.management.ManagedLifecycle;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -28,20 +29,31 @@ import org.coconut.management.ManagedLifecycle;
  *            the type of mapped values
  */
 public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> extends
-        AbstractCacheLifecycle implements InternalCacheEvictionService<K, V, T>,
-        CacheEvictionMXBean, ManagedLifecycle, CompositeService {
+        AbstractCacheLifecycle implements CacheEvictionService<K, V>,
+        CacheEvictionMXBean {
 
     private final AbstractCacheEntryFactoryService<K, V> entryFactory;
 
+    private final MemoryStore<K, V> ms;
 
     /**
      * Creates a new AbstractEvictionService.
-     *
+     * 
      * @param evictionSupport
      *            the InternalCacheSupport for the cache
      */
-    public AbstractEvictionService(AbstractCacheEntryFactoryService<K, V> factory) {
+    public AbstractEvictionService(MemoryStore<K, V> ms,
+            AbstractCacheEntryFactoryService<K, V> factory) {
         this.entryFactory = factory;
+        this.ms = ms;
+    }
+
+    public int getMaximumSize() {
+        return ms.getMaximumSize();
+    }
+
+    public long getMaximumVolume() {
+        return ms.getMaximumVolume();
     }
 
     /** {@inheritDoc} */
@@ -54,15 +66,16 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         return entryFactory.isDisabled();
     }
 
-    /** {@inheritDoc} */
-    public void manage(ManagedGroup parent) {
-        ManagedGroup g = parent.addChild(CacheEvictionConfiguration.SERVICE_NAME,
-                "Cache Eviction attributes and operations");
-        g.add(EvictionUtils.wrapMXBean(this));
-    }
-
     public void setDisabled(boolean isDisabled) {
         entryFactory.setDisabled(isDisabled);
+    }
+
+    public void setMaximumSize(int size) {
+        ms.setMaximumSize(size);
+    }
+
+    public void setMaximumVolume(long volume) {
+        ms.setMaximumVolume(volume);
     }
 
     @Override
@@ -73,8 +86,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
     /** {@inheritDoc} */
     public void trimToSize(int size) {
         if (size < 0) {
-            throw new IllegalArgumentException("size cannot be a negative number, was "
-                    + size);
+            throw new IllegalArgumentException("size cannot be a negative number, was " + size);
         }
         trimCache(size, Long.MAX_VALUE);
     }
@@ -82,10 +94,9 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
     /** {@inheritDoc} */
     public void trimToVolume(long volume) {
         if (volume < 0) {
-            throw new IllegalArgumentException("volume cannot be a negative number, was "
-                    + volume);
+            throw new IllegalArgumentException("volume cannot be a negative number, was " + volume);
         }
-       trimCache(Integer.MAX_VALUE, volume);
+        trimCache(Integer.MAX_VALUE, volume);
     }
 
     abstract void trimCache(int size, long capacity);

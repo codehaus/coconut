@@ -173,29 +173,6 @@ final class EvictionUtils {
         return new DelegatedCacheEvictionService<K, V>(service);
     }
 
-    /**
-     * Returns the maximum size configured in the specified configuration.
-     *
-     * @param conf
-     *            the configuration to read the maximum size from
-     * @return the maximum size configured in the specified configuration
-     */
-    static int getMaximumSizeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
-        int tmp = conf.getMaximumSize();
-        return tmp == 0 ? Integer.MAX_VALUE : tmp;
-    }
-
-    /**
-     * Returns the maximum volume configured in the specified configuration.
-     *
-     * @param conf
-     *            the configuration to read the maximum volume from
-     * @return the maximum volume configured in the specified configuration
-     */
-    static long getMaximumVolumeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
-        long tmp = conf.getMaximumVolume();
-        return tmp == 0 ? Long.MAX_VALUE : tmp;
-    }
 
 // /**
 // * Returns the preferable size configured in the specified configuration.

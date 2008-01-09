@@ -21,7 +21,7 @@ public interface InternalCacheListener<K, V> {
     /**
      * Called after the specified cache was cleared.
      *
-     * @param cache
+     * @param internalCache
      *            the cache that was cleared
      * @param timestamp
      *            the timestamp that was returned by {@link #beforeCacheClear(Cache)}
@@ -69,7 +69,7 @@ public interface InternalCacheListener<K, V> {
     /**
      * Called before the cache was cleared.
      *
-     * @param cache
+     * @param internalCache
      *            the cache that was cleared
      * @return a timestamp
      */

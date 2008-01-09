@@ -52,7 +52,7 @@ public class ConfigurationValidator {
      * @throws IllegalCacheConfigurationException
      *             if the cache does not fully support the specified configuration
      */
-    public void verify(CacheConfiguration<?, ?> conf, Class<? extends Cache> cacheType) {
+    public void verify(CacheConfiguration<?, ?> conf, Class<?> cacheType) {
         CacheServiceSupport support = cacheType.getAnnotation(CacheServiceSupport.class);
         if (support == null) {
             throw new IllegalCacheConfigurationException("class '" + cacheType.getName()

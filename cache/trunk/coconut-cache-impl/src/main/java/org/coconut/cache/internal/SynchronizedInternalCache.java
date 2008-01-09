@@ -1,65 +1,52 @@
 package org.coconut.cache.internal;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.AbstractInternalCache.EntrySet;
-import org.coconut.cache.internal.AbstractInternalCache.KeySet;
-import org.coconut.cache.internal.AbstractInternalCache.Values;
+import org.coconut.cache.defaults.AbstractCache;
 import org.coconut.cache.internal.service.entry.SynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.entry.SynchronizedEntryMap;
-import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.SynchronizedCacheEvictionService;
-import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.expiration.SynchronizedCacheExpirationService;
-import org.coconut.cache.internal.service.listener.DefaultCacheListener;
-import org.coconut.cache.internal.service.loading.SynchronizedCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.ServiceComposer;
 import org.coconut.cache.internal.service.servicemanager.SynchronizedCacheServiceManager;
-import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.internal.service.worker.SynchronizedCacheWorkerService;
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
-import org.coconut.operations.Ops.Procedure;
 
 public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V> {
 
-    private final static Collection<Class<?>> components;
-
-    static {
-        List<Class<?>> c = new ArrayList<Class<?>>();
-        c.add(DefaultCacheStatisticsService.class);
-        c.add(DefaultCacheListener.class);
-        c.add(SynchronizedCacheEvictionService.class);
-        c.add(SynchronizedCacheExpirationService.class);
-        c.add(SynchronizedCacheLoaderService.class);
-        c.add(DefaultCacheManagementService.class);
-        c.add(DefaultCacheEventService.class);
-        c.add(SynchronizedCacheWorkerService.class);
-        c.add(SynchronizedCacheServiceManager.class);
-        c.add(SynchronizedEntryFactoryService.class);
-        c.add(SynchronizedEntryMap.class);
-        /* c.add(SynchronizedInternalCache.class); */
-        /* SynchronizedParallelCacheService.class);c.add( */
-        c.add(DefaultCacheExceptionService.class);
-        components = Collections.unmodifiableCollection(c);
-    }
-
     private final Object mutex;
-    public SynchronizedInternalCache(Cache cache, CacheConfiguration conf) {
-        super(null, null, null);
+
+    private SynchronizedInternalCache(AbstractCache cache, CacheConfiguration conf,
+            Collection<Class<?>> components) {
+        super(cache, conf, components, Collections.singleton(CacheMutex.from(cache)));
         this.mutex = cache;
     }
+
+    public static <K, V> SynchronizedInternalCache<K, V> from(AbstractCache<K, V> cache,
+            CacheConfiguration<K, V> configuration) {
+        Collection<Class<?>> components = defaultComponents(configuration);
+
+        components.add(SynchronizedCacheEvictionService.class);
+        components.add(SynchronizedCacheExpirationService.class);
+        if (configuration.management().isEnabled()) {
+            components.add(DefaultCacheManagementService.class);
+        }
+        components.add(SynchronizedCacheWorkerService.class);
+        components.add(SynchronizedCacheServiceManager.class);
+        components.add(SynchronizedEntryFactoryService.class);
+        components.add(SynchronizedEntryMap.class);
+        return new SynchronizedInternalCache(cache, configuration, components);
+    }
+
     public SynchronizedInternalCache(ServiceComposer sc) {
         super(null, null, null);
         this.mutex = sc.getInternalService(Cache.class);
@@ -71,9 +58,9 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
         long volume = 0;
 
         synchronized (mutex) {
-            serviceManager.lazyStart();
+            lazyStart();
             volume = memoryCache.volume();
-            //list = memoryCache.clear();
+            // list = memoryCache.clear();
         }
 
         listener.afterCacheClear(started, list, volume);
@@ -87,9 +74,9 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
     }
 
     @Override
-    public long getVolume() {
+    public long volume() {
         synchronized (mutex) {
-            return super.getVolume();
+            return super.volume();
         }
     }
 
@@ -128,7 +115,7 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
         CacheEntry<K, V> e = null;
 
         synchronized (mutex) {
-            serviceManager.lazyStart();
+            lazyStart();
             e = memoryCache.remove(key, value);
         }
 
@@ -141,8 +128,8 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
         CacheEntry<K, V> e = null;
 
         synchronized (mutex) {
-            serviceManager.lazyStart();
-           // e = memoryCache.removeValue(value);
+            lazyStart();
+            // e = memoryCache.removeValue(value);
         }
 
         listener.afterRemove(started, e);
@@ -154,7 +141,7 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
         return null;
     }
 
-    public void clearView(Mapper pre, Predicate p) {}
+    public void clearView(Predicate p) {}
 
     public void putAllWithAttributes(Map<K, java.util.Map.Entry<V, AttributeMap>> data) {}
 
@@ -170,7 +157,7 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
         return false;
     }
 
-    public boolean retainAll(Mapper pre, Predicate selector, Collection<?> c) {
+    public boolean retainAll(Mapper pre, Collection<?> c) {
         return false;
     }
 
@@ -194,17 +181,6 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
         return false;
     }
 
-    public <T> void apply(Predicate<? super CacheEntry<K, V>> selector,
-            Mapper<? super CacheEntry<K, V>, T> mapper, Procedure<T> procedure) {}
-
-    public Object getMutex() {
-        return null;
-    }
-
-    public boolean isSynchronized() {
-        return false;
-    }
-
     public Collection<V> values() {
         Collection<V> vs = values;
         return (vs != null) ? vs : (values = new SynchronizedValues(mutex));
@@ -220,39 +196,34 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
         return (es != null) ? es : (entrySet = new SynchronizedEntrySet(mutex));
     }
 
-    public void prestart() {}
-
-
-    
-
     final class SynchronizedValues extends Values {
         private final Object mutex;
-    
+
         SynchronizedValues(Object mutex) {
             this.mutex = mutex;
         }
-    
+
         @Override
         public boolean containsAll(Collection<?> c) {
             synchronized (mutex) {
                 return super.containsAll(c);
             }
         }
-    
+
         @Override
         public Object[] toArray() {
             synchronized (mutex) {
                 return super.toArray();
             }
         }
-    
+
         @Override
         public <T> T[] toArray(T[] a) {
             synchronized (mutex) {
                 return super.toArray(a);
             }
         }
-    
+
         @Override
         public String toString() {
             synchronized (mutex) {
@@ -260,48 +231,48 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
             }
         }
     }
-    
+
     final class SynchronizedKeySet extends KeySet {
         private final Object mutex;
-    
+
         SynchronizedKeySet(Object mutex) {
             this.mutex = mutex;
         }
-    
+
         public boolean containsAll(Collection<?> c) {
             synchronized (mutex) {
                 return super.containsAll(c);
             }
         }
-    
+
         @Override
         public boolean equals(Object o) {
             synchronized (mutex) {
                 return super.equals(o);
             }
         }
-    
+
         @Override
         public int hashCode() {
             synchronized (mutex) {
                 return super.hashCode();
             }
         }
-    
+
         @Override
         public Object[] toArray() {
             synchronized (mutex) {
                 return super.toArray();
             }
         }
-    
+
         @Override
         public <T> T[] toArray(T[] a) {
             synchronized (mutex) {
                 return super.toArray(a);
             }
         }
-    
+
         @Override
         public String toString() {
             synchronized (mutex) {
@@ -312,52 +283,52 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
 
     final class SynchronizedEntrySet extends EntrySet {
         private final Object mutex;
-    
+
         SynchronizedEntrySet(Object mutex) {
             this.mutex = mutex;
         }
-    
+
         @Override
         public boolean containsAll(Collection<?> c) {
             synchronized (mutex) {
                 return super.containsAll(c);
             }
         }
-    
+
         @Override
         public boolean equals(Object o) {
             synchronized (mutex) {
                 return super.equals(o);
             }
         }
-    
+
         @Override
         public int hashCode() {
             synchronized (mutex) {
                 return super.hashCode();
             }
         }
-    
+
         @Override
         public Object[] toArray() {
             synchronized (mutex) {
                 return super.toArray();
             }
         }
-    
+
         @Override
         public <T> T[] toArray(T[] a) {
             synchronized (mutex) {
                 return super.toArray(a);
             }
         }
-    
+
         @Override
         public String toString() {
             synchronized (mutex) {
                 return toString();
             }
         }
-    
+
     }
 }

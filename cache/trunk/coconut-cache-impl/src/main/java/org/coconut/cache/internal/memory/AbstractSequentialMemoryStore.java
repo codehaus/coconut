@@ -4,7 +4,6 @@ import static org.coconut.operations.Mappers.CONSTANT_MAPPER;
 import static org.coconut.operations.Mappers.MAP_ENTRY_TO_KEY_MAPPER;
 import static org.coconut.operations.Mappers.MAP_ENTRY_TO_VALUE_MAPPER;
 import static org.coconut.operations.Mappers.compoundMapper;
-import static org.coconut.operations.Mappers.constant;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -18,8 +17,8 @@ import java.util.Map.Entry;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.InternalCache;
 import org.coconut.internal.forkjoin.ParallelArray;
 import org.coconut.internal.util.CollectionUtils;
 import org.coconut.operations.Predicates;
@@ -32,7 +31,7 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
 
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
-    final InternalCache<K, V> cache;
+    final Cache<K, V> cache;
 
     /**
      * The load factor for the hash table.
@@ -49,7 +48,13 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
 
     long volume;
 
-    AbstractSequentialMemoryStore(InternalCache<K, V> cache) {
+    private final MemoryStoreWithMapping<CacheEntry<K, V>> constantUnsafe = new WithMappingImpl(
+            CONSTANT_MAPPER);
+
+    private final MemoryStoreWithMapping<CacheEntry<K, V>> constantSafe = new WithMappingImpl(
+            CONSTANT_MAPPER);// replace with safe mapper
+
+    AbstractSequentialMemoryStore(Cache<K, V> cache) {
         if (cache == null) {
             throw new NullPointerException("cache is null");
         }
@@ -57,11 +62,11 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
     }
 
     public ParallelArray<CacheEntry<K, V>> all() {
-        return all(CONSTANT_MAPPER);
+        return constantUnsafe.all();
     }
 
     public ParallelArray<CacheEntry<K, V>> all(Class<? super CacheEntry<K, V>> elementType) {
-        return all(CONSTANT_MAPPER, elementType);
+        return constantUnsafe.all(elementType);
     }
 
     public CacheEntry<K, V> any() {
@@ -78,7 +83,7 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
     }
 
     public void apply(Procedure<? super CacheEntry<K, V>> procedure) {
-        apply(CONSTANT_MAPPER, procedure);
+        constantUnsafe.apply(procedure);
     }
 
     public void clear() {
@@ -162,6 +167,10 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
             result.put(me.getKey(), me.getValue());
         }
         return result;
+    }
+
+    public CacheEntry<K, V> reduce(Reducer<CacheEntry<K, V>> reducer, CacheEntry<K, V> base) {
+        return constantSafe.reduce(reducer, base);
     }
 
     public final CacheEntry<K, V> remove(Object key) {
@@ -409,66 +418,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         table = newTable;
     }
 
-    <T> ParallelArray<T> all(Mapper<? super CacheEntry<K, V>, ? extends T> m) {
-        T[] entries = (T[]) new Object[size];
-        int count = 0;
-        for (int i = 0; i < table.length; i++) {
-            for (ChainingEntry e = table[i]; e != null; e = e.next()) {
-                entries[count++] = m.map(e);
-            }
-        }
-        return fromArray(entries);
-    }
-
-    <T> ParallelArray<T> all(Mapper<? super CacheEntry<K, V>, ? extends T> m,
-            Class<? super T> elementType) {
-        T[] entries = (T[]) Array.newInstance(elementType, size);
-        int count = 0;
-        for (int i = 0; i < table.length; i++) {
-            for (ChainingEntry e = table[i]; e != null; e = e.next()) {
-                entries[count++] = m.map(e);
-            }
-        }
-        return fromArray(entries);
-    }
-
-    <T> void apply(Mapper<? super CacheEntry<K, V>, T> mapper, Procedure<? super T> procedure) {
-        apply(Predicates.TRUE, mapper, procedure);
-    }
-
-    private static Mapper SAFE_MAPPER = constant();
-
-    public CacheEntry<K, V> reduce(Reducer<CacheEntry<K, V>> reducer, CacheEntry<K, V> base) {
-        return (CacheEntry) reduce(SAFE_MAPPER, reducer, base);
-    }
-
-    <T> T reduce(Mapper<? super CacheEntry<K, V>, ? extends T> m, Reducer<T> reducer, T base) {
-        T result = base;
-        for (int i = 0; i < table.length; i++) {
-            for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
-                result = reducer.combine(result, m.map(e));
-            }
-        }
-        return result;
-    }
-
-    <T> void apply(Predicate<? super CacheEntry<K, V>> selector,
-            Mapper<? super CacheEntry<K, V>, T> mapper, Procedure<T> procedure) {
-        if (procedure == null) {
-            throw new NullPointerException("procedure is null");
-        }
-        if (size != 0) {
-            for (int i = 0; i < table.length; i++) {
-                for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
-                    if (selector.evaluate(e)) {
-                        T userMapped = mapper.map(e);
-                        procedure.apply(userMapped);
-                    }
-                }
-            }
-        }
-    }
-
     abstract ChainingEntry<K, V> created(K key, V value, AttributeMap attributes);
 
     ChainingEntry<K, V> doRemove(Object key, Object value) {
@@ -665,6 +614,9 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         }
 
         public final void apply(Procedure<? super T> procedure) {
+            if (procedure == null) {
+                throw new NullPointerException("procedure is null");
+            }
             if (size != 0) {
                 for (int i = 0; i < table.length; i++) {
                     for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
@@ -675,6 +627,21 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
                     }
                 }
             }
+        }
+
+        public T reduce(Reducer<T> reducer, T base) {
+            T result = base;
+            if (size != 0) {
+                for (int i = 0; i < table.length; i++) {
+                    for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
+                        if (selector.evaluate(e)) {
+                            T t = mapper.map(e);
+                            result = reducer.combine(result, t);
+                        }
+                    }
+                }
+            }
+            return result;
         }
 
         public Iterator<T> sequentially() {
@@ -697,21 +664,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
 
         public final <U> MemoryStoreWithMapping<U> withMapping(Mapper<? super T, ? extends U> mapper) {
             return new WithFilteredMapping<U>(selector, compoundMapper(this.mapper, mapper));
-        }
-
-        public T reduce(Reducer<T> reducer, T base) {
-            T result = base;
-            if (size != 0) {
-                for (int i = 0; i < table.length; i++) {
-                    for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
-                        if (selector.evaluate(e)) {
-                            T t = mapper.map(e);
-                            result = reducer.combine(result, t);
-                        }
-                    }
-                }
-            }
-            return result;
         }
     }
 
@@ -829,11 +781,26 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         }
 
         public ParallelArray<T> all() {
-            return AbstractSequentialMemoryStore.this.all(mapper);
+            T[] entries = (T[]) new Object[size];
+            int count = 0;
+            for (int i = 0; i < table.length; i++) {
+                for (ChainingEntry e = table[i]; e != null; e = e.next()) {
+                    entries[count++] = mapper.map(e);
+                }
+            }
+            return fromArray(entries);
         }
 
         public ParallelArray<T> all(Class<? super T> elementType) {
-            return AbstractSequentialMemoryStore.this.all(mapper, elementType);
+            T[] entries = (T[]) Array.newInstance(elementType, size);
+            int count = 0;
+            for (int i = 0; i < table.length; i++) {
+                for (ChainingEntry e = table[i]; e != null; e = e.next()) {
+                    entries[count++] = mapper.map(e);
+                }
+            }
+            return fromArray(entries);
+
         }
 
         public T any() {
@@ -842,7 +809,29 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         }
 
         public void apply(Procedure<? super T> procedure) {
-            AbstractSequentialMemoryStore.this.apply(mapper, procedure);
+            if (procedure == null) {
+                throw new NullPointerException("procedure is null");
+            }
+            if (size != 0) {
+                for (int i = 0; i < table.length; i++) {
+                    for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
+
+                        T userMapped = mapper.map(e);
+                        procedure.apply(userMapped);
+
+                    }
+                }
+            }
+        }
+
+        public T reduce(Reducer<T> reducer, T base) {
+            T result = base;
+            for (int i = 0; i < table.length; i++) {
+                for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
+                    result = reducer.combine(result, mapper.map(e));
+                }
+            }
+            return result;
         }
 
         public Iterator<T> sequentially() {
@@ -855,10 +844,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
 
         public <U> MemoryStoreWithMapping<U> withMapping(Mapper<? super T, ? extends U> mapper) {
             return new WithMappingImpl(compoundMapper(this.mapper, mapper));
-        }
-
-        public T reduce(Reducer<T> reducer, T base) {
-            return AbstractSequentialMemoryStore.this.reduce(mapper, reducer, base);
         }
     }
 }

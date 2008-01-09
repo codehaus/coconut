@@ -45,6 +45,8 @@ import org.coconut.cache.spi.ConfigurationValidator;
         CacheExpirationService.class, CacheLoadingService.class, CacheParallelService.class,
         CacheServiceManagerService.class, CacheStatisticsService.class })
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
+    
+    /** The internal cache we are wrapping. */
     private final UnsynchronizedInternalCache<K, V> cache;
 
     /**
@@ -63,8 +65,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
      *             if the specified configuration is <code>null</code>
      */
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
-        ConfigurationValidator.getInstance().verify(conf, UnsynchronizedCache.class);
-        cache = new UnsynchronizedInternalCache(this, conf);
+        ConfigurationValidator.getInstance().verify(conf, getClass());
+        cache = UnsynchronizedInternalCache.from(this, conf);
     }
 
     /** {@inheritDoc} */
@@ -119,7 +121,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** {@inheritDoc} */
     public long volume() {
-        return cache.getVolume();
+        return cache.volume();
     }
 
     /** {@inheritDoc} */

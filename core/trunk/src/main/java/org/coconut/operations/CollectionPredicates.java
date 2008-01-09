@@ -3,6 +3,7 @@
  */
 package org.coconut.operations;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -180,4 +181,56 @@ public final class CollectionPredicates {
             }
         }
     }
+    
+    public static Predicate containedWithin(Collection col) {
+        return new ContainsPredicate(col);
+    }
+    /**
+     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
+     * is {@link Object#equals equal} to the element being specified.
+     */
+    final static class ContainsPredicate<E> implements Predicate<E>, Serializable {
+
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = -802615306772905787L;
+
+        /** The element to compare with. */
+        private final Collection<E> collection;
+
+        /**
+         * Creates an IsEqualsPredicate.
+         *
+         * @param element
+         *            the element to use for comparison
+         * @throws NullPointerException
+         *             if the specified element is <code>null</code>
+         */
+        public ContainsPredicate(Collection<E> collection) {
+            if (collection == null) {
+                throw new NullPointerException("collection is null");
+            }
+            this.collection = collection;
+        }
+
+        /** {@inheritDoc} */
+        public boolean evaluate(E element) {
+            return collection.contains(element);
+        }
+
+        /**
+         * Returns the element we are comparing with.
+         *
+         * @return the element we are comparing with
+         */
+        public Collection getElement() {
+            return collection;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return "isContained In " + collection;
+        }
+    }
+
 }

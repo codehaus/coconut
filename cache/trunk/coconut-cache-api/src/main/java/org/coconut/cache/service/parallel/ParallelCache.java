@@ -4,7 +4,6 @@
 package org.coconut.cache.service.parallel;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.memory.MemoryStoreWithMapping;
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;

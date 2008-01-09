@@ -11,8 +11,8 @@ import java.util.concurrent.Executor;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.CacheMutex;
 import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
@@ -30,7 +30,7 @@ import org.coconut.cache.service.worker.CacheWorkerService;
  * ongoing loads will not be terminated on shutdown, but will not be added to the cache
  * <p>
  * shutdownNow -> ongoing loads will be interrupted.
- *
+ * 
  * @param <K>
  * @param <V>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -48,12 +48,12 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
 
     private final MemoryStore map;
 
-    private final Cache cache;
+    private final Object cache;
 
     private final AbstractCacheServiceManager icsm;
 
     public SynchronizedCacheLoaderService(AbstractCacheServiceManager icsm, MemoryStore map,
-            Cache cache, InternalCacheEntryService attributeFactory,
+            CacheMutex mutex, InternalCacheEntryService attributeFactory,
             InternalCacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf, final CacheWorkerService threadManager,
             final InternalCache<K, V> loadSupport) {
@@ -62,7 +62,7 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
         this.loadExecutor = threadManager.getExecutorService(CacheLoadingService.class);
         this.map = map;
         this.icsm = icsm;
-        this.cache = cache;
+        this.cache = mutex.getMutex();
     }
 
     /** {@inheritDoc} */
@@ -94,8 +94,8 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
 
         synchronized (cache) {
             if (icsm.lazyStart(false)) {
-                doLoad=false;
-                //doLoad = map.needsLoad(key);
+                doLoad = false;
+                // doLoad = map.needsLoad(key);
             }
         }
         if (doLoad) {
@@ -112,7 +112,7 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
             if (!icsm.lazyStart(false)) {
                 return;
             }
-            //map.needsLoad(keys, attributes);
+            // map.needsLoad(keys, attributes);
         }
 
         forceLoadAll(keys);
@@ -129,8 +129,8 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
             if (force) {
                 keys = Attributes.toMap(new ArrayList(map.all().asList()), attributes);
             } else {
-                keys =null;
-                //keys = map.whoNeedsLoading(attributes);
+                keys = null;
+                // keys = map.whoNeedsLoading(attributes);
             }
         }
 

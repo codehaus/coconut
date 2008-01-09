@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.memory.MemoryStoreWithFilter;
@@ -25,10 +26,14 @@ public abstract class AbstractParallelCacheService<K, V> extends AbstractCacheLi
 
     final MemoryStore<K, V> memoryStore;
 
-    final InternalCache<K, V> cache;
+    final InternalCache<K, V> internalCache;
 
-    public AbstractParallelCacheService(InternalCache<K, V> cache, MemoryStore<K, V> memoryStore) {
+    final Cache<K, V> cache;
+
+    public AbstractParallelCacheService(Cache<K, V> cache, InternalCache<K, V> internalCache,
+            MemoryStore<K, V> memoryStore) {
         this.memoryStore = memoryStore;
+        this.internalCache = internalCache;
         this.cache = cache;
     }
 
@@ -144,11 +149,11 @@ public abstract class AbstractParallelCacheService<K, V> extends AbstractCacheLi
 
         public boolean removeAll(Collection<?> c) {
             List l = CollectionPredicates.filter(c, selector);
-            return l.size() > 0 ? cache.removeEntries(l) : false;
+            return l.size() > 0 ? internalCache.removeEntries(l) : false;
         }
 
         public final boolean retainAll(Collection<?> c) {
-            return cache.retainAll(constant(), selector, c);
+            throw new UnsupportedOperationException();
         }
     }
 

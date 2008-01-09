@@ -1,5 +1,6 @@
 package org.coconut.cache.internal.service.parallel;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.memory.MemoryStore;
@@ -16,9 +17,9 @@ public class UnsynchronizedParallelCacheService<K, V> extends AbstractParallelCa
 
     private final ParallelCache pc;
 
-    public UnsynchronizedParallelCacheService(InternalCache<K, V> cache,
+    public UnsynchronizedParallelCacheService(Cache<K, V> cache, InternalCache<K, V> internalCache,
             MemoryStore<K, V> memoryStore) {
-        super(cache, memoryStore);
+        super(cache, internalCache, memoryStore);
         pc = new UnsynchronizedParallelCache();
     }
 

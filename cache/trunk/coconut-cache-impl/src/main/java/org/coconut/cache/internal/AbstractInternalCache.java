@@ -7,7 +7,9 @@ import static org.coconut.operations.Mappers.constant;
 import static org.coconut.operations.Mappers.mapEntryToKey;
 import static org.coconut.operations.Mappers.mapEntryToValue;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,15 +19,20 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheServices;
+import org.coconut.cache.defaults.AbstractCache;
+import org.coconut.cache.internal.memory.DefaultEvictableMemoryStore;
 import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.memory.MemoryStoreWithMapping;
+import org.coconut.cache.internal.service.event.DefaultCacheEventService;
+import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
+import org.coconut.cache.internal.service.listener.DefaultCacheListener;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.servicemanager.AbstractCacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.ServiceComposer;
-import org.coconut.cache.service.parallel.ParallelCache;
+import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.internal.util.CollectionUtils;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Mapper;
@@ -33,42 +40,74 @@ import org.coconut.operations.Ops.Predicate;
 
 public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V> {
     private static Mapper SAFE_MAPPER = constant();
+
     private final String name;
-
-    final MemoryStore<K, V> memoryCache;
-
-    final InternalCacheListener<K, V> listener;
-
-    final AbstractCacheServiceManager serviceManager;
-
-    final ParallelCache<K, V> parallelCache;
 
     Set<Map.Entry<K, V>> entrySet;
 
     Set<K> keySet;
 
+    final InternalCacheListener<K, V> listener;
+
+    final MemoryStore<K, V> memoryCache;
+
+    private final AbstractCacheServiceManager serviceManager;
+
     Collection<V> values;
-    
-    public AbstractInternalCache(Cache cache, CacheConfiguration conf, Collection<Class<?>> classes) {
+
+    AbstractInternalCache(AbstractCache cache, CacheConfiguration conf, Collection<Class<?>> classes) {
+        this(cache, conf, classes, Collections.EMPTY_LIST);
+    }
+
+    AbstractInternalCache(AbstractCache cache, CacheConfiguration conf, Collection<Class<?>> classes,
+            Collection instantiatedComponents) {
         name = getName(conf);
-        ServiceComposer composer = ServiceComposer.compose(cache, this, name, conf, classes);
+        ServiceComposer composer = ServiceComposer.compose(cache, this, name, conf, classes,
+                instantiatedComponents);
+
         serviceManager = composer.getInternalService(AbstractCacheServiceManager.class);
         memoryCache = composer.getInternalService(MemoryStore.class);
         listener = composer.getInternalService(InternalCacheListener.class);
-        parallelCache = composer.getInternalService(ParallelCache.class);
+    }
+
+    public void prestart() {
+        lazyStart();
+    }
+
+    static Collection<Class<?>> defaultComponents(CacheConfiguration<?, ?> configuration) {
+        Collection<Class<?>> c = new ArrayList<Class<?>>();
+        c.add(DefaultCacheExceptionService.class);
+        c.add(DefaultCacheStatisticsService.class);
+        c.add(DefaultCacheListener.class);
+        if (configuration.event().isEnabled()) {
+            c.add(DefaultCacheEventService.class);
+        }
+        c.add(DefaultEvictableMemoryStore.class);
+        return c;
     }
 
     public final boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return serviceManager.awaitTermination(timeout, unit);
     }
 
+    public abstract void clear();
+
+    private CacheServices<K, V> services;
+
+    public CacheServices<K, V> services() {
+        if (services == null) {
+            services = new CacheServices<K, V>(this);
+        }
+        return services;
+    }
+
     public boolean containsKey(Object key) {
-        serviceManager.lazyStart();
+        lazyStart();
         return memoryCache.get(key) != null;
     }
 
     public boolean containsValue(Object value) {
-        serviceManager.lazyStart();
+        lazyStart();
         return memoryCache.withFilterOnValues(Predicates.isEquals(value)).any() != null;
     }
 
@@ -80,14 +119,14 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         return serviceManager.getServiceFromCache(serviceType);
     }
 
-    public long getVolume() {
-        serviceManager.lazyStart();
+    public long volume() {
+        lazyStart();
         return memoryCache.volume();
     }
 
     public final boolean isEmpty() {
-        serviceManager.lazyStart();
-        return memoryCache.size() > 0;
+        lazyStart();
+        return memoryCache.size() == 0;
     }
 
     public final boolean isShutdown() {
@@ -102,31 +141,48 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         return serviceManager.isTerminated();
     }
 
+    public boolean lazyStart() {
+        return serviceManager.lazyStart(false);
+    }
+
+    public void lazyStartFailIfShutdown() {
+        serviceManager.lazyStartFailIfShutdown();
+    }
+
     public V peek(K key) {
-        serviceManager.lazyStart();
+        lazyStart();
         CacheEntry<K, V> prev = memoryCache.get(key);
         return prev == null ? null : prev.getValue();
     }
 
     public CacheEntry<K, V> peekEntry(K key) {
-        serviceManager.lazyStart();
+        lazyStart();
         return memoryCache.get(key);
     }
 
-    public final void shutdown() {
-        serviceManager.shutdown();
+    public final V put(K key, V value) {
+        CacheEntry<K, V> prev = put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP);
+        return prev == null ? null : prev.getValue();
     }
 
-    public final void shutdownNow() {
-        serviceManager.shutdownNow();
+    public final CacheEntry<K, V> put(K key, V value, AttributeMap attributes) {
+        return put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP, false);
     }
 
-    public int size() {
-        serviceManager.lazyStart();
-        return memoryCache.size();
+    public final void putAll(Map<? extends K, ? extends V> t) {
+        HashMap map = new HashMap();
+        for (Map.Entry me : t.entrySet()) {
+            map.put(me.getKey(), new CollectionUtils.SimpleImmutableEntry(me.getValue(),
+                    Attributes.EMPTY_ATTRIBUTE_MAP));
+        }
+        putAllWithAttributes(map);
     }
 
-    /** {@inheritDoc} */
+    public final V putIfAbsent(K key, V value) {
+        CacheEntry<K, V> prev = put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP, true);
+        return prev == null ? null : prev.getValue();
+    }
+
     public final V remove(Object key) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -135,7 +191,6 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         return removed == null ? null : removed.getValue();
     }
 
-    /** {@inheritDoc} */
     public final boolean remove(Object key, Object value) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -149,38 +204,30 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         removeKeys(keys);
     }
 
+    public final void shutdown() {
+        serviceManager.shutdown();
+    }
+
+    public final void shutdownNow() {
+        serviceManager.shutdownNow();
+    }
+
+    public int size() {
+        lazyStart();
+        return memoryCache.size();
+    }
+
     abstract CacheEntry<K, V> doRemove(Object key, Object value);
-
-    protected void checkStarted() {
-        
-    }
-    protected InternalCache<K,V> cache() {
-        return this;
-    }
-    public final V put(K key, V value) {
-        CacheEntry<K, V> prev = put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP);
-        return prev == null ? null : prev.getValue();
-    }
-
-    public final CacheEntry<K, V> put(K key, V value, AttributeMap attributes) {
-        return put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP, false);
-    }
 
     abstract CacheEntry<K, V> put(K key, V value, AttributeMap attributes, boolean OnlyIfAbsent);
 
-    public final V putIfAbsent(K key, V value) {
-        CacheEntry<K, V> prev = put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP, true);
-        return prev == null ? null : prev.getValue();
-    }
+    abstract boolean removeKeys(Collection<?> keys);
 
-    public final void putAll(Map<? extends K, ? extends V> t) {
-        HashMap map = new HashMap();
-        for (Map.Entry me : t.entrySet()) {
-            map.put(me.getKey(), new CollectionUtils.SimpleImmutableEntry(me.getValue(),
-                    Attributes.EMPTY_ATTRIBUTE_MAP));
-        }
-        putAllWithAttributes(map);
-    }
+    abstract boolean removeValue(Object value);
+
+    abstract boolean removeValues(Collection<?> values);
+
+    abstract boolean retainAll(Mapper pre, Collection<?> c);
 
     static String getName(CacheConfiguration configuration) {
         String name = configuration.getName();
@@ -193,47 +240,43 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
 
     abstract class AbstractCollectionView<E> implements Collection<E> {
         MemoryStoreWithMapping<E> mapping;
-     
-        AbstractCollectionView(MemoryStoreWithMapping<E> mapper) {
-            mapping = mapper;
+
+        AbstractCollectionView() {
+            mapping = memoryCache.withMapping(mapper());
         }
-    
+
         public final boolean add(E e) {
             throw new UnsupportedOperationException();
         }
-    
+
         public final boolean addAll(Collection<? extends E> c) {
             throw new UnsupportedOperationException();
         }
-    
+
         public final void clear() {
             AbstractInternalCache.this.clear();
         }
-    
+
         public final boolean isEmpty() {
             return AbstractInternalCache.this.isEmpty();
         }
-    
+
         public final Iterator<E> iterator() {
-            checkStarted();
+            lazyStart();
             return mapping.sequentially();
         }
-    
-        public Iterator<E> unsafeIterator() {
-            return iterator();
-        }
-    
+
         public final int size() {
             return AbstractInternalCache.this.size();
         }
-    
+
         public Object[] toArray() {
-            checkStarted();
+            lazyStart();
             return mapping.all().getArray();
         }
-    
+
         public <T> T[] toArray(T[] a) {
-            checkStarted();
+            lazyStart();
             Object[] result = mapping.all().getArray();
             int size = result.length;
             T[] r = a.length >= size ? a : (T[]) java.lang.reflect.Array.newInstance(a.getClass()
@@ -244,14 +287,14 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
             }
             return r;
         }
-    
+
         @Override
         public String toString() {
-            checkStarted();
+            lazyStart();
             Iterator<E> i = unsafeIterator();
             if (!i.hasNext())
                 return "[]";
-    
+
             StringBuilder sb = new StringBuilder();
             sb.append('[');
             for (;;) {
@@ -262,13 +305,20 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
                 sb.append(", ");
             }
         }
+
+        abstract Mapper mapper();
+
+        final Iterator<E> unsafeIterator() {
+            return memoryCache.withMapping(unsafeMapper()).sequentially();
+        }
+
+        Mapper unsafeMapper() {
+            return mapper();
+        }
     }
 
     abstract class AbstractSetView<E> extends AbstractCollectionView<E> implements Set<E> {
-        public AbstractSetView(MemoryStoreWithMapping<E> mapper) {
-            super(mapper);
-        }
-    
+
         @Override
         public boolean equals(Object o) {
             if (o == this)
@@ -286,15 +336,15 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
                 return false;
             }
         }
-    
+
         @Override
         public int hashCode() {
-            checkStarted();
+            lazyStart();
             int h = 0;
             Iterator<E> i = unsafeIterator();
             while (i.hasNext()) {
                 E obj = i.next();
-    
+
                 if (obj != null) {
                     h += obj.hashCode();
                 }
@@ -304,16 +354,7 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
     }
 
     class EntrySet extends AbstractSetView<Map.Entry<K, V>> {
-    
-        public EntrySet() {
-            super(memoryCache.withMapping(SAFE_MAPPER));
-        }
-    
-        @Override
-        public Iterator<Map.Entry<K, V>> unsafeIterator() {
-            return memoryCache.withMapping(CONSTANT_MAPPER).sequentially();
-        }
-    
+
         public final boolean contains(Object o) {
             if (o == null) {
                 throw new NullPointerException("o is null");
@@ -325,18 +366,24 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
             V v = peek((K) e.getKey());
             return v != null && v.equals(e.getValue());
         }
-    
+
         public boolean containsAll(Collection<?> c) {
-            checkStarted();
-            for (Map.Entry entry : (Collection<Map.Entry>) c) {
-                Map.Entry<K, V> e = memoryCache.get(entry.getKey());
-                if (e == null || !e.getValue().equals(entry.getValue())) {
+            lazyStart();
+            for (Object o : c) {
+                if (o == null) {
+                    throw new NullPointerException();
+                }
+                if (!(o instanceof Map.Entry))
+                    return false;
+                Map.Entry<K, V> e = (Map.Entry<K, V>) o;
+                Map.Entry<K, V> candidate = memoryCache.get(e.getKey());
+                if (candidate == null || !e.getValue().equals(candidate.getValue())) {
                     return false;
                 }
             }
             return true;
         }
-    
+
         public final boolean remove(Object o) {
             if (o == null) {
                 throw new NullPointerException("o is null");
@@ -347,65 +394,69 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
             return AbstractInternalCache.this.remove(e.getKey(), e.getValue());
         }
-    
+
         public final boolean removeAll(Collection<?> c) {
             return removeEntries(c);
         }
-    
+
         public final boolean retainAll(Collection<?> c) {
-            return AbstractInternalCache.this.retainAll(constant(), Predicates.TRUE, c);
+            return AbstractInternalCache.this.retainAll(SAFE_MAPPER, c);
+        }
+
+        @Override
+        Mapper mapper() {
+            return SAFE_MAPPER;
+        }
+
+        @Override
+        Mapper unsafeMapper() {
+            return CONSTANT_MAPPER;
         }
     }
 
-
     class KeySet extends AbstractSetView<K> {
-    
-        public KeySet() {
-            super(memoryCache.withMapping(MAP_ENTRY_TO_KEY_MAPPER));
-        }
-    
+
         public final boolean contains(Object o) {
             return containsKey(o);
         }
-    
+
         public boolean containsAll(Collection<?> c) {
-            checkStarted();
-            for (Object entry : c) {
-                if (memoryCache.get(entry) == null) {
+            lazyStart();
+            for (Object key : c) {
+                if (memoryCache.get(key) == null) {
                     return false;
                 }
             }
             return true;
         }
-    
+
         public final boolean remove(Object o) {
             return AbstractInternalCache.this.remove(o) != null;
         }
-    
+
         public final boolean removeAll(Collection<?> c) {
             return removeKeys(c);
         }
-    
+
         public final boolean retainAll(Collection<?> c) {
-            return AbstractInternalCache.this.retainAll(mapEntryToKey(), Predicates.TRUE, c);
+            return AbstractInternalCache.this.retainAll(mapEntryToKey(), c);
         }
-    
+
+        @Override
+        Mapper mapper() {
+            return MAP_ENTRY_TO_KEY_MAPPER;
+        }
+
     }
 
-
-
     class Values extends AbstractCollectionView<V> {
-    
-        public Values() {
-            super(memoryCache.withMapping(MAP_ENTRY_TO_VALUE_MAPPER));
-        }
-    
+
         public final boolean contains(Object o) {
             return containsValue(o);
         }
-    
+
         public boolean containsAll(Collection<?> c) {
-            checkStarted();
+            lazyStart();
             Iterator<?> e = c.iterator();
             while (e.hasNext()) {
                 if (memoryCache.withFilterOnValues((Predicate) Predicates.isEquals(e.next())).any() == null) {
@@ -414,17 +465,22 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
             }
             return true;
         }
-    
+
         public final boolean remove(Object o) {
             return removeValue(o);
         }
-    
+
         public final boolean removeAll(Collection<?> c) {
             return removeValues(c);
         }
-    
+
         public final boolean retainAll(Collection<?> c) {
-            return cache().retainAll(mapEntryToValue(), Predicates.TRUE, c);
+            return AbstractInternalCache.this.retainAll(mapEntryToValue(), c);
+        }
+
+        @Override
+        Mapper mapper() {
+            return MAP_ENTRY_TO_VALUE_MAPPER;
         }
     }
 }

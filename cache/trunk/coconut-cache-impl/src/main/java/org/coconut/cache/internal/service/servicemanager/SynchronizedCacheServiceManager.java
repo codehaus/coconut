@@ -20,7 +20,7 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
  * An synchronized implementation of {@link CacheServiceManagerService}.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -32,18 +32,14 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
     /** A list of shutdown futures. */
     private final Queue<ServiceHolder> shutdownFutures = new ConcurrentLinkedQueue<ServiceHolder>();
 
-    /** The cache mutex to synchronize on. */
-    private final Object mutex;
-
     /** The current state of the service manager. */
     private volatile RunState runState = RunState.NOTRUNNING;
 
     /** CountDownLatch used for signalling termination. */
     private final CountDownLatch terminationLatch = new CountDownLatch(1);
 
-    public SynchronizedCacheServiceManager(Cache<?, ?> cache, ServiceComposer composer) {
-        super(cache, composer);
-        this.mutex = cache;
+    public SynchronizedCacheServiceManager( ServiceComposer composer) {
+        super(composer);
         shutdownServiceExecutor = Executors.newCachedThreadPool();
     }
 
@@ -62,7 +58,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
                     throw new IllegalStateException(
                             "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");
                 } else if (state == RunState.NOTRUNNING) {
-                    synchronized (mutex) {
+                    synchronized (cache) {
                         if (getRunState() == RunState.NOTRUNNING) {
                             doStart();
                         }
@@ -80,7 +76,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
 
     @Override
     void shutdown(boolean shutdownNow) {
-        synchronized (mutex) {
+        synchronized (cache) {
             RunState runState = this.runState;
             if (runState == RunState.SHUTDOWN && !shutdownNow || runState == RunState.STOP
                     && shutdownNow || runState == RunState.TERMINATED) {
@@ -166,7 +162,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
     /** {@inheritDoc} */
     @Override
     protected void doTerminate() {
-        synchronized (mutex) {
+        synchronized (cache) {
             try {
                 super.doTerminate();
             } finally {

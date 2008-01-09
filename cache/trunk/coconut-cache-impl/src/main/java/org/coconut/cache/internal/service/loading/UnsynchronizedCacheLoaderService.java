@@ -24,15 +24,12 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
 
     private final InternalCache c;
 
-    private final AbstractCacheServiceManager icsm;
-
-    public UnsynchronizedCacheLoaderService(AbstractCacheServiceManager icsm,
+    public UnsynchronizedCacheLoaderService(
             InternalCache c, InternalCacheEntryService attributeFactory,
             InternalCacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf, final InternalCache<K, V> cache) {
         super(loadConf, attributeFactory, exceptionService, cache);
         this.attributeFactory = attributeFactory;
-        this.icsm = icsm;
       //  this.map = map;
         this.c = c;
     }
@@ -42,7 +39,7 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
     void doLoadAll(Map<? extends K, ? extends AttributeMap> attributes) {
         Map<K, AttributeMap> keys = new HashMap<K, AttributeMap>();
 
-        if (!icsm.lazyStart(false)) {
+        if (c.lazyStart()) {
             return;
         }
        // map.needsLoad(keys, attributes);
@@ -61,7 +58,7 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
     @Override
     public void loadAll(AttributeMap attributes, boolean force) {
         final Map<K, AttributeMap> keys;
-        if (!icsm.lazyStart(false)) {
+        if (!c.lazyStart()) {
             return;
         }
         if (force) {
