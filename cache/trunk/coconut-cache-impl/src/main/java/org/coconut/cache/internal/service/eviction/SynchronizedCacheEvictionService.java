@@ -9,10 +9,10 @@ import java.util.List;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.CacheMutex;
-import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.internal.service.memorystore.MemoryStore;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 
@@ -40,7 +40,7 @@ public class SynchronizedCacheEvictionService<K, V> extends UnsynchronizedCacheE
 
     /** {@inheritDoc} */
     public void manage(ManagedGroup parent) {
-        ManagedGroup g = parent.addChild(CacheEvictionConfiguration.SERVICE_NAME,
+        ManagedGroup g = parent.addChild(MemoryStoreConfiguration.SERVICE_NAME,
                 "Cache Eviction attributes and operations");
         g.add(EvictionUtils.wrapMXBean(this));
     }

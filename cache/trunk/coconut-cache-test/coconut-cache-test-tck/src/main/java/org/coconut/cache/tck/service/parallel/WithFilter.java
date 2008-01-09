@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.parallel.ParallelCache;
+import org.coconut.cache.ParallelCache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.operations.Mappers;
 import org.coconut.operations.Predicates;

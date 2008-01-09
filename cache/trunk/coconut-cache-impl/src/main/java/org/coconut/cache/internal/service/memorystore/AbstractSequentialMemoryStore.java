@@ -1,4 +1,4 @@
-package org.coconut.cache.internal.memory;
+package org.coconut.cache.internal.service.memorystore;
 
 import static org.coconut.operations.Mappers.CONSTANT_MAPPER;
 import static org.coconut.operations.Mappers.MAP_ENTRY_TO_KEY_MAPPER;

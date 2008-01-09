@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
  * @param <V>
  *            the type of mapped values
  */
-public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfiguration<K, V> {
+public class MemoryStoreConfiguration<K, V> extends AbstractCacheServiceConfiguration<K, V> {
 
     /** The default maximum size of a cache unless otherwise specified. */
     public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
@@ -51,7 +51,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     public final static String SERVICE_NAME = "memorystore";
 
     /** The default settings, used when xml-serializing this configuration. */
-    private final static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration<Object, Object>();
+    private final static MemoryStoreConfiguration<?, ?> DEFAULT = new MemoryStoreConfiguration<Object, Object>();
 
     /** XML tag for maximum volume. */
     private final static String IS_CACHEABLE_TAG = "isCacheable";
@@ -86,7 +86,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /**
      * Creates a new CacheEvictionConfiguration with default settings.
      */
-    public CacheEvictionConfiguration() {
+    public MemoryStoreConfiguration() {
         super(SERVICE_NAME);
     }
 
@@ -154,7 +154,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      *            whether or not caching is disabled
      * @return this configuration
      */
-    public CacheEvictionConfiguration<K, V> setDisabled(boolean isDisabled) {
+    public MemoryStoreConfiguration<K, V> setDisabled(boolean isDisabled) {
         this.isDisabled = isDisabled;
         return this;
     }
@@ -168,7 +168,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      *            added to the cache
      * @return this configration
      */
-    public CacheEvictionConfiguration<K, V> setIsCacheableFilter(
+    public MemoryStoreConfiguration<K, V> setIsCacheableFilter(
             Predicate<CacheEntry<K, V>> predicate) {
         this.isCacheableFilter = predicate;
         return this;
@@ -198,7 +198,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      *             if the specified integer is negative
      * @return this configuration
      */
-    public CacheEvictionConfiguration<K, V> setMaximumSize(int maximumSize) {
+    public MemoryStoreConfiguration<K, V> setMaximumSize(int maximumSize) {
         if (maximumSize < 0) {
             throw new IllegalArgumentException(
                     "number of maximum elements must be 0 or greater, was " + maximumSize);
@@ -220,7 +220,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      *            the maximum volume.
      * @return this configuration
      */
-    public CacheEvictionConfiguration<K, V> setMaximumVolume(long maximumVolume) {
+    public MemoryStoreConfiguration<K, V> setMaximumVolume(long maximumVolume) {
         if (maximumVolume < 0) {
             throw new IllegalArgumentException("maximumVolume must be a non-negative number, was "
                     + maximumVolume);
@@ -255,7 +255,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      *            the cache is full
      * @return this CacheEvictionConfiguration
      */
-    public CacheEvictionConfiguration<K, V> setPolicy(ReplacementPolicy<?> policy) {
+    public MemoryStoreConfiguration<K, V> setPolicy(ReplacementPolicy<?> policy) {
         replacementPolicy = policy;
         return this;
     }

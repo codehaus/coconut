@@ -10,7 +10,7 @@ import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 import org.coconut.core.Clock;
 
 /**
@@ -42,7 +42,7 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
      *            the cache exception service
      */
     public UnsynchronizedEntryFactoryService(Clock clock,
-            CacheEvictionConfiguration<K, V> evictionConfiguration,
+            MemoryStoreConfiguration<K, V> evictionConfiguration,
             InternalCacheExceptionService<K, V> exceptionService) {
         super(clock, evictionConfiguration, exceptionService);
         this.isDisabled = evictionConfiguration.isDisabled();

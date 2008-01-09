@@ -1,4 +1,4 @@
-package org.coconut.cache.internal.memory;
+package org.coconut.cache.internal.service.memorystore;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,7 +8,7 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 
 public class DefaultEvictableMemoryStore<K, V> extends UnlimitedSequentialMemoryStore<K, V>
         implements CompositeService {
@@ -23,7 +23,7 @@ public class DefaultEvictableMemoryStore<K, V> extends UnlimitedSequentialMemory
     private final ReplacementPolicy cp;
 
     public DefaultEvictableMemoryStore(Cache<K, V> cache, AbstractCacheEntryFactoryService e,
-            CacheEvictionConfiguration<K, V> conf) {
+            MemoryStoreConfiguration<K, V> conf) {
         super(cache, e);
         cp = conf.getPolicy() == null ? new LRUPolicy(1) : (ReplacementPolicy) conf.getPolicy();
         maxSize = getMaximumSizeFromConfiguration(conf);
@@ -43,7 +43,7 @@ public class DefaultEvictableMemoryStore<K, V> extends UnlimitedSequentialMemory
      *            the configuration to read the maximum size from
      * @return the maximum size configured in the specified configuration
      */
-    static int getMaximumSizeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
+    static int getMaximumSizeFromConfiguration(MemoryStoreConfiguration<?, ?> conf) {
         int tmp = conf.getMaximumSize();
         return tmp == 0 ? Integer.MAX_VALUE : tmp;
     }
@@ -55,7 +55,7 @@ public class DefaultEvictableMemoryStore<K, V> extends UnlimitedSequentialMemory
      *            the configuration to read the maximum volume from
      * @return the maximum volume configured in the specified configuration
      */
-    static long getMaximumVolumeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
+    static long getMaximumVolumeFromConfiguration(MemoryStoreConfiguration<?, ?> conf) {
         long tmp = conf.getMaximumVolume();
         return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
@@ -72,13 +72,13 @@ public class DefaultEvictableMemoryStore<K, V> extends UnlimitedSequentialMemory
 
     @Override
     public void setMaximumSize(int size) {
-        size = new CacheEvictionConfiguration<K, V>().setMaximumSize(size).getMaximumSize();
+        size = new MemoryStoreConfiguration<K, V>().setMaximumSize(size).getMaximumSize();
         super.setMaximumSize(size);
     }
 
     @Override
     public void setMaximumVolume(long volume) {
-        volume = new CacheEvictionConfiguration<K, V>().setMaximumVolume(volume).getMaximumVolume();
+        volume = new MemoryStoreConfiguration<K, V>().setMaximumVolume(volume).getMaximumVolume();
         super.setMaximumVolume(volume);
     }
 }

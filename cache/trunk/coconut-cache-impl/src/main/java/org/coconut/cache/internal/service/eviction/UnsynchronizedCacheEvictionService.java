@@ -12,14 +12,14 @@ import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.InternalCache;
-import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
+import org.coconut.cache.internal.service.memorystore.MemoryStore;
 import org.coconut.cache.internal.service.servicemanager.AbstractCacheServiceManager;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 
 /**
  * <p>

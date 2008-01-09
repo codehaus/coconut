@@ -7,10 +7,10 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.InternalCacheEntry;
-import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
+import org.coconut.cache.internal.service.memorystore.MemoryStore;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.core.Clock;
 

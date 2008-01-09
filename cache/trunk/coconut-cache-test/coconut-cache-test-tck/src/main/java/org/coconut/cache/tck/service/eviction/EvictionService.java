@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.tck.service.eviction;
 
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import org.junit.Test;
  * @version $Id$
  */
 public class EvictionService extends AbstractCacheTCKTest {
-    static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration();
+    static MemoryStoreConfiguration<?, ?> DEFAULT = new MemoryStoreConfiguration();
 
     @Before
     public void setup() {
@@ -25,7 +25,7 @@ public class EvictionService extends AbstractCacheTCKTest {
 
     @Test
     public void testServiceAvailable() {
-        assertNotNull(c.getService(CacheEvictionService.class));
+        assertNotNull(c.getService(MemoryStoreService.class));
     }
 
     /**

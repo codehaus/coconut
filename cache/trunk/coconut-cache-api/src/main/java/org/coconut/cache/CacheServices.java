@@ -4,14 +4,14 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
 
 /**
  * A utility class to get hold of different cache services in an easy and typesafe manner.
- * For example, the following will return the {@link CacheEvictionService} for a given
+ * For example, the following will return the {@link MemoryStoreService} for a given
  * cache.
  *
  * <pre>
@@ -42,9 +42,9 @@ public class CacheServices<K, V> {
     }
 
     /**
-     * Returns the eviction service for the specified
+     * Returns the memory store service for the specified
      *
-     * @return the eviction service for the cache
+     * @return the memory store service for the cache
      * @throws IllegalArgumentException
      *             if no eviction service is available for the specified cache
      * @param <K>
@@ -52,8 +52,8 @@ public class CacheServices<K, V> {
      * @param <V>
      *            the type of mapped values
      */
-    public CacheEvictionService<K, V> eviction() {
-        return getService(CacheEvictionService.class);
+    public MemoryStoreService<K, V> memoryStore() {
+        return getService(MemoryStoreService.class);
     }
 
     /**

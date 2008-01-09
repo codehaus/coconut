@@ -11,7 +11,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 
 public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFactoryService<K, V> {
 
@@ -24,7 +24,7 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
     private boolean isDisabled;
 
     public SynchronizedEntryFactoryService(CacheConfiguration<?, ?> conf,
-            CacheEvictionConfiguration<K, V> evictionConfiguration,
+            MemoryStoreConfiguration<K, V> evictionConfiguration,
             InternalCacheExceptionService<K, V> exceptionHandler, Cache<K, V> mutex) {
         super(conf.getClock(),evictionConfiguration, exceptionHandler);
         this.isDisabled = evictionConfiguration.isDisabled();

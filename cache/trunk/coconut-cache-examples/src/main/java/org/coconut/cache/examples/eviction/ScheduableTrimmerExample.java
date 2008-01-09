@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -18,7 +18,7 @@ import org.coconut.cache.service.memorystore.CacheEvictionService;
 public class ScheduableTrimmerExample {
     static class TrimToSize implements Runnable {
         // all coconut cache implementations extend AbstractCache
-        private final CacheEvictionService c;
+        private final MemoryStoreService c;
 
         private final int threshold;
 
@@ -38,7 +38,7 @@ public class ScheduableTrimmerExample {
             }
             this.threshold = threshold;
             this.trimTo = trimTo;
-            c = cache.services().eviction();
+            c = cache.services().memoryStore();
         }
 
         /**

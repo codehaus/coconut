@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.tck.service.worker;
 
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
@@ -14,12 +14,12 @@ public class WorkerService extends AbstractCacheTCKTest {
     @Test
     public void testServiceAvailable() {
         c = newCache(newConf().worker().setWorkerManager(null));
-        assertNotNull(c.getService(CacheEvictionService.class));
+        assertNotNull(c.getService(MemoryStoreService.class));
     }
     @Test
     public void shutdown() {
         c = newCache(newConf().worker().setWorkerManager(null));
-        assertNotNull(c.getService(CacheEvictionService.class));
+        assertNotNull(c.getService(MemoryStoreService.class));
         c.shutdown();
     }
 }

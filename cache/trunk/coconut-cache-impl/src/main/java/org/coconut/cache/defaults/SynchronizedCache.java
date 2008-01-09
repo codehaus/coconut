@@ -14,7 +14,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
@@ -48,7 +48,7 @@ import org.coconut.cache.spi.CacheServiceSupport;
  *            the type of mapped values
  */
 @ThreadSafe
-@CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
+@CacheServiceSupport( { CacheEventService.class, MemoryStoreService.class,
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
         CacheParallelService.class, CacheServiceManagerService.class, CacheStatisticsService.class,
         CacheWorkerService.class })

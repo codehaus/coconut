@@ -1,4 +1,4 @@
-package org.coconut.cache.internal.memory;
+package org.coconut.cache.internal.service.memorystore;
 
 import java.util.Collection;
 import java.util.Map;

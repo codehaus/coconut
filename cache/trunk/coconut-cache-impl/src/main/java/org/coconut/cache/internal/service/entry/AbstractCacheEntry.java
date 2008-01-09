@@ -13,7 +13,7 @@ import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.memory.ChainingEntry;
+import org.coconut.cache.internal.service.memorystore.ChainingEntry;
 import org.coconut.core.Clock;
 import org.coconut.operations.Ops.Predicate;
 

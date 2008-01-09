@@ -19,7 +19,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.CacheInternals;
 import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 import org.coconut.core.Clock;
 import org.coconut.operations.Ops.Predicate;
 
@@ -52,7 +52,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
      * @param exceptionHandler
      */
     public AbstractCacheEntryFactoryService(Clock clock,
-            CacheEvictionConfiguration<K, V> evictionConfiguration,
+            MemoryStoreConfiguration<K, V> evictionConfiguration,
             InternalCacheExceptionService<K, V> exceptionHandler) {
         this.clock = clock;
         this.isCacheable = evictionConfiguration.getIsCacheableFilter();

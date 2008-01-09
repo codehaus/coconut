@@ -15,7 +15,7 @@ import org.coconut.cache.CacheParallelService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
@@ -132,7 +132,7 @@ public class CacheTCKRunner extends Runner {
         if (services.contains(CacheEventService.class)) {
             runner.add(new ServiceSuite(EventSuite.class));
         }
-        if (services.contains(CacheEvictionService.class)) {
+        if (services.contains(MemoryStoreService.class)) {
             runner.add(new ServiceSuite(EvictionSuite.class));
         }
         if (services.contains(CacheExpirationService.class)) {

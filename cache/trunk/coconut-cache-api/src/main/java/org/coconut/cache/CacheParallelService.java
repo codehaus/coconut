@@ -3,7 +3,6 @@
  */
 package org.coconut.cache;
 
-import org.coconut.cache.service.parallel.ParallelCache;
 
 public interface CacheParallelService<K, V> {
     ParallelCache<K, V> get();

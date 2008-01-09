@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.internal.service.eviction;
 
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
-import org.coconut.cache.service.memorystore.CacheEvictionMXBean;
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreMXBean;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
@@ -31,9 +31,9 @@ final class EvictionUtils {
      * <p>
      * Must be a public class to allow for reflection.
      */
-    public static class DelegatedCacheEvictionMXBean implements CacheEvictionMXBean {
+    public static class DelegatedCacheEvictionMXBean implements MemoryStoreMXBean {
         /** The service we are wrapping. */
-        private final CacheEvictionService<?, ?> service;
+        private final MemoryStoreService<?, ?> service;
 
         /**
          * Creates a new CacheEvictionMXBean by wrapping a CacheEvictionService.
@@ -41,7 +41,7 @@ final class EvictionUtils {
          * @param service
          *            the service to wrap.
          */
-        DelegatedCacheEvictionMXBean(CacheEvictionService<?, ?> service) {
+        DelegatedCacheEvictionMXBean(MemoryStoreService<?, ?> service) {
             if (service == null) {
                 throw new NullPointerException("service is null");
             }
@@ -87,9 +87,9 @@ final class EvictionUtils {
      * This class wraps a CacheEvictionService implementation, only exposing the public
      * methods in CacheEvictionService.
      */
-    static class DelegatedCacheEvictionService<K, V> implements CacheEvictionService<K, V> {
+    static class DelegatedCacheEvictionService<K, V> implements MemoryStoreService<K, V> {
         /** The CacheEvictionService we are wrapping. */
-        private final CacheEvictionService<K, V> service;
+        private final MemoryStoreService<K, V> service;
 
         /**
          * Creates a new DelegatedCacheEvictionService from the specified
@@ -98,7 +98,7 @@ final class EvictionUtils {
          * @param service
          *            the CacheEvictionService to wrap.
          */
-        DelegatedCacheEvictionService(CacheEvictionService<K, V> service) {
+        DelegatedCacheEvictionService(MemoryStoreService<K, V> service) {
             if (service == null) {
                 throw new NullPointerException("service is null");
             }
@@ -153,7 +153,7 @@ final class EvictionUtils {
      *            the CacheEvictionService to wrap
      * @return the wrapped CacheEvictionMXBean
      */
-    public static CacheEvictionMXBean wrapMXBean(CacheEvictionService<?, ?> service) {
+    public static MemoryStoreMXBean wrapMXBean(MemoryStoreService<?, ?> service) {
         return new DelegatedCacheEvictionMXBean(service);
     }
 
@@ -169,7 +169,7 @@ final class EvictionUtils {
      * @param <V>
      *            the type of mapped values
      */
-    public static <K, V> CacheEvictionService<K, V> wrapService(CacheEvictionService<K, V> service) {
+    public static <K, V> MemoryStoreService<K, V> wrapService(MemoryStoreService<K, V> service) {
         return new DelegatedCacheEvictionService<K, V>(service);
     }
 

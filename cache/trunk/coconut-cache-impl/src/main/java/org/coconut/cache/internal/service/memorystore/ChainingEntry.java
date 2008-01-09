@@ -1,4 +1,4 @@
-package org.coconut.cache.internal.memory;
+package org.coconut.cache.internal.service.memorystore;
 
 import org.coconut.cache.internal.InternalCacheEntry;
 

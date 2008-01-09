@@ -23,7 +23,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfigu
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
@@ -173,8 +173,8 @@ public class CacheConfiguration<K, V> {
      * 
      * @return a CacheEvictionConfiguration
      */
-    public CacheEvictionConfiguration<K, V> eviction() {
-        return getConfiguration(CacheEvictionConfiguration.class);
+    public MemoryStoreConfiguration<K, V> eviction() {
+        return getConfiguration(MemoryStoreConfiguration.class);
     }
 
     /**

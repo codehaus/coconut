@@ -9,7 +9,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
@@ -65,20 +65,20 @@ public class CacheServicesTest {
     }
 
     /**
-     * Tests {@link CacheServices#eviction()}.
+     * Tests {@link CacheServices#memoryStore()}.
      */
     @Test
     public void evictionService() {
-        final CacheEvictionService service = TestUtil.dummy(CacheEvictionService.class);
+        final MemoryStoreService service = TestUtil.dummy(MemoryStoreService.class);
         context.checking(new Expectations() {
             {
                 one(cache).services();
                 will(returnValue(new CacheServices(cache)));
-                one(cache).getService(CacheEvictionService.class);
+                one(cache).getService(MemoryStoreService.class);
                 will(returnValue(service));
             }
         });
-        CacheEvictionService<Integer, String> ces = cache.services().eviction();
+        MemoryStoreService<Integer, String> ces = cache.services().memoryStore();
         assertSame(service, ces);
     }
 

@@ -8,7 +8,7 @@ import static org.coconut.test.CollectionTestUtil.M1_TO_M5_KEY_SET;
 import java.util.HashSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.coconut.cache.service.parallel.ParallelCache;
+import org.coconut.cache.ParallelCache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.service.parallel.ParallelApply.Copy;
 import org.coconut.operations.Ops.Procedure;

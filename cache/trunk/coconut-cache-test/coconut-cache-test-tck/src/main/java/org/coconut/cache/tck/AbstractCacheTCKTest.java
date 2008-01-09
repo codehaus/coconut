@@ -27,7 +27,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheHitStat;
@@ -221,8 +221,8 @@ public class AbstractCacheTCKTest extends Assert {
         return c.getService(CacheEventService.class);
     }
 
-    protected final CacheEvictionService<Integer, String> eviction() {
-        return c.getService(CacheEvictionService.class);
+    protected final MemoryStoreService<Integer, String> eviction() {
+        return c.getService(MemoryStoreService.class);
     }
 
     protected final CacheExpirationService<Integer, String> expiration() {

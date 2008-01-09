@@ -1,9 +1,14 @@
 package org.coconut.cache.internal.service.parallel;
 
-import org.coconut.cache.CacheParallelService;
-import org.coconut.cache.service.parallel.ParallelCache;
+import static org.coconut.operations.Mappers.constant;
 
-final class ParallelUtils {
+import org.coconut.cache.CacheParallelService;
+import org.coconut.cache.ParallelCache;
+import org.coconut.operations.Ops.Mapper;
+
+public final class ParallelUtils {
+
+    public static Mapper SAFE_MAPPER = constant();
 
     /** Cannot instantiate. */
     // /CLOVER:OFF

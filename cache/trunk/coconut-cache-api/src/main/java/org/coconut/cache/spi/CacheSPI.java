@@ -14,7 +14,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfigu
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
@@ -37,7 +37,7 @@ public final class CacheSPI {
     /** A list of all default service configuration types. */
     public final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULT_CONFIGURATIONS = Collections
             .unmodifiableList(Arrays.asList(CacheEventConfiguration.class,
-                    CacheEvictionConfiguration.class, CacheExceptionHandlingConfiguration.class,
+                    MemoryStoreConfiguration.class, CacheExceptionHandlingConfiguration.class,
                     CacheExpirationConfiguration.class, CacheLoadingConfiguration.class,
                     CacheManagementConfiguration.class, CacheServiceManagerConfiguration.class,
                     CacheStatisticsConfiguration.class, CacheWorkerConfiguration.class));

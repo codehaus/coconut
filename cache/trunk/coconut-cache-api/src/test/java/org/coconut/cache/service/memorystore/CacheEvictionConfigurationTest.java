@@ -25,20 +25,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests {@link CacheEvictionConfiguration}.
+ * Tests {@link MemoryStoreConfiguration}.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: CacheEvictionConfigurationTest.java 538 2007-12-31 00:18:13Z kasper $
  */
 public class CacheEvictionConfigurationTest {
 
-    static CacheEvictionConfiguration<Integer, String> DEFAULT = new CacheEvictionConfiguration<Integer, String>();
+    static MemoryStoreConfiguration<Integer, String> DEFAULT = new MemoryStoreConfiguration<Integer, String>();
 
-    private CacheEvictionConfiguration<Integer, String> conf;
+    private MemoryStoreConfiguration<Integer, String> conf;
 
     @Before
     public void setUp() {
-        conf = new CacheEvictionConfiguration<Integer, String>();
+        conf = new MemoryStoreConfiguration<Integer, String>();
     }
 
     @Test

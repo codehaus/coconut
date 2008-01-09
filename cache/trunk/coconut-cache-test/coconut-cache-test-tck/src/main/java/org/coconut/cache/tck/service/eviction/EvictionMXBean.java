@@ -15,8 +15,8 @@ import javax.management.RuntimeMBeanException;
 
 import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
-import org.coconut.cache.service.memorystore.CacheEvictionMXBean;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreMXBean;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.test.TestCacheLoader;
@@ -26,9 +26,9 @@ import org.junit.Test;
 @RequireService( { CacheManagementService.class })
 public class EvictionMXBean extends AbstractCacheTCKTest {
 
-    static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration();
+    static MemoryStoreConfiguration<?, ?> DEFAULT = new MemoryStoreConfiguration();
 
-    CacheEvictionMXBean mxBean;
+    MemoryStoreMXBean mxBean;
 
     MBeanServer mbs;
 
@@ -42,7 +42,7 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         mbs = MBeanServerFactory.createMBeanServer();
         c = newCache(newConf().loading().setLoader(new TestCacheLoader(SizeAttribute.INSTANCE)).c()
                 .management().setEnabled(true).setMBeanServer(mbs).c());
-        mxBean = findMXBean(mbs, CacheEvictionMXBean.class);
+        mxBean = findMXBean(mbs, MemoryStoreMXBean.class);
     }
 
     /**
@@ -58,7 +58,7 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         // start value
         c = newCache(newConf().setName("foo").management().setEnabled(true).setMBeanServer(mbs).c()
                 .eviction().setMaximumVolume(5000));
-        mxBean = findMXBean(mbs, CacheEvictionMXBean.class);
+        mxBean = findMXBean(mbs, MemoryStoreMXBean.class);
         assertEquals(5000, mxBean.getMaximumVolume());
 
         // Exception
@@ -83,7 +83,7 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         // start value
         c = newCache(newConf().setName("foo").management().setEnabled(true).setMBeanServer(mbs).c()
                 .eviction().setMaximumSize(5000));
-        mxBean = findMXBean(mbs, CacheEvictionMXBean.class);
+        mxBean = findMXBean(mbs, MemoryStoreMXBean.class);
         assertEquals(5000, mxBean.getMaximumSize());
 
         // Exception

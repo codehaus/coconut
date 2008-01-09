@@ -4,10 +4,10 @@
 package org.coconut.cache.internal.service.eviction;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
-import org.coconut.cache.service.memorystore.CacheEvictionMXBean;
-import org.coconut.cache.service.memorystore.CacheEvictionService;
+import org.coconut.cache.internal.service.memorystore.MemoryStore;
+import org.coconut.cache.service.memorystore.MemoryStoreMXBean;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 
@@ -24,8 +24,8 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle;
  *            the type of mapped values
  */
 public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> extends
-        AbstractCacheLifecycle implements CacheEvictionService<K, V>,
-        CacheEvictionMXBean {
+        AbstractCacheLifecycle implements MemoryStoreService<K, V>,
+        MemoryStoreMXBean {
 
     private final AbstractCacheEntryFactoryService<K, V> entryFactory;
 
@@ -54,7 +54,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
     /** {@inheritDoc} */
     @Override
     public void initialize(CacheLifecycle.Initializer cli) {
-        cli.registerService(CacheEvictionService.class, EvictionUtils.wrapService(this));
+        cli.registerService(MemoryStoreService.class, EvictionUtils.wrapService(this));
     }
 
     public boolean isDisabled() {

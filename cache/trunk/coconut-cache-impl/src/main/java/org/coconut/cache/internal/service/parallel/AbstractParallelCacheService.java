@@ -11,8 +11,8 @@ import java.util.Set;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheParallelService;
 import org.coconut.cache.internal.InternalCache;
-import org.coconut.cache.internal.memory.MemoryStore;
-import org.coconut.cache.internal.memory.MemoryStoreWithFilter;
+import org.coconut.cache.internal.service.memorystore.MemoryStore;
+import org.coconut.cache.internal.service.memorystore.MemoryStoreWithFilter;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.operations.CollectionPredicates;
@@ -21,8 +21,6 @@ import org.coconut.operations.Ops.Predicate;
 
 public abstract class AbstractParallelCacheService<K, V> extends AbstractCacheLifecycle implements
         CacheParallelService<K, V> {
-
-    private static Mapper SAFE_MAPPER = constant();
 
     final MemoryStore<K, V> memoryStore;
 

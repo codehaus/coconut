@@ -8,7 +8,7 @@ import javax.management.MBeanServerFactory;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
@@ -46,7 +46,7 @@ public class ManagementService extends AbstractCacheTCKTest {
         ManagedGroup mg = management();
         assertNull(mg.getParent());
         assertEquals(4, mg.getChildren().size());
-        assertNotNull(findChild(mg, CacheEvictionConfiguration.SERVICE_NAME));
+        assertNotNull(findChild(mg, MemoryStoreConfiguration.SERVICE_NAME));
         assertNotNull(findChild(mg, CacheExpirationConfiguration.SERVICE_NAME));
         assertNotNull(findChild(mg, CacheStatisticsConfiguration.SERVICE_NAME));
         assertNotNull(findChild(mg, CacheMXBean.MANAGED_SERVICE_NAME));
