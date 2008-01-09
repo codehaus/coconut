@@ -19,7 +19,7 @@ import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.servicemanager.AbstractCacheServiceManager;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
 
 /**
  * <p>

@@ -14,7 +14,6 @@ import org.coconut.cache.internal.service.entry.SynchronizedEntryMap;
 import org.coconut.cache.internal.service.eviction.SynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.SynchronizedCacheExpirationService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
-import org.coconut.cache.internal.service.servicemanager.ServiceComposer;
 import org.coconut.cache.internal.service.servicemanager.SynchronizedCacheServiceManager;
 import org.coconut.cache.internal.service.worker.SynchronizedCacheWorkerService;
 import org.coconut.operations.Ops.Mapper;
@@ -23,11 +22,6 @@ import org.coconut.operations.Ops.Predicate;
 public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V> {
 
     private final Object mutex;
-
-    public SynchronizedInternalCache(ServiceComposer sc) {
-        super(null, null, null);
-        this.mutex = sc.getInternalService(Cache.class);
-    }
 
     private SynchronizedInternalCache(Cache cache, CacheConfiguration conf,
             Collection<Class<?>> components) {

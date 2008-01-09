@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.tck.service.parallel;
 
-import org.coconut.cache.service.parallel.CacheParallelService;
+import org.coconut.cache.CacheParallelService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 

@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.tck.service.eviction;
 
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
-import org.coconut.cache.service.eviction.CacheEvictionService;
+import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.CacheEvictionService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Before;
 import org.junit.Test;

@@ -10,11 +10,11 @@ import java.util.ResourceBundle;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEventConfiguration;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
+import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;

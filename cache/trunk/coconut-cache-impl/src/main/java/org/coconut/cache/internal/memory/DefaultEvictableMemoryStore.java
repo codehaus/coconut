@@ -8,7 +8,7 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
 
 public class DefaultEvictableMemoryStore<K, V> extends UnlimitedSequentialMemoryStore<K, V>
         implements CompositeService {

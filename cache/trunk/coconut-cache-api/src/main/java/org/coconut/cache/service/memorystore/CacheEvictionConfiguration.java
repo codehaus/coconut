@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.service.eviction;
+package org.coconut.cache.service.memorystore;
 
 import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.attributeBooleanGet;
@@ -48,7 +48,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     public final static long DEFAULT_MAXIMUM_VOLUME = Long.MAX_VALUE;
 
     /** The short name of this service. */
-    public final static String SERVICE_NAME = "eviction";
+    public final static String SERVICE_NAME = "memorystore";
 
     /** The default settings, used when xml-serializing this configuration. */
     private final static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration<Object, Object>();

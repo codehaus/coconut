@@ -23,6 +23,5 @@ public class UnlimitedSequentialMemoryStore<K, V> extends AbstractSequentialMemo
     ChainingEntry<K, V> updated(ChainingEntry<K, V> old, K key, V value, AttributeMap attributes) {
         ChainingEntry<K, V> entry = e.createEntry(key, value, attributes, old);
         return entry;
-
     }
 }

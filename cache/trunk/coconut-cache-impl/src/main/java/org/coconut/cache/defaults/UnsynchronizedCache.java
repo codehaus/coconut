@@ -6,14 +6,14 @@ package org.coconut.cache.defaults;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheParallelService;
 import org.coconut.cache.internal.CacheInternals;
 import org.coconut.cache.internal.InternalCacheFactory;
 import org.coconut.cache.internal.UnsynchronizedInternalCache;
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.parallel.CacheParallelService;
+import org.coconut.cache.service.memorystore.CacheEvictionService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.CacheServiceSupport;

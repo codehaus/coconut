@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.tck.service.worker;
 
-import org.coconut.cache.service.eviction.CacheEvictionService;
+import org.coconut.cache.service.memorystore.CacheEvictionService;
 import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;

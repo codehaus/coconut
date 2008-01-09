@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheParallelService;
 import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.memory.MemoryStoreWithFilter;
-import org.coconut.cache.service.parallel.CacheParallelService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.operations.CollectionPredicates;

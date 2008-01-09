@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.service.eviction.CacheEvictionService;
+import org.coconut.cache.service.memorystore.CacheEvictionService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

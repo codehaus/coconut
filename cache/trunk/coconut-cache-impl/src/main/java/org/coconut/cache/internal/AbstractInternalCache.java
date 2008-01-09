@@ -43,6 +43,10 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
 
     private final String name;
 
+    private final AbstractCacheServiceManager serviceManager;
+
+    private CacheServices<K, V> services;
+
     Set<Map.Entry<K, V>> entrySet;
 
     Set<K> keySet;
@@ -50,8 +54,6 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
     final InternalCacheListener<K, V> listener;
 
     final MemoryStore<K, V> memoryCache;
-
-    private final AbstractCacheServiceManager serviceManager;
 
     Collection<V> values;
 
@@ -64,41 +66,13 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         name = getName(conf);
         ServiceComposer composer = ServiceComposer.compose(cache, this, name, conf, classes,
                 instantiatedComponents);
-
         serviceManager = composer.getInternalService(AbstractCacheServiceManager.class);
         memoryCache = composer.getInternalService(MemoryStore.class);
         listener = composer.getInternalService(InternalCacheListener.class);
     }
 
-    public void prestart() {
-        lazyStart();
-    }
-
-    static Collection<Class<?>> defaultComponents(CacheConfiguration<?, ?> configuration) {
-        Collection<Class<?>> c = new ArrayList<Class<?>>();
-        c.add(DefaultCacheExceptionService.class);
-        c.add(DefaultCacheStatisticsService.class);
-        c.add(DefaultCacheListener.class);
-        if (configuration.event().isEnabled()) {
-            c.add(DefaultCacheEventService.class);
-        }
-        c.add(DefaultEvictableMemoryStore.class);
-        return c;
-    }
-
     public final boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return serviceManager.awaitTermination(timeout, unit);
-    }
-
-    public abstract void clear();
-
-    private CacheServices<K, V> services;
-
-    public CacheServices<K, V> services() {
-        if (services == null) {
-            services = new CacheServices<K, V>(this);
-        }
-        return services;
     }
 
     public boolean containsKey(Object key) {
@@ -117,11 +91,6 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
 
     public final <T> T getService(Class<T> serviceType) {
         return serviceManager.getServiceFromCache(serviceType);
-    }
-
-    public long volume() {
-        lazyStart();
-        return memoryCache.volume();
     }
 
     public final boolean isEmpty() {
@@ -160,13 +129,17 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         return memoryCache.get(key);
     }
 
+    public void prestart() {
+        lazyStart();
+    }
+
     public final V put(K key, V value) {
         CacheEntry<K, V> prev = put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP);
         return prev == null ? null : prev.getValue();
     }
 
     public final CacheEntry<K, V> put(K key, V value, AttributeMap attributes) {
-        return put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP, false);
+        return put(key, value, attributes, false);
     }
 
     public final void putAll(Map<? extends K, ? extends V> t) {
@@ -204,6 +177,13 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         removeKeys(keys);
     }
 
+    public CacheServices<K, V> services() {
+        if (services == null) {
+            services = new CacheServices<K, V>(this);
+        }
+        return services;
+    }
+
     public final void shutdown() {
         serviceManager.shutdown();
     }
@@ -217,6 +197,11 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         return memoryCache.size();
     }
 
+    public long volume() {
+        lazyStart();
+        return memoryCache.volume();
+    }
+
     abstract CacheEntry<K, V> doRemove(Object key, Object value);
 
     abstract CacheEntry<K, V> put(K key, V value, AttributeMap attributes, boolean OnlyIfAbsent);
@@ -228,6 +213,18 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
     abstract boolean removeValues(Collection<?> values);
 
     abstract boolean retainAll(Mapper pre, Collection<?> c);
+
+    static Collection<Class<?>> defaultComponents(CacheConfiguration<?, ?> configuration) {
+        Collection<Class<?>> c = new ArrayList<Class<?>>();
+        c.add(DefaultCacheExceptionService.class);
+        c.add(DefaultCacheStatisticsService.class);
+        c.add(DefaultCacheListener.class);
+        if (configuration.event().isEnabled()) {
+            c.add(DefaultCacheEventService.class);
+        }
+        c.add(DefaultEvictableMemoryStore.class);
+        return c;
+    }
 
     static String getName(CacheConfiguration configuration) {
         String name = configuration.getName();

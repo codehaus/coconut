@@ -11,7 +11,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
 
 public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFactoryService<K, V> {
 

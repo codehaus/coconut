@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.internal.service.eviction;
 
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
-import org.coconut.cache.service.eviction.CacheEvictionMXBean;
-import org.coconut.cache.service.eviction.CacheEvictionService;
+import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.CacheEvictionMXBean;
+import org.coconut.cache.service.memorystore.CacheEvictionService;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 

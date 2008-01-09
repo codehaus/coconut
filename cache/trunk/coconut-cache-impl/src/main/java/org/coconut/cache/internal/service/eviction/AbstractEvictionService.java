@@ -6,15 +6,10 @@ package org.coconut.cache.internal.service.eviction;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
-import org.coconut.cache.internal.service.entry.EntryMap;
-import org.coconut.cache.internal.service.servicemanager.CompositeService;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
-import org.coconut.cache.service.eviction.CacheEvictionMXBean;
-import org.coconut.cache.service.eviction.CacheEvictionService;
+import org.coconut.cache.service.memorystore.CacheEvictionMXBean;
+import org.coconut.cache.service.memorystore.CacheEvictionService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedLifecycle;
 
 /**
  * <p>

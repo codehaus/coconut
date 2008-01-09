@@ -12,7 +12,7 @@ import org.coconut.cache.internal.CacheMutex;
 import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 

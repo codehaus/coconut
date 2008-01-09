@@ -6,11 +6,10 @@ package org.coconut.cache;
 import static org.junit.Assert.assertSame;
 
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.parallel.CacheParallelService;
+import org.coconut.cache.service.memorystore.CacheEvictionService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;

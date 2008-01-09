@@ -14,9 +14,9 @@ import javax.management.MBeanServerFactory;
 import javax.management.RuntimeMBeanException;
 
 import org.coconut.attribute.common.SizeAttribute;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
-import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
+import org.coconut.cache.service.memorystore.CacheEvictionMXBean;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.test.TestCacheLoader;

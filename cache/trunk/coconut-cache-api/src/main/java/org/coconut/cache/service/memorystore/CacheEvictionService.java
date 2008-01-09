@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.service.eviction;
+package org.coconut.cache.service.memorystore;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;

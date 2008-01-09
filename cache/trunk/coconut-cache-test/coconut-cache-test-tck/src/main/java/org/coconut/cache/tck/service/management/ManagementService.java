@@ -5,10 +5,10 @@ package org.coconut.cache.tck.service.management;
 
 import javax.management.MBeanServerFactory;
 
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.memorystore.CacheEvictionConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;

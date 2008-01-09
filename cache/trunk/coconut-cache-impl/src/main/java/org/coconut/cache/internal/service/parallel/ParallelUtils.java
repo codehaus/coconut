@@ -1,7 +1,7 @@
 package org.coconut.cache.internal.service.parallel;
 
+import org.coconut.cache.CacheParallelService;
 import org.coconut.cache.service.parallel.ParallelCache;
-import org.coconut.cache.service.parallel.CacheParallelService;
 
 final class ParallelUtils {
 
