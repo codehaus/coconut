@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.coconut.attribute.AttributeMap;
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.defaults.AbstractCache;
@@ -24,23 +25,25 @@ import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
 
 public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V> {
-    private UnsynchronizedInternalCache(AbstractCache cache, CacheConfiguration conf,
+
+    private UnsynchronizedInternalCache(Cache cache, CacheConfiguration conf,
             Collection<Class<?>> components) {
         super(cache, conf, components);
     }
 
-    public static <K, V> UnsynchronizedInternalCache<K, V> from(AbstractCache<K, V> cache,
-            CacheConfiguration<K, V> configuration) {
-        Collection<Class<?>> components = defaultComponents(configuration);
-        components.add(UnsynchronizedCacheEvictionService.class);
-        components.add(UnsynchronizedCacheExpirationService.class);
-        if (configuration.loading().getLoader() != null) {
-            components.add(UnsynchronizedCacheLoaderService.class);
+    static class UnsynchronizedInternalCacheFactory<K, V> implements InternalCacheFactory<K, V> {
+        public Cache<K, V> create(Cache<K, V> cache, CacheConfiguration<K, V> configuration) {
+            Collection<Class<?>> components = defaultComponents(configuration);
+            components.add(UnsynchronizedCacheEvictionService.class);
+            components.add(UnsynchronizedCacheExpirationService.class);
+            if (configuration.loading().getLoader() != null) {
+                components.add(UnsynchronizedCacheLoaderService.class);
+            }
+            components.add(UnsynchronizedParallelCacheService.class);
+            components.add(UnsynchronizedCacheServiceManager.class);
+            components.add(UnsynchronizedEntryFactoryService.class);
+            return new UnsynchronizedInternalCache(cache, configuration, components);
         }
-        components.add(UnsynchronizedParallelCacheService.class);
-        components.add(UnsynchronizedCacheServiceManager.class);
-        components.add(UnsynchronizedEntryFactoryService.class);
-        return new UnsynchronizedInternalCache(cache, configuration, components);
     }
 
     public Collection<V> values() {

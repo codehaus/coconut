@@ -1,20 +1,16 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the Apache 2.0 License, see http://coconut.codehaus.org/license.
- */
-package org.coconut.cache.internal.service.spi;
+package org.coconut.cache.internal;
 
 import java.util.ResourceBundle;
 
+import org.coconut.cache.internal.SynchronizedInternalCache.SynchronizedInternalCacheFactory;
+import org.coconut.cache.internal.UnsynchronizedInternalCache.UnsynchronizedInternalCacheFactory;
 import org.coconut.internal.util.ResourceBundleUtil;
 
-/**
- * This is class is used for looking up ressources. The default language is english no
- * matter what the default locale is, unless org.coconut.cache.lang is set.
- * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
- */
-public final class Resources {
+public class CacheInternals {
+
+    public final static InternalCacheFactory DEFAULT_UNSYNCHRONIZED_CACHE = new UnsynchronizedInternalCacheFactory();
+
+    public final static InternalCacheFactory DEFAULT_SYNCHRONIZED_CACHE = new SynchronizedInternalCacheFactory();
 
     private static final String BUNDLE_NAME = "org.coconut.cache.messagesimpl";//$NON-NLS-1$
 
@@ -22,7 +18,7 @@ public final class Resources {
 
     /** Cannot instantiate. */
     // /CLOVER:OFF
-    private Resources() {}
+    private CacheInternals() {}
 
     // /CLOVER:ON
 
@@ -41,5 +37,4 @@ public final class Resources {
         String k = key.replace(' ', '_');
         return ResourceBundleUtil.lookupKey(RESOURCE_BUNDLE, c.getSimpleName() + "." + k, o);
     }
-
 }

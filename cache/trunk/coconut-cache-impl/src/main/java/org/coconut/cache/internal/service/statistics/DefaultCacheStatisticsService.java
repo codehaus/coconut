@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.spi.Resources;
+import org.coconut.cache.internal.CacheInternals;
 import org.coconut.cache.internal.service.statistics.LongCounter.ConcurrentLongCounter;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
@@ -404,7 +404,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 // }
 
     private String getDesc(String key) {
-        return Resources.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());
+        return CacheInternals.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());
     }
 
     @Override

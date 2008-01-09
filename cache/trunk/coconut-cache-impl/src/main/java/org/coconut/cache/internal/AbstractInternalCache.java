@@ -19,10 +19,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
-import org.coconut.cache.defaults.AbstractCache;
 import org.coconut.cache.internal.memory.DefaultEvictableMemoryStore;
 import org.coconut.cache.internal.memory.MemoryStore;
 import org.coconut.cache.internal.memory.MemoryStoreWithMapping;
@@ -55,11 +55,11 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
 
     Collection<V> values;
 
-    AbstractInternalCache(AbstractCache cache, CacheConfiguration conf, Collection<Class<?>> classes) {
+    AbstractInternalCache(Cache cache, CacheConfiguration conf, Collection<Class<?>> classes) {
         this(cache, conf, classes, Collections.EMPTY_LIST);
     }
 
-    AbstractInternalCache(AbstractCache cache, CacheConfiguration conf, Collection<Class<?>> classes,
+    AbstractInternalCache(Cache cache, CacheConfiguration conf, Collection<Class<?>> classes,
             Collection instantiatedComponents) {
         name = getName(conf);
         ServiceComposer composer = ServiceComposer.compose(cache, this, name, conf, classes,

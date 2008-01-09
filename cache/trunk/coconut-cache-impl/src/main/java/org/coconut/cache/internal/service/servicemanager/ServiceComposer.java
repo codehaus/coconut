@@ -3,6 +3,7 @@ package org.coconut.cache.internal.service.servicemanager;
 import java.util.Collection;
 import java.util.List;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.AbstractCache;
 import org.coconut.cache.internal.InternalCache;
@@ -16,9 +17,9 @@ public class ServiceComposer {
     /** The picocontainer used to wire servicers. */
     private final MutablePicoContainer container = new DefaultPicoContainer();
 
-    private final AbstractCache c;
+    private final Cache c;
 
-    private ServiceComposer(AbstractCache cache) {
+    private ServiceComposer(Cache cache) {
         this.c = cache;
     }
 
@@ -27,7 +28,7 @@ public class ServiceComposer {
         return service;
     }
 
-    AbstractCache getCache() {
+    Cache getCache() {
         return c;
     }
 
@@ -35,7 +36,7 @@ public class ServiceComposer {
         return container.getComponentInstancesOfType(AbstractCacheLifecycle.class);
     }
 
-    public static ServiceComposer compose(AbstractCache cache, InternalCache internalCache,
+    public static ServiceComposer compose(Cache cache, InternalCache internalCache,
             String name, CacheConfiguration<?, ?> conf, Collection<Class<?>> components,
             Collection<Object> instantiatedComponents) {
         ServiceComposer sc = new ServiceComposer(cache);

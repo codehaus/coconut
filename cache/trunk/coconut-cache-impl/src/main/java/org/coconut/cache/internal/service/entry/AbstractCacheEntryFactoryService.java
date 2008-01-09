@@ -16,9 +16,9 @@ import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.CacheInternals;
 import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.core.Clock;
 import org.coconut.operations.Ops.Predicate;
@@ -101,7 +101,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
     }
 
     private void illegalAttribute(Attribute a, K key, Object illegal, Object defaultValue) {
-        String warning = Resources.lookup(AbstractCacheEntryFactoryService.class, "ia", a, key,
+        String warning = CacheInternals.lookup(AbstractCacheEntryFactoryService.class, "ia", a, key,
                 illegal.toString(), defaultValue.toString());
         exceptionService.warning(warning);
     }

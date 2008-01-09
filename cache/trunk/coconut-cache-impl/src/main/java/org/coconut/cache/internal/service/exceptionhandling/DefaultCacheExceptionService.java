@@ -8,8 +8,8 @@ import java.util.Map;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.CacheInternals;
 import org.coconut.cache.internal.service.debug.InternalDebugService;
-import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
@@ -68,7 +68,7 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
         startupLogger = logger;
         if (logger == null) {
             String loggerName = Cache.class.getPackage().getName() + "." + name;
-            String infoMsg = Resources.lookup(DefaultCacheExceptionService.class, "noLogger", name,
+            String infoMsg = CacheInternals.lookup(DefaultCacheExceptionService.class, "noLogger", name,
                     loggerName);
             logger = new LazyLogger(loggerName, infoMsg);
         }

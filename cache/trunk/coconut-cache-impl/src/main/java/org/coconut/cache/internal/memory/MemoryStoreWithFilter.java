@@ -22,7 +22,6 @@ public interface MemoryStoreWithFilter<K, V> extends MemoryStoreWithMapping<Cach
     <T> ParallelArray<CacheEntry<K, V>> retainAll(
             Mapper<? super CacheEntry<K, V>, ? extends T> mapper, Collection<? super T> procedure);
 
-
     MemoryStoreWithMapping<K> withKeys();
 
     MemoryStoreWithMapping<V> withValues();
