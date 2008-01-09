@@ -14,6 +14,6 @@ import org.junit.runners.Suite;
  * @version $Id: StatisticsSuite.java 466 2007-11-16 14:08:17Z kasper $
  */
 @RunWith(ServiceSuite.class)
-@Suite.SuiteClasses( { ParallelApply.class, ParallelServiceGeneral.class, WithFilter.class,
+@Suite.SuiteClasses( { ParallelApply.class, WithFilter.class,
         WithKeys.class, WithMapping.class, WithValues.class })
 public class ParallelSuite {}

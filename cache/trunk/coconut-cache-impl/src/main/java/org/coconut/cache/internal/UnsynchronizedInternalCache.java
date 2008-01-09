@@ -8,12 +8,10 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.defaults.AbstractCache;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
-import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.UnsynchronizedCacheExpirationService;
 import org.coconut.cache.internal.service.loading.UnsynchronizedCacheLoaderService;
-import org.coconut.cache.internal.service.parallel.UnsynchronizedParallelCacheService;
+import org.coconut.cache.internal.service.memorystore.UnsynchronizedMemoryStoreService;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
 import org.coconut.internal.forkjoin.ParallelArray;
 import org.coconut.internal.util.CollectionUtils;
@@ -34,12 +32,11 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
     static class UnsynchronizedInternalCacheFactory<K, V> implements InternalCacheFactory<K, V> {
         public Cache<K, V> create(Cache<K, V> cache, CacheConfiguration<K, V> configuration) {
             Collection<Class<?>> components = defaultComponents(configuration);
-            components.add(UnsynchronizedCacheEvictionService.class);
+            components.add(UnsynchronizedMemoryStoreService.class);
             components.add(UnsynchronizedCacheExpirationService.class);
             if (configuration.loading().getLoader() != null) {
                 components.add(UnsynchronizedCacheLoaderService.class);
             }
-            components.add(UnsynchronizedParallelCacheService.class);
             components.add(UnsynchronizedCacheServiceManager.class);
             components.add(UnsynchronizedEntryFactoryService.class);
             return new UnsynchronizedInternalCache(cache, configuration, components);

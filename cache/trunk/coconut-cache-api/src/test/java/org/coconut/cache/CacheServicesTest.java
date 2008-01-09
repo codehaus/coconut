@@ -172,23 +172,7 @@ public class CacheServicesTest {
         CacheStatisticsService ces = cache.services().statistics();
         assertSame(service, ces);
     }
-    /**
-     * Tests {@link CacheServices#parallel()}.
-     */
-    @Test
-    public void parallelService() {
-        final CacheParallelService service = TestUtil.dummy(CacheParallelService.class);
-        context.checking(new Expectations() {
-            {
-                one(cache).services();
-                will(returnValue(new CacheServices(cache)));
-                one(cache).getService(CacheParallelService.class);
-                will(returnValue(service));
-            }
-        });
-        CacheParallelService ces = cache.services().parallel();
-        assertSame(service, ces);
-    }
+
     /**
      * Tests {@link CacheServices#worker()}.
      */

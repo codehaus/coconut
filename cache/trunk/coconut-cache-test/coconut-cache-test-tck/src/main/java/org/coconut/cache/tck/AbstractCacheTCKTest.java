@@ -22,7 +22,6 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheParallelService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -279,10 +278,6 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected final CacheLoadingService<Integer, String> loading() {
         return c.getService(CacheLoadingService.class);
-    }
-
-    protected final CacheParallelService<Integer, String> parallel() {
-        return c.getService(CacheParallelService.class);
     }
 
     protected final CacheManagementService management() {

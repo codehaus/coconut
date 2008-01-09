@@ -51,7 +51,7 @@ public class EqualsHashcode extends AbstractCacheTCKTest {
         c4.shutdown();
         assertTrue(c4.equals(c4));
         assertTrue(c3.equals(c3));
-        assertFalse(c3.equals(c4));
-        assertFalse(c4.equals(c3));
+        assertTrue(c3.equals(c4));
+        assertTrue(c4.equals(c3));
     }
 }

@@ -16,7 +16,7 @@ import org.junit.Test;
 public class WithValues extends AbstractCacheTCKTest {
 
     public ParallelCache.WithMapping<String> p() {
-        return parallel().get().withValues();
+        return eviction().get().withValues();
     }
 
     @Test(expected = NullPointerException.class)

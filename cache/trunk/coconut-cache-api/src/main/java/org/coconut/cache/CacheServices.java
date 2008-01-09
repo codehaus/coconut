@@ -126,17 +126,6 @@ public class CacheServices<K, V> {
         return getService(CacheWorkerService.class);
     }
 
-    /**
-     * Returns the parallel service for the specified
-     *
-     * @return the parallel service for the cache
-     * @throws IllegalArgumentException
-     *             if no parallel service is available for the specified cache
-     */
-    public CacheParallelService parallel() {
-        return getService(CacheParallelService.class);
-    }
-
     protected <T> T getService(Class<T> serviceType) {
         return cache.getService(serviceType);
     }

@@ -1,6 +1,7 @@
-package org.coconut.cache.internal.service.parallel;
-
-import static org.coconut.operations.Mappers.constant;
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
+package org.coconut.cache.internal.service.memorystore;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -8,48 +9,105 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.coconut.cache.Cache;
-import org.coconut.cache.CacheParallelService;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.InternalCache;
-import org.coconut.cache.internal.service.memorystore.MemoryStore;
-import org.coconut.cache.internal.service.memorystore.MemoryStoreWithFilter;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
+import org.coconut.cache.service.memorystore.MemoryStoreMXBean;
+import org.coconut.cache.service.memorystore.MemoryStoreService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.operations.CollectionPredicates;
-import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
 
-public abstract class AbstractParallelCacheService<K, V> extends AbstractCacheLifecycle implements
-        CacheParallelService<K, V> {
+/**
+ * <p>
+ * NOTICE: This is an internal class and should not be directly referred. No guarantee is
+ * made to the compatibility of this class between different releases of Coconut Cache.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: AbstractEvictionService.java 559 2008-01-09 16:28:27Z kasper $
+ * @param <K>
+ *            the type of keys maintained by this service
+ * @param <V>
+ *            the type of mapped values
+ */
+public abstract class AbstractMemoryService<K, V, T extends CacheEntry<K, V>> extends
+        AbstractCacheLifecycle implements MemoryStoreService<K, V>, MemoryStoreMXBean {
 
-    final MemoryStore<K, V> memoryStore;
+    private final AbstractCacheEntryFactoryService<K, V> entryFactory;
 
-    final InternalCache<K, V> internalCache;
+    final MemoryStore<K, V> ms;
 
-    final Cache<K, V> cache;
+    private final InternalCache<K, V> cache;
 
-    public AbstractParallelCacheService(Cache<K, V> cache, InternalCache<K, V> internalCache,
-            MemoryStore<K, V> memoryStore) {
-        this.memoryStore = memoryStore;
-        this.internalCache = internalCache;
+    /**
+     * Creates a new AbstractEvictionService.
+     * 
+     * @param evictionSupport
+     *            the InternalCacheSupport for the cache
+     */
+    public AbstractMemoryService(InternalCache<K, V> cache, MemoryStore<K, V> ms,
+            AbstractCacheEntryFactoryService<K, V> factory) {
+        this.entryFactory = factory;
+        this.ms = ms;
         this.cache = cache;
+    }
+    void checkStarted() {
+
+    }
+    public int getMaximumSize() {
+        return ms.getMaximumSize();
+    }
+
+    public long getMaximumVolume() {
+        return ms.getMaximumVolume();
     }
 
     /** {@inheritDoc} */
     @Override
     public void initialize(CacheLifecycle.Initializer cli) {
-        cli.registerService(CacheParallelService.class, ParallelUtils.wrapService(this));
+        cli.registerService(MemoryStoreService.class, MemoryStoreUtils.wrapService(this));
+    }
+
+    public boolean isDisabled() {
+        return entryFactory.isDisabled();
+    }
+
+    public void setDisabled(boolean isDisabled) {
+        entryFactory.setDisabled(isDisabled);
+    }
+
+    public void setMaximumSize(int size) {
+        ms.setMaximumSize(size);
+    }
+
+    public void setMaximumVolume(long volume) {
+        ms.setMaximumVolume(volume);
     }
 
     @Override
     public String toString() {
-        return "Parallel Service";
+        return "Eviction Service";
     }
 
-    void checkStarted() {
-
+    /** {@inheritDoc} */
+    public void trimToSize(int size) {
+        if (size < 0) {
+            throw new IllegalArgumentException("size cannot be a negative number, was " + size);
+        }
+        trimCache(size, Long.MAX_VALUE);
     }
 
+    /** {@inheritDoc} */
+    public void trimToVolume(long volume) {
+        if (volume < 0) {
+            throw new IllegalArgumentException("volume cannot be a negative number, was " + volume);
+        }
+        trimCache(Integer.MAX_VALUE, volume);
+    }
+
+    abstract void trimCache(int size, long capacity);
+    
     abstract class AbstractFilteredCollectionView<E> implements Collection<E> {
         MemoryStoreWithFilter<K, V> withFilter;
 
@@ -147,7 +205,7 @@ public abstract class AbstractParallelCacheService<K, V> extends AbstractCacheLi
 
         public boolean removeAll(Collection<?> c) {
             List l = CollectionPredicates.filter(c, selector);
-            return l.size() > 0 ? internalCache.removeEntries(l) : false;
+            return l.size() > 0 ? cache.removeEntries(l) : false;
         }
 
         public final boolean retainAll(Collection<?> c) {

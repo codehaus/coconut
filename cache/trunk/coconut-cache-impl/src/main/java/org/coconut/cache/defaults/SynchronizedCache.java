@@ -6,7 +6,6 @@ package org.coconut.cache.defaults;
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheParallelService;
 import org.coconut.cache.internal.CacheInternals;
 import org.coconut.cache.internal.InternalCacheFactory;
 import org.coconut.cache.internal.SynchronizedInternalCache;
@@ -50,8 +49,7 @@ import org.coconut.cache.spi.CacheServiceSupport;
 @ThreadSafe
 @CacheServiceSupport( { CacheEventService.class, MemoryStoreService.class,
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
-        CacheParallelService.class, CacheServiceManagerService.class, CacheStatisticsService.class,
-        CacheWorkerService.class })
+        CacheServiceManagerService.class, CacheStatisticsService.class, CacheWorkerService.class })
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     /** The default factory. */
     private final static InternalCacheFactory FACTORY = CacheInternals.DEFAULT_SYNCHRONIZED_CACHE;

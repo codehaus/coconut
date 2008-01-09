@@ -25,17 +25,17 @@ public class WithFilter extends AbstractCacheTCKTest {
     };
 
     public ParallelCache.WithFilter<Integer, String> p() {
-        return parallel().get().withFilter(p);
+        return eviction().get().withFilter(p);
     }
 
     @Test(expected = NullPointerException.class)
     public void withFilterNPE() {
-        parallel().get().withFilter(null);
+        eviction().get().withFilter(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void withFilterNPE1() {
-        parallel().get().withFilter(p).withFilter(null);
+        eviction().get().withFilter(p).withFilter(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -77,7 +77,7 @@ public class WithFilter extends AbstractCacheTCKTest {
     @Test
     public void filterOnFilter() {
         init(5);
-        ParallelCache.WithFilter wf = parallel().get().withFilter(
+        ParallelCache.WithFilter wf = eviction().get().withFilter(
                 Predicates.mapAndEvaluate((Mapper) Mappers.mapEntryToKey(), Predicates
                         .greaterThen(1)));
         assertEquals(4, wf.size());

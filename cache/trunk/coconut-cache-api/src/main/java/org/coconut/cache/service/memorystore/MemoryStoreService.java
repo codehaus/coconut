@@ -6,6 +6,7 @@ package org.coconut.cache.service.memorystore;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
+import org.coconut.cache.ParallelCache;
 
 /**
  * The eviction service controls the size of the cache and what entries to evict at
@@ -129,7 +130,7 @@ public interface MemoryStoreService<K, V> {
      *
      * @return <code>true</code> if caching is disabled, otherwise <code>false</code>
      */
-    public boolean isDisabled();
+     boolean isDisabled();
 
     /**
      * Sets whether or not caching is disabled. If caching is disabled, the cache will not
@@ -142,5 +143,7 @@ public interface MemoryStoreService<K, V> {
      * @param isDisabled
      *            whether or not caching is disabled
      */
-    public void setDisabled(boolean isDisabled);
+     void setDisabled(boolean isDisabled);
+    
+    ParallelCache<K, V> get();
 }

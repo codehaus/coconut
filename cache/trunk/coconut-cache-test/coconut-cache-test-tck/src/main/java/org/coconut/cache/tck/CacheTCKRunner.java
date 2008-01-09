@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheParallelService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -134,6 +133,7 @@ public class CacheTCKRunner extends Runner {
         }
         if (services.contains(MemoryStoreService.class)) {
             runner.add(new ServiceSuite(EvictionSuite.class));
+            runner.add(new ServiceSuite(ParallelSuite.class));
         }
         if (services.contains(CacheExpirationService.class)) {
             runner.add(new ServiceSuite(ExpirationSuite.class));
@@ -147,9 +147,6 @@ public class CacheTCKRunner extends Runner {
         }
         if (services.contains(CacheStatisticsService.class)) {
             runner.add(new ServiceSuite(StatisticsSuite.class));
-        }
-        if (services.contains(CacheParallelService.class)) {
-            runner.add(new ServiceSuite(ParallelSuite.class));
         }
         if (services.contains(CacheWorkerService.class)) {
             runner.add(new ServiceSuite(WorkerSuite.class));

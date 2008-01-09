@@ -1,17 +1,16 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.service.eviction;
+package org.coconut.cache.internal.service.memorystore;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.CacheMutex;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
-import org.coconut.cache.internal.service.memorystore.MemoryStore;
 import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
@@ -22,19 +21,21 @@ import org.coconut.management.ManagedLifecycle;
  * made to the compatibility of this class between different releases of Coconut Cache.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: SynchronizedCacheEvictionService.java 559 2008-01-09 16:28:27Z kasper $
  * @param <K>
  *            the type of keys maintained by the cache
  * @param <V>
  *            the type of mapped values
  */
-public class SynchronizedCacheEvictionService<K, V> extends UnsynchronizedCacheEvictionService
+public class SynchronizedMemoryStoreService<K, V> extends UnsynchronizedMemoryStoreService
         implements ManagedLifecycle {
     private final Object mutex;
 
-    public SynchronizedCacheEvictionService(MemoryStore<K, V> ms, CacheMutex mutex,
+    public SynchronizedMemoryStoreService(
+            InternalCache cache,
+            MemoryStore<K, V> ms, CacheMutex mutex,
             InternalCacheListener listener, AbstractCacheEntryFactoryService<K, V> factory) {
-        super(ms, listener, factory);
+        super(cache, ms, listener, factory);
         this.mutex = mutex.getMutex();
     }
 
@@ -42,7 +43,7 @@ public class SynchronizedCacheEvictionService<K, V> extends UnsynchronizedCacheE
     public void manage(ManagedGroup parent) {
         ManagedGroup g = parent.addChild(MemoryStoreConfiguration.SERVICE_NAME,
                 "Cache Eviction attributes and operations");
-        g.add(EvictionUtils.wrapMXBean(this));
+        g.add(MemoryStoreUtils.wrapMXBean(this));
     }
 
     /** {@inheritDoc} */

@@ -1,8 +1,9 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.service.eviction;
+package org.coconut.cache.internal.service.memorystore;
 
+import org.coconut.cache.ParallelCache;
 import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 import org.coconut.cache.service.memorystore.MemoryStoreMXBean;
 import org.coconut.cache.service.memorystore.MemoryStoreService;
@@ -16,13 +17,13 @@ import org.coconut.management.annotation.ManagedOperation;
  * made to the compatibility of this class between different releases of Coconut Cache.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: EvictionUtils.java 559 2008-01-09 16:28:27Z kasper $
  */
-final class EvictionUtils {
+final class MemoryStoreUtils {
 
     /** Cannot instantiate. */
     // /CLOVER:OFF
-    private EvictionUtils() {}
+    private MemoryStoreUtils() {}
 
     // /CLOVER:ON
 
@@ -143,6 +144,10 @@ final class EvictionUtils {
         /** {@inheritDoc} */
         public void setDisabled(boolean isDisabled) {
             service.setDisabled(isDisabled);
+        }
+
+        public ParallelCache<K, V> get() {
+            return service.get();
         }
     }
 

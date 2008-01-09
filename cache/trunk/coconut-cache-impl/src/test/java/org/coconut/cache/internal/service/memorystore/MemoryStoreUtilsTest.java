@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.service.eviction;
+package org.coconut.cache.internal.service.memorystore;
 
 import org.coconut.cache.CacheConfiguration;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import org.junit.Test;
  * @version $Id: CacheConfigurationTest.java 434 2007-11-13 15:36:17Z kasper $
  */
 @SuppressWarnings("unchecked")
-public class EvictionUtilsTest {
+public class MemoryStoreUtilsTest {
 
     /**
      * Tests that
@@ -22,7 +22,7 @@ public class EvictionUtilsTest {
      */
     @Test(expected = NullPointerException.class)
     public void wrapMXBeanNPE() {
-        EvictionUtils.wrapMXBean(null);
+        MemoryStoreUtils.wrapMXBean(null);
     }
     
     /**
@@ -32,6 +32,6 @@ public class EvictionUtilsTest {
      */
     @Test(expected = NullPointerException.class)
     public void wrapServiceNPE() {
-        EvictionUtils.wrapService(null);
+        MemoryStoreUtils.wrapService(null);
     }
 }

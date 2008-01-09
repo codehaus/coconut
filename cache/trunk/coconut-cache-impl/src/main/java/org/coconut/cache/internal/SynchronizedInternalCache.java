@@ -11,9 +11,9 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.SynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.entry.SynchronizedEntryMap;
-import org.coconut.cache.internal.service.eviction.SynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.SynchronizedCacheExpirationService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
+import org.coconut.cache.internal.service.memorystore.SynchronizedMemoryStoreService;
 import org.coconut.cache.internal.service.servicemanager.SynchronizedCacheServiceManager;
 import org.coconut.cache.internal.service.worker.SynchronizedCacheWorkerService;
 import org.coconut.operations.Ops.Mapper;
@@ -228,7 +228,7 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
         public Cache<K, V> create(Cache<K, V> cache, CacheConfiguration<K, V> configuration) {
             Collection<Class<?>> components = defaultComponents(configuration);
 
-            components.add(SynchronizedCacheEvictionService.class);
+            components.add(SynchronizedMemoryStoreService.class);
             components.add(SynchronizedCacheExpirationService.class);
             if (configuration.management().isEnabled()) {
                 components.add(DefaultCacheManagementService.class);
