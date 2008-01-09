@@ -54,7 +54,7 @@ public interface CacheEvictionService<K, V> {
      * @return the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
      *         is no limit.
      * @see #setMaximumVolume(long)
-     * @see Cache#getVolume()
+     * @see Cache#volume()
      */
     long getMaximumVolume();
 

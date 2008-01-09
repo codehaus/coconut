@@ -117,7 +117,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
     @Test
     public void getVolume() {
         try {
-            c.getVolume();
+            c.volume();
             fail("should throw CacheException");
         } catch (RuntimeException1 ce) {
 

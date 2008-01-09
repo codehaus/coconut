@@ -193,7 +193,7 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     protected void assertVolume(long volume) {
-        assertEquals(volume, c.getVolume());
+        assertEquals(volume, c.volume());
     }
 
     /**

@@ -34,11 +34,7 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
 
     private final static Collection<Class<?>> components;
 
-    private final Set<Map.Entry<K, V>> entrySet;
 
-    private final Set<K> keySet;
-
-    private final Collection<V> values;
     static {
         List<Class<?>> c = new ArrayList<Class<?>>();
         c.add(DefaultCacheStatisticsService.class);
@@ -58,24 +54,21 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
 
     public UnsynchronizedInternalCache(Cache cache, CacheConfiguration conf) {
         super(cache, conf, components);
-        entrySet = memoryCache.entrySet();
-        keySet = memoryCache.keySet();
-        values = memoryCache.values();
     }
 
-    public final Collection<V> values() {
-        serviceManager.lazyStart();
-        return values;
+    public Collection<V> values() {
+        Collection<V> vs = values;
+        return (vs != null) ? vs : (values = new Values());
     }
 
-    public final Set<K> keySet() {
-        serviceManager.lazyStart();
-        return keySet;
+    public Set<K> keySet() {
+        Set<K> ks = keySet;
+        return (ks != null) ? ks : (keySet = new KeySet());
     }
 
-    public final Set<Map.Entry<K, V>> entrySet() {
-        serviceManager.lazyStart();
-        return entrySet;
+    public Set<Map.Entry<K, V>> entrySet() {
+        Set<Map.Entry<K, V>> es = entrySet;
+        return (es != null) ? es : (entrySet = new EntrySet());
     }
 
     public void clear() {
@@ -164,8 +157,8 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
         long started = listener.beforeRemoveAll((Collection) c);
 
         serviceManager.lazyStart();
-        ParallelArray<CacheEntry<K, V>> list=null;
-        //ParallelArray<CacheEntry<K, V>> list = memoryCache.retainAll(pre, selector, c);
+        ParallelArray<CacheEntry<K, V>> list = null;
+        // ParallelArray<CacheEntry<K, V>> list = memoryCache.retainAll(pre, selector, c);
 
         listener.afterRemoveAll(started, (Collection) c, list.asList());
 

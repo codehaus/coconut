@@ -4,8 +4,6 @@
 package org.coconut.cache.internal.memory;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheEntry;
@@ -14,25 +12,22 @@ import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
 
 public interface MemoryStoreWithFilter<K, V> extends MemoryStoreWithMapping<CacheEntry<K, V>> {
-    Set<Map.Entry<K, V>> entrySet();
 
-    Set<K> keySet();
+    void clear();
 
     ParallelArray<CacheEntry<K, V>> removeAll();
 
     ParallelArray<CacheEntry<K, V>> retainAll(Collection<? super CacheEntry<K, V>> procedure);
 
     <T> ParallelArray<CacheEntry<K, V>> retainAll(
-            Mapper<? super CacheEntry<K, V>, ? extends T> mapper,
-            Collection<? super T> procedure);
+            Mapper<? super CacheEntry<K, V>, ? extends T> mapper, Collection<? super T> procedure);
 
-    Collection<V> values();
 
     MemoryStoreWithMapping<K> withKeys();
 
     MemoryStoreWithMapping<V> withValues();
-    
-    MemoryStoreWithFilter<K, V > withFilter(Predicate<? super CacheEntry<K, V>> selector);
+
+    MemoryStoreWithFilter<K, V> withFilter(Predicate<? super CacheEntry<K, V>> selector);
 
     MemoryStoreWithFilter<K, V> withFilterOnAttributes(Predicate<? super AttributeMap> selector);
 

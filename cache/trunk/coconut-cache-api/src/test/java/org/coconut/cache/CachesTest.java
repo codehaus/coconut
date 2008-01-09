@@ -86,7 +86,7 @@ public class CachesTest {
         assertEquals(0, Caches.emptyCache().entrySet().size());
         assertEquals(new HashMap(), Caches.emptyCache());
         assertEquals("emptymap", emptyCache().getName());
-        assertEquals(0L, emptyCache().getVolume());
+        assertEquals(0L, emptyCache().volume());
         assertEquals(new HashMap().hashCode(), Caches.emptyCache().hashCode());
         assertFalse(emptyCache().isShutdown());
         assertFalse(emptyCache().isStarted());

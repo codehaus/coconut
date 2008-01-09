@@ -118,7 +118,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public long getVolume() {
+    public long volume() {
         return cache.getVolume();
     }
 

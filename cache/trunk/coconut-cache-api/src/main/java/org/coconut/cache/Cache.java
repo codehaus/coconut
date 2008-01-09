@@ -290,7 +290,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *
      * @return the current volume of this cache
      */
-    long getVolume();
+    long volume();
 
     /**
      * Returns <tt>true</tt> if this cache contains no elements.

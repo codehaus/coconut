@@ -66,30 +66,30 @@ public class EvictionTrimming extends AbstractCacheTCKTest {
         MyLoader m = new MyLoader();
         init(newConf().eviction().setPolicy(Policies.newLRU()).c().loading().setLoader(m));
         c.get(1);
-        assertEquals(2, c.getVolume());
+        assertEquals(2, c.volume());
         c.get(2);
-        assertEquals(6, c.getVolume());
+        assertEquals(6, c.volume());
         c.get(4);
-        assertEquals(13, c.getVolume());
+        assertEquals(13, c.volume());
         c.get(5);
         c.get(6);
-        assertEquals(33, c.getVolume());
+        assertEquals(33, c.volume());
 
         eviction().trimToVolume(34);
-        assertEquals(33, c.getVolume());
+        assertEquals(33, c.volume());
 
         eviction().trimToVolume(33);
-        assertEquals(33, c.getVolume());
+        assertEquals(33, c.volume());
 
         eviction().trimToVolume(32);
         assertFalse(c.containsKey(1));
-        assertEquals(31, c.getVolume());
+        assertEquals(31, c.volume());
 
         eviction().trimToVolume(22);
-        assertEquals(20, c.getVolume());
+        assertEquals(20, c.volume());
 
         eviction().trimToVolume(1);
-        assertEquals(0, c.getVolume());
+        assertEquals(0, c.volume());
     }
 
     /**

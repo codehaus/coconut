@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class WithValues extends AbstractCacheTCKTest {
 
-    public ParallelCache.WithKeyValues<String> p() {
+    public ParallelCache.WithMapping<String> p() {
         return parallel().get().withValues();
     }
 

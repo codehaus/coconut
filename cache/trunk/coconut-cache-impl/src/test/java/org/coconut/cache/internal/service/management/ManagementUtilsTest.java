@@ -51,7 +51,7 @@ public class ManagementUtilsTest {
         context.checking(new Expectations() {
             {
                 one(mock).clear();
-                one(mock).getVolume();
+                one(mock).volume();
                 will(returnValue(1l));
                 one(mock).getName();
                 will(returnValue("fooName"));

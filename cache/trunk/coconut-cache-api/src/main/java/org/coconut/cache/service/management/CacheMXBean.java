@@ -45,7 +45,7 @@ public interface CacheMXBean {
     /**
      * Returns the current used capacity of the cache.
      * <p>
-     * This method is equivalent to calling {@link org.coconut.cache.Cache#getVolume()}.
+     * This method is equivalent to calling {@link org.coconut.cache.Cache#volume()}.
      * 
      * @return the current number of elements in the cache
      */

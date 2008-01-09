@@ -12,6 +12,9 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.AbstractInternalCache.EntrySet;
+import org.coconut.cache.internal.AbstractInternalCache.KeySet;
+import org.coconut.cache.internal.AbstractInternalCache.Values;
 import org.coconut.cache.internal.service.entry.SynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.entry.SynchronizedEntryMap;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
@@ -203,16 +206,158 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
     }
 
     public Collection<V> values() {
-        return null;
+        Collection<V> vs = values;
+        return (vs != null) ? vs : (values = new SynchronizedValues(mutex));
+    }
+
+    public Set<K> keySet() {
+        Set<K> ks = keySet;
+        return (ks != null) ? ks : (keySet = new SynchronizedKeySet(mutex));
+    }
+
+    public Set<Map.Entry<K, V>> entrySet() {
+        Set<Map.Entry<K, V>> es = entrySet;
+        return (es != null) ? es : (entrySet = new SynchronizedEntrySet(mutex));
     }
 
     public void prestart() {}
 
-    public Set<K> keySet() {
-        return null;
+
+    
+
+    final class SynchronizedValues extends Values {
+        private final Object mutex;
+    
+        SynchronizedValues(Object mutex) {
+            this.mutex = mutex;
+        }
+    
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            synchronized (mutex) {
+                return super.containsAll(c);
+            }
+        }
+    
+        @Override
+        public Object[] toArray() {
+            synchronized (mutex) {
+                return super.toArray();
+            }
+        }
+    
+        @Override
+        public <T> T[] toArray(T[] a) {
+            synchronized (mutex) {
+                return super.toArray(a);
+            }
+        }
+    
+        @Override
+        public String toString() {
+            synchronized (mutex) {
+                return toString();
+            }
+        }
+    }
+    
+    final class SynchronizedKeySet extends KeySet {
+        private final Object mutex;
+    
+        SynchronizedKeySet(Object mutex) {
+            this.mutex = mutex;
+        }
+    
+        public boolean containsAll(Collection<?> c) {
+            synchronized (mutex) {
+                return super.containsAll(c);
+            }
+        }
+    
+        @Override
+        public boolean equals(Object o) {
+            synchronized (mutex) {
+                return super.equals(o);
+            }
+        }
+    
+        @Override
+        public int hashCode() {
+            synchronized (mutex) {
+                return super.hashCode();
+            }
+        }
+    
+        @Override
+        public Object[] toArray() {
+            synchronized (mutex) {
+                return super.toArray();
+            }
+        }
+    
+        @Override
+        public <T> T[] toArray(T[] a) {
+            synchronized (mutex) {
+                return super.toArray(a);
+            }
+        }
+    
+        @Override
+        public String toString() {
+            synchronized (mutex) {
+                return toString();
+            }
+        }
     }
 
-    public Set<Entry<K, V>> entrySet() {
-        return null;
+    final class SynchronizedEntrySet extends EntrySet {
+        private final Object mutex;
+    
+        SynchronizedEntrySet(Object mutex) {
+            this.mutex = mutex;
+        }
+    
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            synchronized (mutex) {
+                return super.containsAll(c);
+            }
+        }
+    
+        @Override
+        public boolean equals(Object o) {
+            synchronized (mutex) {
+                return super.equals(o);
+            }
+        }
+    
+        @Override
+        public int hashCode() {
+            synchronized (mutex) {
+                return super.hashCode();
+            }
+        }
+    
+        @Override
+        public Object[] toArray() {
+            synchronized (mutex) {
+                return super.toArray();
+            }
+        }
+    
+        @Override
+        public <T> T[] toArray(T[] a) {
+            synchronized (mutex) {
+                return super.toArray(a);
+            }
+        }
+    
+        @Override
+        public String toString() {
+            synchronized (mutex) {
+                return toString();
+            }
+        }
+    
     }
 }

@@ -5,8 +5,6 @@ import static org.coconut.operations.Mappers.MAP_ENTRY_TO_KEY_MAPPER;
 import static org.coconut.operations.Mappers.MAP_ENTRY_TO_VALUE_MAPPER;
 import static org.coconut.operations.Mappers.compoundMapper;
 import static org.coconut.operations.Mappers.constant;
-import static org.coconut.operations.Mappers.mapEntryToKey;
-import static org.coconut.operations.Mappers.mapEntryToValue;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -14,10 +12,8 @@ import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import org.coconut.attribute.AttributeMap;
@@ -26,15 +22,13 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.InternalCache;
 import org.coconut.internal.forkjoin.ParallelArray;
 import org.coconut.internal.util.CollectionUtils;
-import org.coconut.operations.CollectionPredicates;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
+import org.coconut.operations.Ops.Reducer;
 
 public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore<K, V> {
-
-    private static Mapper SAFE_MAPPER = constant();
 
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
@@ -87,24 +81,12 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         apply(CONSTANT_MAPPER, procedure);
     }
 
-    public void checkStarted() {
-    // ignore
-    }
-
     public void clear() {
         modCount++;
         for (int i = 0; i < table.length; i++) {
             table[i] = null;
         }
         size = 0;
-    }
-
-    public Set<Entry<K, V>> entrySet() {
-        if (cache.isSynchronized()) {
-            return new EntrySetSynchronized(cache.getMutex());
-        } else {
-            return new EntrySet();
-        }
     }
 
     public ChainingEntry<K, V> get(Object key) {
@@ -124,18 +106,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         return null;
     }
 
-    public Iterator<CacheEntry<K, V>> iterator() {
-        return new HashIterator<CacheEntry<K, V>>(CONSTANT_MAPPER);
-    }
-
-    public Set<K> keySet() {
-        if (cache.isSynchronized()) {
-            return new KeySetSynchronized(cache.getMutex());
-        } else {
-            return new KeySet();
-        }
-    }
-
     public int getMaximumSize() {
         return Integer.MAX_VALUE;
     }
@@ -143,37 +113,7 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
     public long getMaximumVolume() {
         return Long.MAX_VALUE;
     }
-    public void setMaximumSize(int size) {
-        throw new UnsupportedOperationException("size limitation not supported for this cache");
-    }
 
-    public void setMaximumVolume(long volume) {
-        throw new UnsupportedOperationException("volume limitation not supported for this cache");
-    }
-    public ParallelArray<CacheEntry<K, V>> trimTo(int size, long volume) {
-        if (this.size == 0 || size == 0 || volume == 0) {
-            return removeAll();
-        } else {
-            ArrayList<ChainingEntry<K, V>> list = new ArrayList<ChainingEntry<K, V>>(Math.max(0,
-                    this.size - size));
-// while (this.size > size && this.volume > volume) {
-//
-// }
-            return fromArray((CacheEntry<K, V>[]) list.toArray(new CacheEntry[list.size()]));
-        }
-    }
-    public ParallelArray<CacheEntry<K, V>> trim() {
-        if (this.size == 0 || size == 0 || volume == 0) {
-            return removeAll();
-        } else {
-            ArrayList<ChainingEntry<K, V>> list = new ArrayList<ChainingEntry<K, V>>(Math.max(0,
-                    this.size - size));
-// while (this.size > size && this.volume > volume) {
-//
-// }
-            return fromArray((CacheEntry<K, V>[]) list.toArray(new CacheEntry[list.size()]));
-        }
-    }
     public Map.Entry<CacheEntry<K, V>, CacheEntry<K, V>> put(K key, V value, AttributeMap map,
             boolean onlyIfAbsent) {
         int hash = hash(key.hashCode());
@@ -351,15 +291,45 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         return null;
     }
 
+    public Iterator<CacheEntry<K, V>> sequentially() {
+        return new HashIterator<CacheEntry<K, V>>(CONSTANT_MAPPER);
+    }
+
+    public void setMaximumSize(int size) {
+        throw new UnsupportedOperationException("size limitation not supported for this cache");
+    }
+
+    public void setMaximumVolume(long volume) {
+        throw new UnsupportedOperationException("volume limitation not supported for this cache");
+    }
+
     public int size() {
         return size;
     }
 
-    public Collection<V> values() {
-        if (cache.isSynchronized()) {
-            return new ValuesSynchronized(cache.getMutex());
+    public ParallelArray<CacheEntry<K, V>> trim() {
+        if (this.size == 0 || size == 0 || volume == 0) {
+            return removeAll();
         } else {
-            return new Values();
+            ArrayList<ChainingEntry<K, V>> list = new ArrayList<ChainingEntry<K, V>>(Math.max(0,
+                    this.size - size));
+// while (this.size > size && this.volume > volume) {
+//
+// }
+            return fromArray((CacheEntry<K, V>[]) list.toArray(new CacheEntry[list.size()]));
+        }
+    }
+
+    public ParallelArray<CacheEntry<K, V>> trimTo(int size, long volume) {
+        if (this.size == 0 || size == 0 || volume == 0) {
+            return removeAll();
+        } else {
+            ArrayList<ChainingEntry<K, V>> list = new ArrayList<ChainingEntry<K, V>>(Math.max(0,
+                    this.size - size));
+// while (this.size > size && this.volume > volume) {
+//
+// }
+            return fromArray((CacheEntry<K, V>[]) list.toArray(new CacheEntry[list.size()]));
         }
     }
 
@@ -399,7 +369,7 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
     }
 
     private void deleted(ChainingEntry<K, V> entry, boolean isEvicted) {
-        entry.setNext(null);
+        entry.setNext(null);// the entry might have a long lifespan, so clear references
         removed(entry, isEvicted);
         volume -= entry.getSize();
     }
@@ -466,15 +436,29 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         apply(Predicates.TRUE, mapper, procedure);
     }
 
+    private static Mapper SAFE_MAPPER = constant();
+
+    public CacheEntry<K, V> reduce(Reducer<CacheEntry<K, V>> reducer, CacheEntry<K, V> base) {
+        return (CacheEntry) reduce(SAFE_MAPPER, reducer, base);
+    }
+
+    <T> T reduce(Mapper<? super CacheEntry<K, V>, ? extends T> m, Reducer<T> reducer, T base) {
+        T result = base;
+        for (int i = 0; i < table.length; i++) {
+            for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
+                result = reducer.combine(result, m.map(e));
+            }
+        }
+        return result;
+    }
+
     <T> void apply(Predicate<? super CacheEntry<K, V>> selector,
             Mapper<? super CacheEntry<K, V>, T> mapper, Procedure<T> procedure) {
         if (procedure == null) {
             throw new NullPointerException("procedure is null");
         }
         if (size != 0) {
-            ChainingEntry<K, V>[] table = this.table;
-            int len = table.length;
-            for (int i = 0; i < len; i++) {
+            for (int i = 0; i < table.length; i++) {
                 for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
                     if (selector.evaluate(e)) {
                         T userMapped = mapper.map(e);
@@ -545,391 +529,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         return h ^ h >>> 7 ^ h >>> 4;
     }
 
-    abstract class AbstractCollectionView<E> implements Collection<E> {
-        final Mapper mapper;
-
-        AbstractCollectionView(Mapper<CacheEntry<K, V>, E> mapper) {
-            if (mapper == null) {
-                throw new NullPointerException("mapper is null");
-            }
-            this.mapper = mapper;
-        }
-
-        public final boolean add(E e) {
-            throw new UnsupportedOperationException();
-        }
-
-        public final boolean addAll(Collection<? extends E> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        public final void clear() {
-            cache.clear();
-        }
-
-        public final boolean isEmpty() {
-            return cache.isEmpty();
-        }
-
-        public final Iterator<E> iterator() {
-            checkStarted();
-            return mapper == CONSTANT_MAPPER ? new HashIterator<E>(SAFE_MAPPER)
-                    : new HashIterator<E>(mapper);
-        }
-
-        public final int size() {
-            return cache.size();
-        }
-
-        public Object[] toArray() {
-            checkStarted();
-            Mapper mapper = this.mapper == CONSTANT_MAPPER ? SAFE_MAPPER : this.mapper;
-            if (size != 0) {
-                Object[] array = new Object[size];
-                int count = 0;
-                for (int i = 0; i < table.length; i++) {
-                    for (ChainingEntry e = table[i]; e != null; e = e.next()) {
-                        array[count++] = mapper.map(e);// replace with safe mapped
-                    }
-                }
-                return array;
-            }
-            return new Object[0];
-        }
-
-        public <T> T[] toArray(T[] a) {
-            checkStarted();
-            Mapper mapper = this.mapper == CONSTANT_MAPPER ? SAFE_MAPPER : this.mapper;
-            T[] r = a.length >= size ? a : (T[]) java.lang.reflect.Array.newInstance(a.getClass()
-                    .getComponentType(), size);
-            if (size != 0) {
-                int count = 0;
-                for (int i = 0; i < table.length; i++) {
-                    for (ChainingEntry e = table[i]; e != null; e = e.next()) {
-                        Object o = mapper.map(e);
-                        r[count++] = (T) o;
-                    }
-                }
-            }
-
-            if (a.length > size) {
-                a[size] = null;
-            }
-            return r;
-        }
-
-        @Override
-        public final String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append('[');
-            _toString(sb);
-            return sb.append(']').toString();
-        }
-
-        void _toString(StringBuilder sb) {
-            checkStarted();
-            if (size != 0) {
-                ChainingEntry<K, V> prev = null;
-                for (int i = 0; i < table.length; i++) {
-                    for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
-                        if (prev != null) {
-                            sb.append(", ");
-                            sb.append(mapper.map(e));
-                        }
-                        prev = e;
-                    }
-                }
-                sb.append(", ");
-                sb.append(prev);
-            }
-        }
-    }
-
-    abstract class AbstractFilteredCollectionView<E> implements Collection<E> {
-        WithFilterImpl withFilter;
-
-        AbstractFilteredCollectionView(WithFilterImpl withFilter) {
-            this.withFilter = withFilter;
-        }
-
-        public final boolean add(E e) {
-            throw new UnsupportedOperationException();
-        }
-
-        public final boolean addAll(Collection<? extends E> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        public final void clear() {
-            cache.clearView(withFilter.mapper, withFilter.selector);
-        }
-
-        public boolean isEmpty() {
-            checkStarted();
-            return withFilter.any() != null;
-        }
-
-        public Iterator<E> iterator() {
-            checkStarted();
-            return null;
-// return mapper == CONSTANT_MAPPER ? new HashIterator<E>(SAFE_MAPPER)
-// : new HashIterator<E>(mapper);
-        }
-
-        public int size() {
-            checkStarted();
-            return withFilter.size();
-        }
-
-        public Object[] toArray() {
-            return withFilter.all().getArray();
-        }
-
-        public <T> T[] toArray(T[] a) {
-            checkStarted();
-            Mapper mapper = withFilter.mapper == CONSTANT_MAPPER ? SAFE_MAPPER : withFilter.mapper;
-            T[] r = a.length >= size ? a : (T[]) java.lang.reflect.Array.newInstance(a.getClass()
-                    .getComponentType(), size);
-            if (size != 0) {
-                int count = 0;
-                for (int i = 0; i < table.length; i++) {
-                    for (ChainingEntry e = table[i]; e != null; e = e.next()) {
-                        Object o = mapper.map(e);
-                        r[count++] = (T) o;
-                    }
-                }
-            }
-
-            if (a.length > size) {
-                a[size] = null;
-            }
-            return r;
-        }
-
-        @Override
-        public final String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append('[');
-            _toString(sb);
-            return sb.append(']').toString();
-        }
-
-        void _toString(StringBuilder sb) {
-            checkStarted();
-            if (size != 0) {
-                ChainingEntry<K, V> prev = null;
-                for (int i = 0; i < table.length; i++) {
-                    for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
-                        if (withFilter.selector.equals(e)) {
-                            if (prev != null) {
-                                sb.append(", ");
-                                sb.append(withFilter.mapper.map(e));
-                            }
-                            prev = e;
-                        }
-                    }
-                }
-                if (prev != null) {
-                    sb.append(", ");
-                    sb.append(prev);
-                }
-            }
-        }
-    }
-
-    abstract class AbstractFilteredSetView<E> extends AbstractFilteredCollectionView<E> implements
-            Set<E> {
-        public AbstractFilteredSetView(WithFilterImpl mapper) {
-            super(mapper);
-        }
-    }
-
-    abstract class AbstractSetView<E> extends AbstractCollectionView<E> implements Set<E> {
-        public AbstractSetView(Mapper<CacheEntry<K, V>, E> mapper) {
-            super(mapper);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == this)
-                return true;
-            if (!(o instanceof Set))
-                return false;
-            Collection c = (Collection) o;
-            if (c.size() != size())
-                return false;
-            try {
-                return containsAll(c);
-            } catch (ClassCastException unused) {
-                return false;
-            } catch (NullPointerException unused) {
-                return false;
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            checkStarted();
-            int h = 0;
-            if (size != 0) {
-                for (int i = 0; i < table.length; i++) {
-                    for (ChainingEntry e = table[i]; e != null; e = e.next()) {
-                        Object o = mapper.map(e);
-                        if (o != null) {
-                            h += o.hashCode();
-                        }
-                    }
-                }
-            }
-            return h;
-        }
-    }
-
-    class EntrySet extends AbstractSetView<Map.Entry<K, V>> {
-
-        public EntrySet() {
-            super(CONSTANT_MAPPER);
-        }
-
-        public final boolean contains(Object o) {
-            if (o == null) {
-                throw new NullPointerException("o is null");
-            }
-            if (!(o instanceof Map.Entry)) {
-                return false;
-            }
-            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            V v = cache.peek((K) e.getKey());
-            return v != null && v.equals(e.getValue());
-        }
-
-        public boolean containsAll(Collection<?> c) {
-            checkStarted();
-            for (Map.Entry entry : (Collection<Map.Entry>) c) {
-                Map.Entry<K, V> e = get(entry.getKey());
-                if (e == null || !e.getValue().equals(entry.getValue())) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public final boolean remove(Object o) {
-            if (o == null) {
-                throw new NullPointerException("o is null");
-            }
-            if (!(o instanceof Map.Entry)) {
-                return false;
-            }
-            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            return cache.remove(e.getKey(), e.getValue());
-        }
-
-        public final boolean removeAll(Collection<?> c) {
-            return cache.removeEntries(c);
-        }
-
-        public final boolean retainAll(Collection<?> c) {
-            return cache.retainAll(constant(), Predicates.TRUE, c);
-        }
-    }
-
-    class EntrySetFiltered extends AbstractFilteredSetView<Map.Entry<K, V>> {
-
-        public EntrySetFiltered(WithFilterImpl filterImpl) {
-            super(filterImpl);
-        }
-
-        public final boolean contains(Object o) {
-            if (o == null) {
-                throw new NullPointerException("o is null");
-            }
-            final Predicate selector = withFilter.selector;
-            if (!(o instanceof Map.Entry) || !selector.evaluate(o)) {
-                return false;
-            }
-            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            V v = cache.peek((K) e.getKey());
-            return v != null && v.equals(e.getValue());
-        }
-
-        public boolean containsAll(Collection<?> c) {
-            return false;
-        }
-
-        public boolean remove(Object o) {
-            final Predicate selector = withFilter.selector;
-            if (!(o instanceof Map.Entry) || !selector.evaluate(o)) {
-                return false;
-            }
-            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            return cache.remove(e.getKey(), e.getValue());
-        }
-
-        public boolean removeAll(Collection<?> c) {
-            final Predicate selector = withFilter.selector;
-            List l = CollectionPredicates.filter(c, selector);
-            return l.size() > 0 ? cache.removeEntries(l) : false;
-        }
-
-        public final boolean retainAll(Collection<?> c) {
-            final Predicate selector = withFilter.selector;
-            return cache.retainAll(constant(), selector, c);
-        }
-
-    }
-
-    final class EntrySetSynchronized extends EntrySet {
-        private final Object mutex;
-
-        EntrySetSynchronized(Object mutex) {
-            this.mutex = mutex;
-        }
-
-        @Override
-        public boolean containsAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.containsAll(c);
-            }
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            synchronized (mutex) {
-                return super.equals(o);
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            synchronized (mutex) {
-                return super.hashCode();
-            }
-        }
-
-        @Override
-        public Object[] toArray() {
-            synchronized (mutex) {
-                return super.toArray();
-            }
-        }
-
-        @Override
-        public <T> T[] toArray(T[] a) {
-            synchronized (mutex) {
-                return super.toArray(a);
-            }
-        }
-
-        @Override
-        void _toString(StringBuilder sb) {
-            synchronized (mutex) {
-                super._toString(sb);
-            }
-        }
-
-    }
-
     final class HashIterator<E> implements Iterator<E> {
         private ChainingEntry<K, V> current; // current entry
 
@@ -946,11 +545,7 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         private final Predicate<E> predicate;
 
         HashIterator(Mapper<Entry<K, V>, E> mapper) {
-            this(mapper, Predicates.<E> truePredicate());
-        }
-
-        HashIterator(Mapper<Entry<K, V>, E> mapper, Predicate<E> predicate) {
-            this(mapper, predicate, null);
+            this(mapper, Predicates.<E> truePredicate(), null);
         }
 
         HashIterator(Mapper<Entry<K, V>, E> mapper, Predicate<E> predicate, Mapper postSelect) {
@@ -1005,159 +600,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
                         && ((next = t[index++]) == null || !predicate.evaluate(m.map(next)))) {}
             }
             return e;
-        }
-    }
-
-    class KeySet extends AbstractSetView<K> {
-
-        public KeySet() {
-            super(MAP_ENTRY_TO_KEY_MAPPER);
-        }
-
-        public final boolean contains(Object o) {
-            return cache.containsKey(o);
-        }
-
-        public boolean containsAll(Collection<?> c) {
-            checkStarted();
-            for (Object entry : c) {
-                if (get(entry) == null) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public final boolean remove(Object o) {
-            return cache.remove(o) != null;
-        }
-
-        public final boolean removeAll(Collection<?> c) {
-            return cache.removeKeys(c);
-        }
-
-        public final boolean retainAll(Collection<?> c) {
-            return cache.retainAll(mapEntryToKey(), Predicates.TRUE, c);
-        }
-
-    }
-
-    final class KeySetSynchronized extends KeySet {
-        private final Object mutex;
-
-        KeySetSynchronized(Object mutex) {
-            this.mutex = mutex;
-        }
-
-        public boolean containsAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.containsAll(c);
-            }
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            synchronized (mutex) {
-                return super.equals(o);
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            synchronized (mutex) {
-                return super.hashCode();
-            }
-        }
-
-        @Override
-        public Object[] toArray() {
-            synchronized (mutex) {
-                return super.toArray();
-            }
-        }
-
-        @Override
-        public <T> T[] toArray(T[] a) {
-            synchronized (mutex) {
-                return super.toArray(a);
-            }
-        }
-
-        @Override
-        void _toString(StringBuilder sb) {
-            synchronized (mutex) {
-                super._toString(sb);
-            }
-        }
-    }
-
-    class Values extends AbstractCollectionView<V> {
-
-        public Values() {
-            super(MAP_ENTRY_TO_VALUE_MAPPER);
-        }
-
-        public final boolean contains(Object o) {
-            return cache.containsValue(o);
-        }
-
-        public boolean containsAll(Collection<?> c) {
-            checkStarted();
-            Iterator<?> e = c.iterator();
-            while (e.hasNext()) {
-                if (withFilterOnValues((Predicate) Predicates.isEquals(e.next())).any() == null) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public final boolean remove(Object o) {
-            return cache.removeValue(o);
-        }
-
-        public final boolean removeAll(Collection<?> c) {
-            return cache.removeValues(c);
-        }
-
-        public final boolean retainAll(Collection<?> c) {
-            return cache.retainAll(mapEntryToValue(), Predicates.TRUE, c);
-        }
-    }
-
-    final class ValuesSynchronized extends Values {
-        private final Object mutex;
-
-        ValuesSynchronized(Object mutex) {
-            this.mutex = mutex;
-        }
-
-        @Override
-        public boolean containsAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.containsAll(c);
-            }
-        }
-
-        @Override
-        public Object[] toArray() {
-            synchronized (mutex) {
-                return super.toArray();
-            }
-        }
-
-        @Override
-        public <T> T[] toArray(T[] a) {
-            synchronized (mutex) {
-                return super.toArray(a);
-            }
-        }
-
-        @Override
-        void _toString(StringBuilder sb) {
-            synchronized (mutex) {
-                super._toString(sb);
-            }
         }
     }
 
@@ -1235,6 +677,55 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
             }
         }
 
+        public Iterator<T> sequentially() {
+            return new HashIterator<T>(CONSTANT_MAPPER, (Predicate) selector, mapper);
+        }
+
+        public final int size() {
+            int count = 0;
+            if (size != 0) {
+                for (int i = 0; i < table.length; i++) {
+                    for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
+                        if (selector.evaluate(e)) {
+                            count++;
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+
+        public final <U> MemoryStoreWithMapping<U> withMapping(Mapper<? super T, ? extends U> mapper) {
+            return new WithFilteredMapping<U>(selector, compoundMapper(this.mapper, mapper));
+        }
+
+        public T reduce(Reducer<T> reducer, T base) {
+            T result = base;
+            if (size != 0) {
+                for (int i = 0; i < table.length; i++) {
+                    for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
+                        if (selector.evaluate(e)) {
+                            T t = mapper.map(e);
+                            result = reducer.combine(result, t);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+    }
+
+    class WithFilterImpl extends WithFilteredMapping<CacheEntry<K, V>> implements
+            MemoryStoreWithFilter<K, V> {
+        WithFilterImpl(Predicate<? super CacheEntry<K, V>> selector) {
+            super(selector, CONSTANT_MAPPER);
+        }
+
+        WithFilterImpl(Predicate<? super CacheEntry<K, V>> selector,
+                Mapper<? super CacheEntry<K, V>, ? super CacheEntry<K, V>> mapper) {
+            super(selector, (Mapper) mapper);
+        }
+
         public void clear() {
             if (size != 0) {
                 for (int i = 0; i < table.length; i++) {
@@ -1257,44 +748,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
                     }
                 }
             }
-        }
-
-        public final int size() {
-            int count = 0;
-            if (size != 0) {
-                for (int i = 0; i < table.length; i++) {
-                    for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
-                        if (selector.evaluate(e)) {
-                            count++;
-                        }
-                    }
-                }
-            }
-            return count;
-        }
-
-        public final <U> MemoryStoreWithMapping<U> withMapping(Mapper<? super T, ? extends U> mapper) {
-            return new WithFilteredMapping<U>(selector, compoundMapper(this.mapper, mapper));
-        }
-    }
-
-    class WithFilterImpl extends WithFilteredMapping<CacheEntry<K, V>> implements
-            MemoryStoreWithFilter<K, V> {
-        WithFilterImpl(Predicate<? super CacheEntry<K, V>> selector) {
-            super(selector, CONSTANT_MAPPER);
-        }
-
-        WithFilterImpl(Predicate<? super CacheEntry<K, V>> selector,
-                Mapper<? super CacheEntry<K, V>, ? super CacheEntry<K, V>> mapper) {
-            super(selector, (Mapper) mapper);
-        }
-
-        public Set<Entry<K, V>> entrySet() {
-            return new EntrySetFiltered(this);
-        }
-
-        public Set<K> keySet() {
-            return null;
         }
 
         public ParallelArray<CacheEntry<K, V>> removeAll() {
@@ -1336,10 +789,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
             return null;
         }
 
-        public Collection<V> values() {
-            return null;
-        }
-
         public MemoryStoreWithFilter<K, V> withFilter(Predicate<? super CacheEntry<K, V>> selector) {
             return new WithFilterImpl(Predicates.and(this.selector, selector));
         }
@@ -1367,7 +816,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         public final MemoryStoreWithMapping<V> withValues() {
             return withMapping(MAP_ENTRY_TO_VALUE_MAPPER);
         }
-
     }
 
     final class WithMappingImpl<T> implements MemoryStoreWithMapping<T> {
@@ -1397,8 +845,8 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
             AbstractSequentialMemoryStore.this.apply(mapper, procedure);
         }
 
-        public void clear() {
-            cache.clear();
+        public Iterator<T> sequentially() {
+            return new HashIterator<T>((Mapper) mapper);
         }
 
         public int size() {
@@ -1408,6 +856,9 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         public <U> MemoryStoreWithMapping<U> withMapping(Mapper<? super T, ? extends U> mapper) {
             return new WithMappingImpl(compoundMapper(this.mapper, mapper));
         }
-    }
 
+        public T reduce(Reducer<T> reducer, T base) {
+            return AbstractSequentialMemoryStore.this.reduce(mapper, reducer, base);
+        }
+    }
 }

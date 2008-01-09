@@ -122,15 +122,15 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
     public void trimToVolume() {
         assertGet(M1, M2, M3, M4);
         assertSize(4);
-        assertEquals(1 + 2 + 3 + 4, c.getVolume());
+        assertEquals(1 + 2 + 3 + 4, c.volume());
         mxBean.trimToVolume(5);
 
-        long v = c.getVolume();
-        assertTrue(c.getVolume() <= 5);
+        long v = c.volume();
+        assertTrue(c.volume() <= 5);
         assertGet(M5);
-        assertEquals(v + 5, c.getVolume());
+        assertEquals(v + 5, c.volume());
         mxBean.trimToVolume(3);
-        assertTrue(c.getVolume() <= 3);
+        assertTrue(c.volume() <= 3);
         // Exception
         try {
             mxBean.trimToVolume(-1);

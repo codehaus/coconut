@@ -106,7 +106,7 @@ public class DummyCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public long getVolume() {
+    public long volume() {
         return 0;
     }
 

@@ -133,7 +133,7 @@ public final class Caches {
         }
 
         /** {@inheritDoc} */
-        public long getVolume() {
+        public long volume() {
             return 0;
         }
 

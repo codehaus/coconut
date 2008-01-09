@@ -127,7 +127,7 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
                 return;
             }
             if (force) {
-                keys = Attributes.toMap(new ArrayList(map.keySet()), attributes);
+                keys = Attributes.toMap(new ArrayList(map.all().asList()), attributes);
             } else {
                 keys =null;
                 //keys = map.whoNeedsLoading(attributes);

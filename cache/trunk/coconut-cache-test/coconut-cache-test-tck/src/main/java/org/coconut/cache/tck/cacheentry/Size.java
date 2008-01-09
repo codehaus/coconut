@@ -30,24 +30,24 @@ public class Size extends AbstractCacheTCKTest {
     public void cacheCapacity() {
         init(conf.loading().setLoader(new MyLoader()));
         assertGet(M1);
-        assertEquals(2, c.getVolume());
+        assertEquals(2, c.volume());
         assertGet(M3);
-        assertEquals(7, c.getVolume());
+        assertEquals(7, c.volume());
         remove(M1);
-        assertEquals(5, c.getVolume());
+        assertEquals(5, c.volume());
         assertGet(M6);
-        assertEquals(14, c.getVolume());
+        assertEquals(14, c.volume());
         assertSize(2);// element size unaffected
         c.clear();
-        assertEquals(0, c.getVolume());
+        assertEquals(0, c.volume());
 
         init();
         put(M1);
-        assertEquals(1, c.getVolume());
+        assertEquals(1, c.volume());
         putAll(M1, M2);
-        assertEquals(2, c.getVolume());
+        assertEquals(2, c.volume());
         c.clear();
-        assertEquals(0, c.getVolume());
+        assertEquals(0, c.volume());
     }
 
     @SuppressWarnings("unchecked")

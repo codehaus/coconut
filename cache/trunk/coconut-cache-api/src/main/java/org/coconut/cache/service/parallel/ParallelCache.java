@@ -4,40 +4,34 @@
 package org.coconut.cache.service.parallel;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.memory.MemoryStoreWithMapping;
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
 
 public abstract class ParallelCache<K, V> /* implements Iterable<CacheEntry<K, V>> */{
-    /**
-     * Applies the given procedure to all elements in the cache
-     *
-     * @param procedure
-     *            the procedure
-     */
+
     public abstract void apply(Procedure<? super CacheEntry<K, V>> procedure);
-
-    public abstract int size();// return long instead???
-
-    public abstract WithKeyValues<K> withKeys();
-    public abstract WithKeyValues<V> withValues();
+    public abstract int size();
+    public abstract long volume();
+    public abstract WithMapping<K> withKeys();
+    public abstract WithMapping<V> withValues();
+    
     public abstract WithFilter<K, V> withFilter(Predicate<? super CacheEntry<K, V>> selector);
+    
     public abstract <U> WithMapping<U> withMapping(
             Mapper<? super CacheEntry<K, V>, ? extends U> mapper);
 
     public static abstract class WithFilter<K, V> {
-        public abstract WithFilter<K, V> withFilter(Predicate<? super WithFilter<K, V>> selector);
+        public abstract WithFilter<K, V> withFilter(Predicate<? super CacheEntry<K, V>> selector);
         public abstract void apply(Procedure<? super CacheEntry<K, V>> procedure);
-        public abstract int size();// return long instead???
+        public abstract int size();
     }
 
     public static abstract class WithMapping<T> {
         public abstract void apply(Procedure<? super T> procedure);
-        public abstract int size();// return long instead???
+        public abstract int size();
+        public abstract <U> WithMapping<U> withMapping(Mapper<? super T, ? extends U> mapper);
     }
 
-    public static abstract class WithKeyValues<T> {
-        public abstract void apply(Procedure<? super T> procedure);
-        public abstract int size();// return long instead???
-    }
 }
