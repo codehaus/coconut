@@ -16,22 +16,22 @@ public class ParallelApply extends AbstractCacheTCKTest {
 
     @Test(expected = NullPointerException.class)
     public void applyNPE() {
-        eviction().get().apply(null);
+        eviction().getParallelCache().apply(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void applyNPE1() {
         init(5);
-        eviction().get().apply(null);
+        eviction().getParallelCache().apply(null);
     }
 
     @Test
     public void apply() {
         Copy copy = new Copy();
-        eviction().get().apply(copy);
+        eviction().getParallelCache().apply(copy);
         assertEquals(0, copy.chm.size());
         init(5);
-        eviction().get().apply(copy);
+        eviction().getParallelCache().apply(copy);
         assertEquals(5, copy.chm.size());
         assertEquals(M1_TO_M5_SET, new HashSet(copy.chm.values()));
     }
@@ -40,14 +40,14 @@ public class ParallelApply extends AbstractCacheTCKTest {
     public void shutdownNoISE() {
         init(5);
         c.shutdown();
-        eviction().get().apply(new Copy());
+        eviction().getParallelCache().apply(new Copy());
     }
 
     @Test
     public void size() {
-        assertEquals(0, eviction().get().size());
+        assertEquals(0, eviction().getParallelCache().size());
         init(5);
-        assertEquals(5, eviction().get().size());
+        assertEquals(5, eviction().getParallelCache().size());
     }
 
     static class Copy implements Procedure<CacheEntry<Integer, String>> {

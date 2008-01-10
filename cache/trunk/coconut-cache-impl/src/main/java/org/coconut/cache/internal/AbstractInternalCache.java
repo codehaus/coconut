@@ -1,9 +1,7 @@
 package org.coconut.cache.internal;
 
-import static org.coconut.operations.Mappers.CONSTANT_MAPPER;
 import static org.coconut.operations.Mappers.MAP_ENTRY_TO_KEY_MAPPER;
 import static org.coconut.operations.Mappers.MAP_ENTRY_TO_VALUE_MAPPER;
-import static org.coconut.operations.Mappers.constant;
 import static org.coconut.operations.Mappers.mapEntryToKey;
 import static org.coconut.operations.Mappers.mapEntryToValue;
 
@@ -23,6 +21,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.listener.DefaultCacheListener;
@@ -37,10 +36,9 @@ import org.coconut.internal.util.CollectionUtils;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 
 public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V> {
-    private static Mapper SAFE_MAPPER = constant();
-
     private final String name;
 
     private final AbstractCacheServiceManager serviceManager;
@@ -73,6 +71,11 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
 
     public final boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return serviceManager.awaitTermination(timeout, unit);
+    }
+
+    public <T> void apply(Predicate<? super CacheEntry<K, V>> selector,
+            Mapper<? super CacheEntry<K, V>, T> mapper, Procedure<T> procedure) {
+        memoryCache.withFilter(selector).withMapping(mapper).apply(procedure);
     }
 
     public boolean containsKey(Object key) {
@@ -305,12 +308,8 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
 
         abstract Mapper mapper();
 
-        final Iterator<E> unsafeIterator() {
-            return memoryCache.withMapping(unsafeMapper()).sequentially();
-        }
-
-        Mapper unsafeMapper() {
-            return mapper();
+        Iterator<E> unsafeIterator() {
+            return memoryCache.withMapping(mapper()).sequentially();
         }
     }
 
@@ -397,17 +396,16 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         }
 
         public final boolean retainAll(Collection<?> c) {
-            return AbstractInternalCache.this.retainAll(SAFE_MAPPER, c);
+            return AbstractInternalCache.this.retainAll(mapper(), c);
         }
 
         @Override
-        Mapper mapper() {
-            return SAFE_MAPPER;
+        final Mapper mapper() {
+            return AbstractCacheEntryFactoryService.SAFE_MAPPER;
         }
 
-        @Override
-        Mapper unsafeMapper() {
-            return CONSTANT_MAPPER;
+        Iterator<Map.Entry<K, V>> unsafeIterator() {
+            return (Iterator) memoryCache.sequentially();
         }
     }
 
@@ -440,7 +438,7 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         }
 
         @Override
-        Mapper mapper() {
+        final Mapper mapper() {
             return MAP_ENTRY_TO_KEY_MAPPER;
         }
 
@@ -476,7 +474,7 @@ public abstract class AbstractInternalCache<K, V> implements InternalCache<K, V>
         }
 
         @Override
-        Mapper mapper() {
+        final Mapper mapper() {
             return MAP_ENTRY_TO_VALUE_MAPPER;
         }
     }

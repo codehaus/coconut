@@ -4,7 +4,7 @@
  * http://creativecommons.org/licenses/publicdomain
  */
 
-package org.coconut.internal.forkjoin;
+package org.coconut.forkjoin;
 
 /**
  * A computation that is broken into a series of task executions, each

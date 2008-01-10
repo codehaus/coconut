@@ -145,5 +145,5 @@ public interface MemoryStoreService<K, V> {
      */
      void setDisabled(boolean isDisabled);
     
-    ParallelCache<K, V> get();
+    ParallelCache<K, V> getParallelCache();
 }

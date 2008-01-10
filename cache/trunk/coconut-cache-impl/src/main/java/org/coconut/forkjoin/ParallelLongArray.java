@@ -4,17 +4,17 @@
  * http://creativecommons.org/licenses/publicdomain
  */
 
-package org.coconut.internal.forkjoin;
-import static org.coconut.internal.forkjoin.Ops.doubleMaxReducer;
-import static org.coconut.internal.forkjoin.Ops.doubleMinReducer;
-import static org.coconut.internal.forkjoin.Ops.longMaxReducer;
-import static org.coconut.internal.forkjoin.Ops.longMinReducer;
-import static org.coconut.internal.forkjoin.Ops.naturalDoubleComparator;
-import static org.coconut.internal.forkjoin.Ops.naturalDoubleMaxReducer;
-import static org.coconut.internal.forkjoin.Ops.naturalDoubleMinReducer;
-import static org.coconut.internal.forkjoin.Ops.naturalLongComparator;
-import static org.coconut.internal.forkjoin.Ops.naturalLongMaxReducer;
-import static org.coconut.internal.forkjoin.Ops.naturalLongMinReducer;
+package org.coconut.forkjoin;
+import static org.coconut.forkjoin.Ops.doubleMaxReducer;
+import static org.coconut.forkjoin.Ops.doubleMinReducer;
+import static org.coconut.forkjoin.Ops.longMaxReducer;
+import static org.coconut.forkjoin.Ops.longMinReducer;
+import static org.coconut.forkjoin.Ops.naturalDoubleComparator;
+import static org.coconut.forkjoin.Ops.naturalDoubleMaxReducer;
+import static org.coconut.forkjoin.Ops.naturalDoubleMinReducer;
+import static org.coconut.forkjoin.Ops.naturalLongComparator;
+import static org.coconut.forkjoin.Ops.naturalLongMaxReducer;
+import static org.coconut.forkjoin.Ops.naturalLongMinReducer;
 
 import java.lang.reflect.Array;
 import java.util.AbstractList;

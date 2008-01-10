@@ -21,11 +21,13 @@ import org.coconut.cache.internal.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.memorystore.MemoryStoreConfiguration;
 import org.coconut.core.Clock;
+import org.coconut.operations.Mappers;
+import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
 
 /**
  * An AbstractCacheEntryFactoryService is responsible for creating cache entry instances.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -35,6 +37,7 @@ import org.coconut.operations.Ops.Predicate;
  */
 public abstract class AbstractCacheEntryFactoryService<K, V> implements
         InternalCacheEntryService<K, V> {
+    public static final Mapper SAFE_MAPPER = Mappers.CONSTANT_MAPPER;
 
     /** Used for calculating timestamps. */
     private final Clock clock;
@@ -46,7 +49,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     /**
      * Creates a new AbstractCacheEntryFactoryService.
-     *
+     * 
      * @param clock
      *            the clock used to calculate time stamps
      * @param exceptionHandler
@@ -76,7 +79,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     /**
      * Creates a new empty AttributeMap.
-     *
+     * 
      * @return a new empty AttributeMap
      */
     public AttributeMap createMap() {
@@ -86,7 +89,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
     /**
      * Creates a new AttributeMap populated containing the entries specified in the
      * specified attribute map.
-     *
+     * 
      * @param copyFrom
      *            the map to copy entries from
      * @return a new AttributeMap populated containing the entries specified in the
@@ -101,14 +104,14 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
     }
 
     private void illegalAttribute(Attribute a, K key, Object illegal, Object defaultValue) {
-        String warning = CacheInternals.lookup(AbstractCacheEntryFactoryService.class, "ia", a, key,
-                illegal.toString(), defaultValue.toString());
+        String warning = CacheInternals.lookup(AbstractCacheEntryFactoryService.class, "ia", a,
+                key, illegal.toString(), defaultValue.toString());
         exceptionService.warning(warning);
     }
 
     /**
      * Calculates the cost of the element that was added.
-     *
+     * 
      * @param key
      *            the key of the cache entry
      * @param value
@@ -169,7 +172,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     /**
      * Calculates the size of the element that was added.
-     *
+     * 
      * @param key
      *            the key of the cache entry
      * @param value

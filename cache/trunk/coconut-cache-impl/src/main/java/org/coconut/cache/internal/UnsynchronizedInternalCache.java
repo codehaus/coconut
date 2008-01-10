@@ -13,14 +13,13 @@ import org.coconut.cache.internal.service.expiration.UnsynchronizedCacheExpirati
 import org.coconut.cache.internal.service.loading.UnsynchronizedCacheLoaderService;
 import org.coconut.cache.internal.service.memorystore.UnsynchronizedMemoryStoreService;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
-import org.coconut.internal.forkjoin.ParallelArray;
+import org.coconut.forkjoin.ParallelArray;
 import org.coconut.internal.util.CollectionUtils;
 import org.coconut.operations.CollectionPredicates;
 import org.coconut.operations.Mappers;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
-import org.coconut.operations.Ops.Procedure;
 
 public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V> {
 
@@ -183,7 +182,8 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
     }
 
     public V get(Object key) {
-        throw new UnsupportedOperationException();
+        CacheEntry<K, V> ce = memoryCache.get(key);
+        return ce == null ? null : ce.getValue();
     }
 
     public Map<K, V> getAll(Collection<? extends K> keys) {
@@ -191,7 +191,7 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
     }
 
     public CacheEntry<K, V> getEntry(K key) {
-        throw new UnsupportedOperationException();
+        return memoryCache.get(key);
     }
 
     public V replace(K key, V value) {
@@ -201,10 +201,4 @@ public class UnsynchronizedInternalCache<K, V> extends AbstractInternalCache<K, 
     public boolean replace(K key, V oldValue, V newValue) {
         throw new UnsupportedOperationException();
     }
-
-    public <T> void apply(Predicate<? super CacheEntry<K, V>> selector,
-            Mapper<? super CacheEntry<K, V>, T> mapper, Procedure<T> procedure) {
-        memoryCache.withFilter(selector).withMapping(mapper).apply(procedure);
-    }
-
 }

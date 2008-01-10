@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheEntry;
-import org.coconut.internal.forkjoin.ParallelArray;
+import org.coconut.forkjoin.ParallelArray;
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
 
@@ -33,5 +33,4 @@ public interface MemoryStoreWithFilter<K, V> extends MemoryStoreWithMapping<Cach
     MemoryStoreWithFilter<K, V> withFilterOnKeys(Predicate<? super K> selector);
 
     MemoryStoreWithFilter<K, V> withFilterOnValues(Predicate<? super V> selector);
-
 }

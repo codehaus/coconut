@@ -16,7 +16,7 @@ import org.junit.Test;
 public class WithMapping extends AbstractCacheTCKTest {
 
     public ParallelCache.WithMapping<Integer> p() {
-        return eviction().get().withMapping((Mapper) Mappers.mapEntryToKey());
+        return eviction().getParallelCache().withMapping((Mapper) Mappers.mapEntryToKey());
     }
 
     @Test(expected = NullPointerException.class)
@@ -25,7 +25,7 @@ public class WithMapping extends AbstractCacheTCKTest {
     }
     @Test(expected = NullPointerException.class)
     public void withFilterNPE() {
-        eviction().get().withMapping(null);
+        eviction().getParallelCache().withMapping(null);
     }
 
 
@@ -63,7 +63,7 @@ public class WithMapping extends AbstractCacheTCKTest {
     @Test
     public void filterOnFilter() {
         init(5);
-        ParallelCache.WithFilter wf = eviction().get().withFilter(
+        ParallelCache.WithFilter wf = eviction().getParallelCache().withFilter(
                 Predicates.mapAndEvaluate((Mapper) Mappers.mapEntryToKey(), Predicates
                         .greaterThen(1)));
         assertEquals(4, wf.size());

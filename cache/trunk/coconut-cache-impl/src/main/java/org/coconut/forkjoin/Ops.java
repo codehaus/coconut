@@ -4,7 +4,7 @@
  * http://creativecommons.org/licenses/publicdomain
  */
 
-package org.coconut.internal.forkjoin;
+package org.coconut.forkjoin;
 import java.util.Comparator;
 
 import org.coconut.operations.Ops.DoubleComparator;
@@ -50,7 +50,7 @@ import org.coconut.operations.Ops.Reducer;
  *
  * <p>This class is normally best used via <tt>import static</tt>.
  */
-public class Ops {
+class Ops {
     private Ops() {} // disable construction
 
     /**

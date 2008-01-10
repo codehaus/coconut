@@ -4,7 +4,7 @@
  *
  */
 
-package org.coconut.internal.forkjoin;
+package org.coconut.forkjoin;
 
 /**
  * Resultless ForkJoinTasks with explicit completions.  Unlike some

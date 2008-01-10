@@ -4,7 +4,7 @@
  * http://creativecommons.org/licenses/publicdomain
  */
 
-package org.coconut.internal.forkjoin;
+package org.coconut.forkjoin;
 import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;

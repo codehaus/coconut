@@ -19,7 +19,8 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.internal.forkjoin.ParallelArray;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.forkjoin.ParallelArray;
 import org.coconut.internal.util.CollectionUtils;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Mapper;
@@ -27,11 +28,15 @@ import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
 import org.coconut.operations.Ops.Reducer;
 
-public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore<K, V> {
+public abstract class AbstractSequentialMemoryStore<K, V> extends AbstractCacheLifecycle implements
+        MemoryStore<K, V> {
 
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
-    final Cache<K, V> cache;
+    private final MemoryStoreWithMapping<CacheEntry<K, V>> noMapping = new WithMappingImpl(
+            CONSTANT_MAPPER);
+
+    private final Cache<K, V> cache;
 
     /**
      * The load factor for the hash table.
@@ -48,12 +53,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
 
     long volume;
 
-    private final MemoryStoreWithMapping<CacheEntry<K, V>> constantUnsafe = new WithMappingImpl(
-            CONSTANT_MAPPER);
-
-    private final MemoryStoreWithMapping<CacheEntry<K, V>> constantSafe = new WithMappingImpl(
-            CONSTANT_MAPPER);// replace with safe mapper
-
     AbstractSequentialMemoryStore(Cache<K, V> cache) {
         if (cache == null) {
             throw new NullPointerException("cache is null");
@@ -62,35 +61,39 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
     }
 
     public ParallelArray<CacheEntry<K, V>> all() {
-        return constantUnsafe.all();
+        return noMapping.all();
     }
 
     public ParallelArray<CacheEntry<K, V>> all(Class<? super CacheEntry<K, V>> elementType) {
-        return constantUnsafe.all(elementType);
+        return noMapping.all(elementType);
     }
 
     public CacheEntry<K, V> any() {
         if (size != 0) {
-            ChainingEntry<K, V>[] table = this.table;
-            int len = table.length;
-            for (int i = 0; i < len; i++) {
-                for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
-                    return e;
+            for (int i = 0; i < table.length; i++) {
+                if (table[i] != null) {
+                    return table[i];
                 }
             }
         }
         return null;
     }
 
+    public Iterator<CacheEntry<K, V>> sequentially() {
+        return noMapping.sequentially();
+    }
+
     public void apply(Procedure<? super CacheEntry<K, V>> procedure) {
-        constantUnsafe.apply(procedure);
+        noMapping.apply(procedure);
     }
 
     public void clear() {
         modCount++;
+        // Arrays.fill(table,null);??
         for (int i = 0; i < table.length; i++) {
             table[i] = null;
         }
+        volume = 0;
         size = 0;
     }
 
@@ -170,7 +173,7 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
     }
 
     public CacheEntry<K, V> reduce(Reducer<CacheEntry<K, V>> reducer, CacheEntry<K, V> base) {
-        return constantSafe.reduce(reducer, base);
+        return noMapping.reduce(reducer, base);
     }
 
     public final CacheEntry<K, V> remove(Object key) {
@@ -300,10 +303,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         return null;
     }
 
-    public Iterator<CacheEntry<K, V>> sequentially() {
-        return new HashIterator<CacheEntry<K, V>>(CONSTANT_MAPPER);
-    }
-
     public void setMaximumSize(int size) {
         throw new UnsupportedOperationException("size limitation not supported for this cache");
     }
@@ -314,6 +313,11 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
 
     public int size() {
         return size;
+    }
+
+    @Override
+    public void terminated() {
+        table = new ChainingEntry[1];
     }
 
     public ParallelArray<CacheEntry<K, V>> trim() {
@@ -815,7 +819,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
             if (size != 0) {
                 for (int i = 0; i < table.length; i++) {
                     for (ChainingEntry<K, V> e = table[i]; e != null; e = e.next()) {
-
                         T userMapped = mapper.map(e);
                         procedure.apply(userMapped);
 

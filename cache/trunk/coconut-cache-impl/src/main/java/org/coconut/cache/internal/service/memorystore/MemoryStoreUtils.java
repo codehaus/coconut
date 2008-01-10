@@ -146,8 +146,8 @@ final class MemoryStoreUtils {
             service.setDisabled(isDisabled);
         }
 
-        public ParallelCache<K, V> get() {
-            return service.get();
+        public ParallelCache<K, V> getParallelCache() {
+            return service.getParallelCache();
         }
     }
 

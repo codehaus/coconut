@@ -236,7 +236,6 @@ public class SynchronizedInternalCache<K, V> extends AbstractInternalCache<K, V>
             components.add(SynchronizedCacheWorkerService.class);
             components.add(SynchronizedCacheServiceManager.class);
             components.add(SynchronizedEntryFactoryService.class);
-            components.add(SynchronizedEntryMap.class);
             return new SynchronizedInternalCache(cache, configuration, components);
         }
     }

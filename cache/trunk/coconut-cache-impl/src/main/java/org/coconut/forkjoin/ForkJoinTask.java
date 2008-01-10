@@ -4,7 +4,7 @@
  * http://creativecommons.org/licenses/publicdomain
  */
 
-package org.coconut.internal.forkjoin;
+package org.coconut.forkjoin;
 import java.lang.reflect.Field;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;

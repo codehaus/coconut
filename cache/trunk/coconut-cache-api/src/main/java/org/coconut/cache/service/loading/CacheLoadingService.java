@@ -46,6 +46,8 @@ import org.coconut.cache.CacheServices;
  */
 public interface CacheLoadingService<K, V> {
 
+    //V reload();
+    //V reload(AttributeMap attributes);
     /**
      * This method will attempt to load the value, for the specified key, from the
      * configured cache loader even if a valid mapping for the specified key is already in

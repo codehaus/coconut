@@ -24,6 +24,9 @@ public final class Mappers {
 
     public static final Mapper MAP_ENTRY_TO_VALUE_MAPPER = new ValueFromMapEntry();
 
+    //mapper<K,V> -> return map.get(K)
+    public static final Mapper GET_FROM_MAP_MAPPER = new ValueFromMapEntry();
+    
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private Mappers() {}

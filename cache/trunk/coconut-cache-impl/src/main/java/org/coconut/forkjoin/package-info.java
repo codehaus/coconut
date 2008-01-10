@@ -34,4 +34,4 @@
  * associated code bodies in TaskTypes, along with an evolving set of
  * implementations for lists and arrays of objects and scalars.
  */
-package org.coconut.internal.forkjoin;
+package org.coconut.forkjoin;
