@@ -13,22 +13,6 @@ import java.util.Map;
  */
 public interface Cache2<K, V> extends Cache<K, V> {
 
-    //put all on abstract cache
-    Map<K, CacheEntry<K, V>> getAllEntries(Collection<? extends K> keys);
-
-    CacheEntry<K, V> putEntry(CacheEntry<K, V> entry);
-
-    void putAllEntries(Collection<? extends CacheEntry<K, V>> entries);
-
-    /* think about these */
-    CacheEntry<K, V> putIfAbsentEntry(CacheEntry<K, V> entry);
-
-    boolean removeEntry(CacheEntry<K, V> entry);
-
-    CacheEntry<K, V> replaceEntry(CacheEntry<K, V> entry);
-
-    boolean replaceEntry(CacheEntry<K, V> newEntry, CacheEntry<K, V> oldEntry);
-    
     /*
      * All o The first level is thread safety/performance unsynchronized cache,
      * for example, org. {@link org.coconut.cache.defaults.UnsynchronizedCache}

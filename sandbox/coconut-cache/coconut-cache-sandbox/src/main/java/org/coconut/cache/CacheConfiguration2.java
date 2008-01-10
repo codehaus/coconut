@@ -30,43 +30,6 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
     }
 
 
-    /**
-     * Returns an unmodifiable view of the specified configuration. This method
-     * allows modules to provide users with "read-only" access to
-     * configurations. Query (get) operations on the returned configuration
-     * "read through" to the specified configuration, and attempts to modify the
-     * returned configuration result in an UnsupportedOperationException.
-     * <p>
-     * If you need an unmodifiable version that is not backed by the existing
-     * configuration use new CacheConfiguration(existing
-     * configuration).unmodifiableConfiguration();
-     * 
-     * @return an unmodifiable version of the current configuration
-     */
-    public CacheConfiguration<K, V> unmodifiableConfiguration() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Creates a new CacheConfiguration by copying this configuration.
-     * 
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    public Object clone() {
-        return new CacheConfiguration2<K, V>(this);
-    }
-
-    /**
-     * Creates a new CacheConfiguration by copying an existing configuration.
-     * 
-     * @param otherConfiguration
-     *            the configuration to copy from
-     */
-    public CacheConfiguration2(CacheConfiguration2<K, V> otherConfiguration) {
-        throw new UnsupportedOperationException(); // TODO implement
-    }
-
     private boolean enableTiming = true;
 
     private boolean useHighResolutionCounter = true;

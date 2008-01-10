@@ -21,7 +21,5 @@ public interface AttributeCache<K, V> extends Cache<K, V> {
 
 	V removeIt(K key, AttributeMap attributes);
 
-	Map<K, V> removeAll(Collection<? extends K> keys);
-
 	Map<K, V> removeAll(Collection<? extends K> keys, AttributeMap attributes);
 }
