@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import jsr166y.forkjoin.Ops.Mapper;
+import jsr166y.forkjoin.Ops.Op;
 import jsr166y.forkjoin.Ops.Predicate;
 
 
@@ -622,9 +622,9 @@ public final class Predicates {
      * @param <T>
      *            the type of elements accepted by the specified Predicate
      */
-    public static <F, T> Predicate<F> mapAndEvaluate(final Mapper<F, T> mapper,
+    public static <F, T> Predicate<F> mapAndop(final Op<F, T> mapper,
             Predicate<? super T> predicate) {
-        return new MapAndEvaluatePredicate<F, T>(mapper, predicate);
+        return new MapAndopPredicate<F, T>(mapper, predicate);
     }
 
     /**
@@ -632,7 +632,7 @@ public final class Predicates {
      * More formally
      *
      * <pre>
-     * !predicate.evaluate(element);
+     * !predicate.op(element);
      * </pre>
      *
      * <p>
@@ -652,12 +652,12 @@ public final class Predicates {
     }
 
     /**
-     * Creates a new Predicate that will evaluate to <code>false</code> if the specified
+     * Creates a new Predicate that will op to <code>false</code> if the specified
      * element is <code>null</code>. Otherwise, it will return the evalutation result
-     * of the specified predicate evaluate the element. More formally
+     * of the specified predicate op the element. More formally
      *
      * <pre>
-     * element!=null &amp;&amp; predicate.evaluate(element);
+     * element!=null &amp;&amp; predicate.op(element);
      * </pre>
      *
      * <p>
@@ -679,11 +679,11 @@ public final class Predicates {
     /**
      * Creates a Predicate that performs a logical OR on two supplied predicates. The
      * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
-     * if the specified left side predicate evaluates to <code>true</code> the right
-     * side predicate will not be evaluated. More formally
+     * if the specified left side predicate ops to <code>true</code> the right
+     * side predicate will not be opd. More formally
      *
      * <pre>
-     * left.evaluate(element) || right.evaluate(element);
+     * left.op(element) || right.op(element);
      * </pre>
      *
      * <p>
@@ -705,7 +705,7 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that always evaluates to <code>true</code>. The returned
+     * Creates a Predicate that always ops to <code>true</code>. The returned
      * predicate is serializable.
      * <p>
      * This example illustrates the type-safe way to obtain a true predicate:
@@ -734,7 +734,7 @@ public final class Predicates {
      * supplied predicates. More formally
      *
      * <pre>
-     * left.evaluate(element) &circ; right.evaluate(element);
+     * left.op(element) &circ; right.op(element);
      * </pre>
      *
      * <p>
@@ -826,9 +826,9 @@ public final class Predicates {
          *            the element to test
          * @return <tt>true</tt> if all supplied Predicates accepts the element.
          */
-        public boolean evaluate(E element) {
+        public boolean op(E element) {
             for (Predicate<? super E> predicate : predicates) {
-                if (!predicate.evaluate(element)) {
+                if (!predicate.op(element)) {
                     return false;
                 }
             }
@@ -907,8 +907,8 @@ public final class Predicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(E element) {
-            return left.evaluate(element) && right.evaluate(element);
+        public boolean op(E element) {
+            return left.op(element) && right.op(element);
         }
 
         /**
@@ -984,9 +984,9 @@ public final class Predicates {
          *            the element to test
          * @return <tt>true</tt> if all supplied Predicates accepts the element.
          */
-        public boolean evaluate(E element) {
+        public boolean op(E element) {
             for (Predicate<? super E> predicate : predicates) {
-                if (predicate.evaluate(element)) {
+                if (predicate.op(element)) {
                     return true;
                 }
             }
@@ -1031,7 +1031,7 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to get
+     * A Predicate that always ops to <tt>false</tt>. Use {@link #FALSE} to get
      * an instance of this Predicate.
      *
      * @see TruePredicate
@@ -1051,7 +1051,7 @@ public final class Predicates {
          *            the element to test
          * @return <tt>false</tt> for any element
          */
-        public boolean evaluate(Object element) {
+        public boolean op(Object element) {
             return false;
         }
 
@@ -1120,7 +1120,7 @@ public final class Predicates {
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public boolean evaluate(E element) {
+        public boolean op(E element) {
             return comparator.compare(object, element) <= 0;
         }
 
@@ -1201,7 +1201,7 @@ public final class Predicates {
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public boolean evaluate(E element) {
+        public boolean op(E element) {
             return comparator.compare(object, element) < 0;
         }
 
@@ -1230,7 +1230,7 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
+     * A Predicate that ops to <code>true</code> iff the element being opd
      * is {@link Object#equals equal} to the element being specified.
      */
     final static class IsEqualsPredicate<E> implements Predicate<E>, Serializable {
@@ -1257,7 +1257,7 @@ public final class Predicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(E element) {
+        public boolean op(E element) {
             return this.element == element || this.element.equals(element);
         }
 
@@ -1286,7 +1286,7 @@ public final class Predicates {
         private static final long serialVersionUID = 6280765768913457567L;
 
         /** {@inheritDoc} */
-        public boolean evaluate(Object element) {
+        public boolean op(Object element) {
             return element != null;
         }
 
@@ -1303,7 +1303,7 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
+     * A Predicate that ops to <code>true</code> iff the element being opd
      * has the same object identity as the element being specified.
      */
     final static class IsSamePredicate<E> implements Predicate<E>, Serializable {
@@ -1330,7 +1330,7 @@ public final class Predicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(E element) {
+        public boolean op(E element) {
             return this.element == element;
         }
 
@@ -1381,7 +1381,7 @@ public final class Predicates {
                 throw new IllegalArgumentException(
                         "cannot create IsTypePredicate from primitive class '"
                                 + theClass.getName()
-                                + "', since all primitive arguments to evaluate() are automatically boxed");
+                                + "', since all primitive arguments to op() are automatically boxed");
             }
 
             this.theClass = theClass;
@@ -1395,7 +1395,7 @@ public final class Predicates {
          * @return <code>true</code> if the filter accepts the element;
          *         <code>false</code> otherwise.
          */
-        public boolean evaluate(E element) {
+        public boolean op(E element) {
             return theClass.isAssignableFrom(element.getClass());
         }
 
@@ -1462,7 +1462,7 @@ public final class Predicates {
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public boolean evaluate(E element) {
+        public boolean op(E element) {
             return comparator.compare(object, element) >= 0;
         }
 
@@ -1544,7 +1544,7 @@ public final class Predicates {
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public boolean evaluate(E element) {
+        public boolean op(E element) {
             return comparator.compare(object, element) > 0;
         }
 
@@ -1576,26 +1576,26 @@ public final class Predicates {
      * A Predicate that first applies the specified mapper to the argument before
      * evaluating the specified predicate.
      */
-    final static class MapAndEvaluatePredicate<F, T> implements Predicate<F>, Serializable {
+    final static class MapAndopPredicate<F, T> implements Predicate<F>, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -6292758840373110577L;
 
         /** The mapper used to map the element. */
-        private final Mapper<F, T> mapper;
+        private final Op<F, T> mapper;
 
         /** The predicate to test the mapped value against. */
         private final Predicate<? super T> predicate;
 
         /**
-         * Creates a new MapAndEvaluatePredicate.
+         * Creates a new MapAndopPredicate.
          *
          * @param mapper
          *            the mapper used to first map the argument
          * @param predicate
-         *            the predicate used to evaluate the mapped argument
+         *            the predicate used to op the mapped argument
          */
-        public MapAndEvaluatePredicate(Mapper<F, T> mapper, Predicate<? super T> predicate) {
+        public MapAndopPredicate(Op<F, T> mapper, Predicate<? super T> predicate) {
             if (mapper == null) {
                 throw new NullPointerException("mapper is null");
             } else if (predicate == null) {
@@ -1614,8 +1614,8 @@ public final class Predicates {
          * @return <code>true</code> if the predicate accepts the element;
          *         <code>false</code> otherwise.
          */
-        public boolean evaluate(F element) {
-            return predicate.evaluate(mapper.map(element));
+        public boolean op(F element) {
+            return predicate.op(mapper.op(element));
         }
 
         /**
@@ -1624,7 +1624,7 @@ public final class Predicates {
          *
          * @return the mapper that will map the object before applying the predicate on it
          */
-        public Mapper<F, T> getMapper() {
+        public Op<F, T> getMapper() {
             return mapper;
         }
 
@@ -1645,8 +1645,8 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that evaluates to true iff the Predicate used for constructing
-     * evaluates to <code>false</code>.
+     * A Predicate that ops to true iff the Predicate used for constructing
+     * ops to <code>false</code>.
      */
     final static class NotPredicate<E> implements Predicate<E>, Serializable {
 
@@ -1678,8 +1678,8 @@ public final class Predicates {
          *            the element to test
          * @return the logical NOT of the supplied Predicate
          */
-        public boolean evaluate(E element) {
-            return !predicate.evaluate(element);
+        public boolean op(E element) {
+            return !predicate.op(element);
         }
 
         /**
@@ -1733,8 +1733,8 @@ public final class Predicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(E element) {
-            return left.evaluate(element) || right.evaluate(element);
+        public boolean op(E element) {
+            return left.op(element) || right.op(element);
         }
 
         /**
@@ -1763,7 +1763,7 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get an
+     * A Predicate that always ops to <tt>true</tt>. Use {@link #TRUE} to get an
      * instance of this Predicate.
      *
      * @see FalsePredicate
@@ -1783,7 +1783,7 @@ public final class Predicates {
          *            the element to test
          * @return <tt>true</tt> for any element
          */
-        public boolean evaluate(Object element) {
+        public boolean op(Object element) {
             return true;
         }
 
@@ -1834,8 +1834,8 @@ public final class Predicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(E element) {
-            return left.evaluate(element) ^ right.evaluate(element);
+        public boolean op(E element) {
+            return left.op(element) ^ right.op(element);
         }
 
         /**

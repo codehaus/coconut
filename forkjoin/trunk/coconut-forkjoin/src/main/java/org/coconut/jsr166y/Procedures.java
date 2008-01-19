@@ -138,7 +138,7 @@ public final class Procedures {
         }
 
         /** {@inheritDoc} */
-        public void apply(E element) {
+        public void op(E element) {
             collection.add(element); // ignore return value
         }
     }
@@ -155,7 +155,7 @@ public final class Procedures {
         NoopProcedure() {}
 
         /** {@inheritDoc} */
-        public void apply(Object t) {}
+        public void op(Object t) {}
 
         /** @return Preserves singleton property */
         private Object readResolve() {
@@ -189,7 +189,7 @@ public final class Procedures {
         }
 
         /** {@inheritDoc} */
-        public void apply(E element) {
+        public void op(E element) {
             queue.offer(element); // ignore return value
         }
     }
@@ -206,7 +206,7 @@ public final class Procedures {
         SystemOutPrintlnProcedure() {}
 
         /** {@inheritDoc} */
-        public void apply(Object t) {
+        public void op(Object t) {
             System.out.println(t);
         }
 
@@ -228,7 +228,7 @@ public final class Procedures {
         SystemOutPrintProcedure() {}
 
         /** {@inheritDoc} */
-        public void apply(Object t) {
+        public void op(Object t) {
             System.out.print(t);
         }
 

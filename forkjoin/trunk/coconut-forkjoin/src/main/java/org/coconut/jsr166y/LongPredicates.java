@@ -6,7 +6,7 @@ package org.coconut.jsr166y;
 import java.io.Serializable;
 
 import jsr166y.forkjoin.Ops.LongPredicate;
-import jsr166y.forkjoin.Ops.MapperToLong;
+import jsr166y.forkjoin.Ops.ObjectToLong;
 import jsr166y.forkjoin.Ops.Predicate;
 
 /**
@@ -141,7 +141,7 @@ public final class LongPredicates {
      * @param predicate
      * @return the
      */
-    public static <T> Predicate<T> mapAndEvaluate(MapperToLong<T> mapper, LongPredicate predicate) {
+    public static <T> Predicate<T> mapAndEvaluate(ObjectToLong<T> mapper, LongPredicate predicate) {
         return new MapToLongAndEvaluatePredicate<T>(mapper, predicate);
     }
 
@@ -228,8 +228,8 @@ public final class LongPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(long element) {
-            return left.evaluate(element) && right.evaluate(element);
+        public boolean op(long element) {
+            return left.op(element) && right.op(element);
         }
 
         /**
@@ -278,7 +278,7 @@ public final class LongPredicates {
          * @return <code>true</code> if the specified value is equal to the value that
          *         was used when constructing this predicate, otherwise <code>false</code>.
          */
-        public boolean evaluate(long t) {
+        public boolean op(long t) {
             return equalsTo == t;
         }
 
@@ -305,7 +305,7 @@ public final class LongPredicates {
         FalseLongPredicate() {}
 
         /** {@inheritDoc} */
-        public boolean evaluate(long value) {
+        public boolean op(long value) {
             return false;
         }
 
@@ -334,7 +334,7 @@ public final class LongPredicates {
 
         /** {@inheritDoc} */
         /** {@inheritDoc} */
-        public boolean evaluate(long t) {
+        public boolean op(long t) {
             return greaterThen < t;
         }
 
@@ -355,7 +355,7 @@ public final class LongPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(long t) {
+        public boolean op(long t) {
             return greaterThenOrEquals <= t;
         }
 
@@ -376,7 +376,7 @@ public final class LongPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(long t) {
+        public boolean op(long t) {
             return lessThen > t;
         }
 
@@ -397,7 +397,7 @@ public final class LongPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(long t) {
+        public boolean op(long t) {
             return lessThenOrEquals >= t;
         }
 
@@ -416,7 +416,7 @@ public final class LongPredicates {
         private static final long serialVersionUID = -6292758840373110577L;
 
         /** The mapper that maps the element being tested to a long. */
-        private final MapperToLong<T> mapper;
+        private final ObjectToLong<T> mapper;
 
         /** The predicate to test against. */
         private final LongPredicate predicate;
@@ -429,7 +429,7 @@ public final class LongPredicates {
          * @param predicate
          *            the predicate used to evaluate the mapped argument
          */
-        MapToLongAndEvaluatePredicate(final MapperToLong<T> mapper, LongPredicate predicate) {
+        MapToLongAndEvaluatePredicate(final ObjectToLong<T> mapper, LongPredicate predicate) {
             if (mapper == null) {
                 throw new NullPointerException("mapper is null");
             } else if (predicate == null) {
@@ -440,8 +440,8 @@ public final class LongPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(T element) {
-            return predicate.evaluate(mapper.map(element));
+        public boolean op(T element) {
+            return predicate.op(mapper.op(element));
         }
 
         /**
@@ -451,7 +451,7 @@ public final class LongPredicates {
          * @return the mapper that will map the object to a long before applying the
          *         predicate on it
          */
-        public MapperToLong<T> getMapper() {
+        public ObjectToLong<T> getMapper() {
             return mapper;
         }
 
@@ -506,8 +506,8 @@ public final class LongPredicates {
          *            the element to test
          * @return the logical NOT of the supplied LongPredicate
          */
-        public boolean evaluate(long element) {
-            return !predicate.evaluate(element);
+        public boolean op(long element) {
+            return !predicate.op(element);
         }
 
         /**
@@ -561,8 +561,8 @@ public final class LongPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(long element) {
-            return left.evaluate(element) || right.evaluate(element);
+        public boolean op(long element) {
+            return left.op(element) || right.op(element);
         }
 
         /**
@@ -605,7 +605,7 @@ public final class LongPredicates {
         TrueLongPredicate() {}
 
         /** {@inheritDoc} */
-        public boolean evaluate(long value) {
+        public boolean op(long value) {
             return true;
         }
 

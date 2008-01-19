@@ -29,7 +29,7 @@ public final class CollectionPredicates {
     // /CLOVER:ON
 
     /**
-     * Filters the specified iterable, returning a new list of those items that evaluated
+     * Filters the specified iterable, returning a new list of those items that opd
      * to true given the specified predicate.
      *
      * @param <E>
@@ -37,7 +37,7 @@ public final class CollectionPredicates {
      * @param iterable
      *            the iterable to filter
      * @param predicate
-     *            the predicate to evaluate items accordingly to
+     *            the predicate to op items accordingly to
      * @return a collection of filteres items
      */
     public static <E> List<E> filter(Iterable<E> iterable, Predicate<? super E> predicate) {
@@ -48,7 +48,7 @@ public final class CollectionPredicates {
         }
         List<E> list = new ArrayList<E>();
         for (E e : iterable) {
-            if (predicate.evaluate(e)) {
+            if (predicate.op(e)) {
                 list.add(e);
             }
         }
@@ -56,7 +56,7 @@ public final class CollectionPredicates {
     }
 
     /**
-     * Filters the specified map, returning a new map of those items that evaluated to
+     * Filters the specified map, returning a new map of those items that opd to
      * true given the specified predicate.
      *
      * @param <K>
@@ -66,7 +66,7 @@ public final class CollectionPredicates {
      * @param map
      *            the map to filter
      * @param predicate
-     *            the predicate to evaluate items accordingly to
+     *            the predicate to op items accordingly to
      * @return a collection of filteres items
      */
     public static <K, V> Map<K, V> filterMap(Map<K, V> map,
@@ -78,7 +78,7 @@ public final class CollectionPredicates {
         }
         Map<K, V> m = new HashMap<K, V>();
         for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (predicate.evaluate(entry)) {
+            if (predicate.op(entry)) {
                 m.put(entry.getKey(), entry.getValue());
             }
         }
@@ -93,7 +93,7 @@ public final class CollectionPredicates {
         }
         Map<K, V> m = new HashMap<K, V>();
         for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (predicate.evaluate(entry.getKey())) {
+            if (predicate.op(entry.getKey())) {
                 m.put(entry.getKey(), entry.getValue());
             }
         }
@@ -108,7 +108,7 @@ public final class CollectionPredicates {
         }
         Map<K, V> m = new HashMap<K, V>();
         for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (predicate.evaluate(entry.getValue())) {
+            if (predicate.op(entry.getValue())) {
                 m.put(entry.getKey(), entry.getValue());
             }
         }
@@ -135,7 +135,7 @@ public final class CollectionPredicates {
             throw new NullPointerException("predicate is null");
         }
         for (E s : iterable) {
-            if (!predicate.evaluate(s)) {
+            if (!predicate.op(s)) {
                 return false;
             }
         }
@@ -162,7 +162,7 @@ public final class CollectionPredicates {
             throw new NullPointerException("predicate is null");
         }
         for (E s : iterable) {
-            if (predicate.evaluate(s)) {
+            if (predicate.op(s)) {
                 return true;
             }
         }
@@ -176,7 +176,7 @@ public final class CollectionPredicates {
             throw new NullPointerException("predicate is null");
         }
         for (Iterator<E> i = iterable.iterator(); i.hasNext();) {
-            if (!predicate.evaluate(i.next())) {
+            if (!predicate.op(i.next())) {
                 i.remove();
             }
         }

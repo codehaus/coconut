@@ -10,7 +10,7 @@ import java.util.Comparator;
 import jsr166y.forkjoin.Ops.DoubleComparator;
 import jsr166y.forkjoin.Ops.IntComparator;
 import jsr166y.forkjoin.Ops.LongComparator;
-import jsr166y.forkjoin.Ops.Mapper;
+import jsr166y.forkjoin.Ops.Op;
 
 /**
  * Various implementations of {@link Comparator}, {@link LongComparator},
@@ -81,11 +81,11 @@ public final class Comparators {
     // /CLOVER:ON
 
     public static <T, U extends Comparable<? super U>> Comparator<T> mappedComparator(
-            Mapper<? super T, U> mapper) {
+            Op<? super T, U> mapper) {
         return mappedComparator(mapper, NATURAL_COMPARATOR);
     }
 
-    public static <T, U> Comparator<T> mappedComparator(Mapper<? super T, U> mapper,
+    public static <T, U> Comparator<T> mappedComparator(Op<? super T, U> mapper,
             Comparator<? super U> comparator) {
         return new MappedComparator<T, U>(comparator, mapper);
     }
@@ -217,9 +217,9 @@ public final class Comparators {
 
         private final Comparator<? super U> comparator;
 
-        private final Mapper<? super T, U> mapper;
+        private final Op<? super T, U> mapper;
 
-        MappedComparator(Comparator<? super U> comparator, Mapper<? super T, U> mapper) {
+        MappedComparator(Comparator<? super U> comparator, Op<? super T, U> mapper) {
             if (mapper == null) {
                 throw new NullPointerException("mapper is null");
             } else if (comparator == null) {
@@ -231,8 +231,8 @@ public final class Comparators {
 
         /** {@inheritDoc} */
         public int compare(T a, T b) {
-            U ua = mapper.map(a);
-            U ub = mapper.map(b);
+            U ua = mapper.op(a);
+            U ub = mapper.op(b);
             return comparator.compare(ua, ub);
         }
     }

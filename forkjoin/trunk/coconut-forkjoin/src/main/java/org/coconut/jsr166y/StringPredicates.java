@@ -118,7 +118,7 @@ public final class StringPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(String element) {
+        public boolean op(String element) {
             return element.contains(contains);
         }
 
@@ -169,7 +169,7 @@ public final class StringPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(String element) {
+        public boolean op(String element) {
             return element.endsWith(endsWith);
         }
 
@@ -223,7 +223,7 @@ public final class StringPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(String element) {
+        public boolean op(String element) {
             return element.equalsIgnoreCase(equalsIgnoreCase);
         }
 
@@ -274,7 +274,7 @@ public final class StringPredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean evaluate(String element) {
+        public boolean op(String element) {
             return element.startsWith(startsWith);
         }
 

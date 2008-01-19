@@ -218,7 +218,7 @@ public final class Reducers {
         private static final long serialVersionUID = -5291652398158425686L;
 
         /** {@inheritDoc} */
-        public double combine(double a, double b) {
+        public double op(double a, double b) {
             return a + b;
         }
 
@@ -252,7 +252,7 @@ public final class Reducers {
         }
 
         /** {@inheritDoc} */
-        public double combine(double a, double b) {
+        public double op(double a, double b) {
             return comparator.compare(a, b) >= 0 ? a : b;
         }
     }
@@ -281,7 +281,7 @@ public final class Reducers {
         }
 
         /** {@inheritDoc} */
-        public double combine(double a, double b) {
+        public double op(double a, double b) {
             return comparator.compare(a, b) <= 0 ? a : b;
         }
     }
@@ -293,7 +293,7 @@ public final class Reducers {
         private static final long serialVersionUID = -8988998991050744720L;
 
         /** {@inheritDoc} */
-        public int combine(int a, int b) {
+        public int op(int a, int b) {
             return a + b;
         }
 
@@ -327,7 +327,7 @@ public final class Reducers {
         }
 
         /** {@inheritDoc} */
-        public int combine(int a, int b) {
+        public int op(int a, int b) {
             return comparator.compare(a, b) >= 0 ? a : b;
         }
     }
@@ -356,7 +356,7 @@ public final class Reducers {
         }
 
         /** {@inheritDoc} */
-        public int combine(int a, int b) {
+        public int op(int a, int b) {
             return comparator.compare(a, b) <= 0 ? a : b;
         }
     }
@@ -367,7 +367,7 @@ public final class Reducers {
         private static final long serialVersionUID = 3153032156748016348L;
 
         /** {@inheritDoc} */
-        public long combine(long a, long b) {
+        public long op(long a, long b) {
             return a + b;
         }
 
@@ -401,7 +401,7 @@ public final class Reducers {
         }
 
         /** {@inheritDoc} */
-        public long combine(long a, long b) {
+        public long op(long a, long b) {
             return comparator.compare(a, b) >= 0 ? a : b;
         }
     }
@@ -430,7 +430,7 @@ public final class Reducers {
         }
 
         /** {@inheritDoc} */
-        public long combine(long a, long b) {
+        public long op(long a, long b) {
             return comparator.compare(a, b) <= 0 ? a : b;
         }
     }
@@ -460,7 +460,7 @@ public final class Reducers {
         }
 
         /** {@inheritDoc} */
-        public T combine(T a, T b) {
+        public T op(T a, T b) {
             return a != null && (b == null || comparator.compare(a, b) >= 0) ? a : b;
         }
     }
@@ -490,7 +490,7 @@ public final class Reducers {
         }
 
         /** {@inheritDoc} */
-        public T combine(T a, T b) {
+        public T op(T a, T b) {
             return a != null && (b == null || comparator.compare(a, b) <= 0) ? a : b;
         }
     }
@@ -502,7 +502,7 @@ public final class Reducers {
         private static final long serialVersionUID = -5902864811727900806L;
 
         /** {@inheritDoc} */
-        public double combine(double a, double b) {
+        public double op(double a, double b) {
             return Math.max(a, b);
         }
 
@@ -519,7 +519,7 @@ public final class Reducers {
         private static final long serialVersionUID = 9005140841348156699L;
 
         /** {@inheritDoc} */
-        public double combine(double a, double b) {
+        public double op(double a, double b) {
             return Math.min(a, b);
         }
 
@@ -535,7 +535,7 @@ public final class Reducers {
         private static final long serialVersionUID = 9077782496369337326L;
 
         /** {@inheritDoc} */
-        public int combine(int a, int b) {
+        public int op(int a, int b) {
             return a >= b ? a : b;
         }
 
@@ -551,7 +551,7 @@ public final class Reducers {
         private static final long serialVersionUID = -6976117010912842877L;
 
         /** {@inheritDoc} */
-        public int combine(int a, int b) {
+        public int op(int a, int b) {
             return a <= b ? a : b;
         }
 
@@ -567,7 +567,7 @@ public final class Reducers {
         private static final long serialVersionUID = 6933457108004180230L;
 
         /** {@inheritDoc} */
-        public long combine(long a, long b) {
+        public long op(long a, long b) {
             return a >= b ? a : b;
         }
 
@@ -583,7 +583,7 @@ public final class Reducers {
         private static final long serialVersionUID = -7592565629449709106L;
 
         /** {@inheritDoc} */
-        public long combine(long a, long b) {
+        public long op(long a, long b) {
             return a <= b ? a : b;
         }
 
@@ -603,7 +603,7 @@ public final class Reducers {
         private static final long serialVersionUID = 5079675958818175983L;
 
         /** {@inheritDoc} */
-        public T combine(T a, T b) {
+        public T op(T a, T b) {
             return a != null && (b == null || a.compareTo(b) >= 0) ? a : b;
         }
 
@@ -623,7 +623,7 @@ public final class Reducers {
         private static final long serialVersionUID = -6750364835779757657L;
 
         /** {@inheritDoc} */
-        public T combine(T a, T b) {
+        public T op(T a, T b) {
             return a != null && (b == null || a.compareTo(b) <= 0) ? a : b;
         }
 

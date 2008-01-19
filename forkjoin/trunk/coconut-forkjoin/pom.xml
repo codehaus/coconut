@@ -21,7 +21,7 @@
     <dependency>
       <groupId>org.coconut.forkjoin</groupId>
       <artifactId>jsr166y</artifactId>
-      <version>070108</version>
+      <version>140108</version>
     </dependency>
   </dependencies>
   <build>
