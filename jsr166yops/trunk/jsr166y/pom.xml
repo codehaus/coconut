@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.codehaus.cake.jsr166yops</groupId>
+    <artifactId>jsr166yops-parent</artifactId>
+    <version>0.1</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>jsr166y</artifactId>
+  <name>Jsr166y</name>
+  <version>310108</version>
+  <packaging>jar</packaging>
+</project>

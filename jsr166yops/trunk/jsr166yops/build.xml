@@ -1,0 +1,50 @@
+<project default="package" name="jsr166yops">
+	<property name="src.dir" value="src" />
+	<property name="src.test.dir" value="${src.dir}/test/java" />
+	<property name="src.java.dir" value="${src.dir}/main/java" />
+	<property name="build.dir" value="target" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="classes.test.dir" value="${build.dir}/test-classes" />
+	<property name="lib.dir" value="lib" />
+
+	<path id="test.classpath">
+		<pathelement location="${classes.dir}" />
+		<pathelement location="${classes.test.dir}" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.java.dir}" destdir="${classes.dir}" classpathref="classpath" />
+	</target>
+
+	<target name="test-compile" depends="compile">
+		<mkdir dir="${classes.test.dir}" />
+		<javac srcdir="${src.test.dir}" destdir="${classes.test.dir}" classpathref="test.classpath" />
+	</target>
+
+	<target name="package" depends="compile">
+		<jar destfile="${build.dir}/${ant.project.name}.jar" basedir="${classes.dir}" />
+	</target>
+
+	<target name="test" depends="test-compile">
+	  <junit fork="yes" haltonfailure="yes">
+		<batchtest fork="yes">
+			<fileset dir="${src.test.dir}" includes="**/*Test.java" />
+		</batchtest>
+	    <formatter type="brief" usefile="false" />
+	    <classpath refid="test.classpath" />
+	  </junit>
+	</target>
+	
+</project>
