@@ -15,7 +15,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -37,6 +36,8 @@ import org.codehaus.cake.jsr166yops.Predicates.IsTypePredicate;
 import org.codehaus.cake.jsr166yops.Predicates.LessThenOrEqualPredicate;
 import org.codehaus.cake.jsr166yops.Predicates.LessThenPredicate;
 import org.codehaus.cake.test.util.TestUtil;
+import org.codehaus.cake.test.util.ComparatorTestUtil.Dummy;
+import org.codehaus.cake.test.util.ComparatorTestUtil.DummyComparator;
 import org.junit.Test;
 
 /**
@@ -1019,29 +1020,4 @@ public class PredicatesTest {
     public void mapperPredicateNPE2() {
         Predicates.mapAndEvaluate(TestUtil.dummy(Op.class), null);
     }
-
-    static final class Dummy implements Serializable {
-        static final Dummy D1 = new Dummy(1);
-
-        static final Dummy D2 = new Dummy(2);
-
-        static final Dummy D3 = new Dummy(3);
-
-        static final Dummy D4 = new Dummy(4);
-
-        static final Dummy D5 = new Dummy(5);
-
-        final int i;
-
-        private Dummy(int i) {
-            this.i = i;
-        }
-    }
-
-    static final class DummyComparator implements Comparator<Dummy>, Serializable {
-        public int compare(Dummy o1, Dummy o2) {
-            return (o1.i < o2.i ? -1 : (o1.i == o2.i ? 0 : 1));
-        }
-    }
-
 }

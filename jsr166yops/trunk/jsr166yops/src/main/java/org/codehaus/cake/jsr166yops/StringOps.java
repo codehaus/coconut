@@ -16,11 +16,8 @@ import jsr166y.forkjoin.Ops.Predicate;
  */
 public final class StringOps {
 
-    // /CLOVER:OFF
     /** Cannot instantiate. */
     private StringOps() {}
-
-    // /CLOVER:ON
 
     /**
      * Creates a Predicate that will accept any String that contains the specified

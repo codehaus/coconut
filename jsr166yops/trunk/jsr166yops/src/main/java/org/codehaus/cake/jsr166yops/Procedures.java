@@ -38,11 +38,9 @@ public final class Procedures {
      */
     public final static Procedure SYS_OUT_PRINTLN_PROCEDURE = new SystemOutPrintlnProcedure();
 
-    // /CLOVER:OFF
     /** Cannot instantiate. */
     private Procedures() {}
 
-    // /CLOVER:ON
     /**
      * Wraps the {@link Collection#add(Object)} method in an {@link Procedure}.
      * <p>

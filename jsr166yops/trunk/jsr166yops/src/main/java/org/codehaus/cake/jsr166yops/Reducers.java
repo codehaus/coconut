@@ -81,11 +81,8 @@ public final class Reducers {
      */
     public static final Reducer MIN_REDUCER = new NaturalMinReducer();
 
-    // /CLOVER:OFF
     /** Cannot instantiate. */
     private Reducers() {}
-
-    // /CLOVER:ON
 
     /**
      * A reducer returning the maximum of two double elements, using the specified
@@ -371,9 +368,7 @@ public final class Reducers {
         }
 
         /** @return Preserves singleton property */
-        private Object readResolve() {
-            return LONG_ADDER_REDUCER;
-        }
+        private Object readResolve() {return LONG_ADDER_REDUCER;}
     }
 
     /**

@@ -24,11 +24,8 @@ public final class LongPredicates {
     /** A LongPredicate that always evaluates to <code>true</code>. */
     public static final LongPredicate TRUE = new TrueLongPredicate();
 
-    // /CLOVER:OFF
     /** Cannot instantiate. */
     private LongPredicates() {}
-
-    // /CLOVER:ON
 
     /**
      * Creates a LongPredicate that performs a logical AND on two supplied predicates. The

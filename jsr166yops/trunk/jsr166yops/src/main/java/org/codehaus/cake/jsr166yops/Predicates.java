@@ -36,11 +36,8 @@ public final class Predicates {
     /** A Predicate that always evaluates to <code>true</code>. */
     public static final Predicate TRUE = new TruePredicate();
 
-    // /CLOVER:OFF
     /** Cannot instantiate. */
     private Predicates() {}
-
-    // /CLOVER:ON
 
     /**
      * As {@link #all(Predicate[])} except taking an {@link Iterable} as parameter.

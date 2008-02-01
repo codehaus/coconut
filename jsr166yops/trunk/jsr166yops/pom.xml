@@ -21,7 +21,7 @@
     <dependency>
       <groupId>org.codehaus.cake.jsr166yops</groupId>
       <artifactId>jsr166y</artifactId>
-      <version>310108</version>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jmock</groupId>
@@ -54,6 +54,7 @@
           <excludes>
             <exclude>**/test/util/*.java</exclude>
           </excludes>
+        <!--  <contextFilters>private \w+\s*\(.*</contextFilters> -->
         </configuration>
       </plugin>
     </plugins>

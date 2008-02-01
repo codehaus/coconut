@@ -75,11 +75,8 @@ public final class Comparators {
      */
     public static final Comparator NULL_LEAST_ORDER = new NullLeastOrderPredicate();
 
-    // /CLOVER:OFF
     /** Cannot instantiate. */
     private Comparators() {}
-
-    // /CLOVER:ON
 
     public static <T, U extends Comparable<? super U>> Comparator<T> mappedComparator(
             Op<? super T, U> mapper) {

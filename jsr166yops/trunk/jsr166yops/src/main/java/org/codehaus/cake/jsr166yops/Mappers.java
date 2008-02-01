@@ -10,18 +10,16 @@ import jsr166y.forkjoin.Ops.Op;
  * Various implementations of {@link Op}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public final class Mappers {
+    /** An Op that returns the specified argument. */
     public static final Op CONSTANT_MAPPER = new NoOpMapper();
 
-    // /CLOVER:OFF
     /** Cannot instantiate. */
     private Mappers() {}
-
-    // /CLOVER:ON
 
     /**
      * Creates a composite mapper that applies a second mapper to the results of applying
@@ -59,16 +57,15 @@ public final class Mappers {
         }
 
         /** {@inheritDoc} */
-        // Returns <tt>second.map(first.map(t))</tt>
         public V op(T t) {
             return second.op(first.op(t));
         }
     }
 
     /**
-     * A Mappper that returns the same object being provided to the {@link #op(Object)}
+     * An Op that returns the same object being provided to the {@link #op(Object)}
      * method.
-     *
+     * 
      * @param <T>
      *            the type of objects accepted by the Mapper
      */

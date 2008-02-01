@@ -18,7 +18,8 @@ import jsr166y.forkjoin.Ops.Procedure;
 /**
  * Various ops implementations that operate on {@link Collection}, {@link Iterable} and
  * {@link Map}.
- * 
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
@@ -40,11 +41,9 @@ public final class CollectionOps {
      */
     public static final Op MAP_GET_OP = new ValueFromMapEntry();
 
-    // /CLOVER:OFF
     /** Cannot instantiate. */
     private CollectionOps() {}
 
-    // /CLOVER:ON
     /**
      * Wraps the {@link Collection#add(Object)} method in an {@link Procedure}.
      * <p>
