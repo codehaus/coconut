@@ -20,7 +20,7 @@ import jsr166y.forkjoin.Ops.Predicate;
  * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Predicates.java 501 2007-12-04 11:03:23Z kasper $
+ * @version $Id$
  */
 public final class Predicates {
 

@@ -12,7 +12,7 @@ import jsr166y.forkjoin.Ops.Predicate;
  * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: StringPredicates.java 472 2007-11-19 09:34:26Z kasper $
+ * @version $Id$
  */
 public final class StringOps {
 

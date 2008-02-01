@@ -43,7 +43,7 @@ import org.junit.Test;
  * Tests {@link Predicates}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id: PredicatesTest.java 501 2007-12-04 11:03:23Z kasper $
+ * @version $Id$
  */
 public class PredicatesTest {
 
