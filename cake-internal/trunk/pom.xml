@@ -1,0 +1,99 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.codehaus.cake</groupId>
+  <artifactId>cake-root-pom</artifactId>
+  <packaging>pom</packaging>
+  <name>Cake</name>
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://svn.codehaus.org/coconut/LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <version>1.0</version>
+  <inceptionYear>2004</inceptionYear>
+  <distributionManagement>
+    <repository>
+      <id>codehaus.org</id>
+      <name>Cake's release repository</name>
+      <url>dav:https://dav.codehaus.org/repository/coconut</url>
+    </repository>
+    <snapshotRepository>
+      <id>codehaus.org</id>
+      <name>Cake's snapshot repository</name>
+      <url>dav:https://dav.codehaus.org/snapshots.repository/coconut</url>
+    </snapshotRepository>
+    <site>
+      <id>codehaus.org</id>
+      <url>dav:https://dav.codehaus.org/coconut</url>
+    </site>
+  </distributionManagement>
+  <developers>
+    <developer>
+      <id>kasper</id>
+      <name>Kasper Nielsen</name>
+      <email>kasper@codehaus.org</email>
+      <organization />
+      <roles>
+        <role>Despot</role>
+      </roles>
+    </developer>
+  </developers>
+  <!-- 
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+    </extensions>
+  </build>
+   -->
+  <organization>
+    <name>Codehaus</name>
+    <url>http://www.codehaus.org/</url>
+  </organization>
+  <repositories>
+    <repository>
+      <id>codehaus.snapshots</id>
+      <name>Codehaus Snapshot Repository</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
+    </repository>
+    <repository>
+      <id>codehaus.releases</id>
+      <name>Codehaus Repository</name>
+      <url>http://repository.codehaus.org/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+  <!-- 
+    <pluginRepository>
+      <id>atlassian-m2-repository</id>
+      <name>Atlassian Maven 2.x Repository</name>
+      <url>http://repository.atlassian.com/maven2</url>
+    </pluginRepository>
+     -->
+    <pluginRepository>
+      <id>apache.org</id>
+      <name>Maven Plugin Snapshots</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+  <modules>
+    <module>cake-testutil</module>
+    <module>cake-buildtools</module>
+  </modules>
+</project>
