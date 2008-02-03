@@ -24,9 +24,10 @@
       <version>0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock-junit4</artifactId>
-      <version>2.4.0</version>
+      <groupId>org.codehaus.cake.test</groupId>
+      <artifactId>cake-testutil</artifactId>
+      <version>0.1-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -51,10 +52,7 @@
         <configuration>
           <licenseLocation>${clover.licenseLocation}</licenseLocation>
           <useSurefireTestResults>true</useSurefireTestResults>
-          <excludes>
-            <exclude>**/test/util/*.java</exclude>
-          </excludes>
-        <!--  <contextFilters>private \w+\s*\(.*</contextFilters> -->
+          <!--  <contextFilters>private \w+\s*\(.*</contextFilters> -->
         </configuration>
       </plugin>
     </plugins>

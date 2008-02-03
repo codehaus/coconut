@@ -22,13 +22,13 @@ public class ProceduresTest {
 
     @Test
     public void systemOutPrint() {
-        SystemOutCatcher str = SystemOutCatcher.start();
+        SystemOutCatcher str = SystemOutCatcher.get();
         try {
             Procedure eh = Procedures.systemOutPrint();
             eh.op(234);
             assertTrue(str.toString().equals("234"));
         } finally {
-            str.stop();
+            str.terminate();
         }
         assertIsSerializable(Procedures.SYS_OUT_PRINT_PROCEDURE);
         assertSame(Procedures.SYS_OUT_PRINT_PROCEDURE, Procedures.systemOutPrint());
@@ -38,13 +38,13 @@ public class ProceduresTest {
 
     @Test
     public void systemOutPrintln() {
-        SystemOutCatcher str = SystemOutCatcher.start();
+        SystemOutCatcher str = SystemOutCatcher.get();
         try {
             Procedure eh = Procedures.systemOutPrintln();
             eh.op(234);
             assertTrue(str.toString().equals("234"+TestUtil.LINE_SEPARATOR));
         } finally {
-            str.stop();
+            str.terminate();
         }
         assertIsSerializable(Procedures.SYS_OUT_PRINTLN_PROCEDURE);
         assertSame(Procedures.SYS_OUT_PRINTLN_PROCEDURE, Procedures.systemOutPrintln());
