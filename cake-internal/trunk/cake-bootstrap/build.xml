@@ -8,7 +8,7 @@
 			<keep pattern="org.picocontainer.*"/> 
 		</jarjar>
 		<exec dir="." executable="cmd" os="Windows NT">
-		  <arg line="/c mvn install:install-file -DgroupId=org.codehaus.cake -DartifactId=cake-picocontainer -Dversion=1.3 -Dpackaging=jar -DgeneratePom=true -Dfile=target/cake-picocontainer-1.3.jar"/>
+		  <arg line="/c mvn install:install-file -DgroupId=org.codehaus.cake.internal -DartifactId=cake-picocontainer -Dversion=1.3 -Dpackaging=jar -DgeneratePom=true -Dfile=target/cake-picocontainer-1.3.jar"/>
 		</exec>
 	</target>
 </project>

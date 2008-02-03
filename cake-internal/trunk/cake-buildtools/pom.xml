@@ -8,11 +8,11 @@
     <version>1.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>cake-buildtools</artifactId>
   <name>Cake Build Tools</name>
-  <groupId>org.codehaus.internal</groupId>
-  <packaging>jar</packaging>
+  <groupId>org.codehaus.cake.internal</groupId>
   <version>0.1</version>
+  <artifactId>cake-buildtools</artifactId>
+  <packaging>jar</packaging>
   <description>Cake Build Tools</description>
   <scm>
     <connection>
