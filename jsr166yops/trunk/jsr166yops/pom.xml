@@ -2,8 +2,8 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.codehaus.cake.jsr166yops</groupId>
-    <artifactId>jsr166yops-parent</artifactId>
+    <groupId>org.codehaus.cake.jsr166y</groupId>
+    <artifactId>jsr166y-parent</artifactId>
     <version>0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -14,12 +14,12 @@
   <distributionManagement>
     <site>
       <id>codehaus.org</id>
-      <url>dav:https://dav.codehaus.org/coconut/forkjoin</url>
+      <url>dav:https://dav.codehaus.org/coconut/jsr166yops</url>
     </site>
   </distributionManagement>
   <dependencies>
     <dependency>
-      <groupId>org.codehaus.cake.jsr166yops</groupId>
+      <groupId>org.codehaus.cake.jsr166y</groupId>
       <artifactId>jsr166y</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>

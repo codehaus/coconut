@@ -18,6 +18,7 @@ import org.codehaus.cake.jsr166yops.LongPredicates.GreaterThenLongPredicate;
 import org.codehaus.cake.jsr166yops.LongPredicates.GreaterThenOrEqualsLongPredicate;
 import org.codehaus.cake.jsr166yops.LongPredicates.LessThenLongPredicate;
 import org.codehaus.cake.jsr166yops.LongPredicates.LessThenOrEqualsLongPredicate;
+import org.codehaus.cake.jsr166yops.LongPredicates.NotLongPredicate;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 
@@ -150,7 +151,7 @@ public class LongPredicatesTest {
         assertTrue(LongPredicates.not(FALSE).op(2));
         LongPredicates.not(TRUE).toString(); // does not fail
         assertIsSerializable(LongPredicates.not(TRUE));
-        assertSame(TRUE, LongPredicates.not(TRUE).getPredicate());
+        assertSame(TRUE, ((NotLongPredicate) LongPredicates.not(TRUE)).getPredicate());
     }
 
     /* Test greater then */

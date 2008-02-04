@@ -7,6 +7,24 @@ import jsr166y.forkjoin.Ops.DoubleProcedure;
 import jsr166y.forkjoin.Ops.DoubleReducer;
 
 public class ParallelDoubleMatrix extends AbstractParallelAnyMatrix {
+    
+    //should we use double[][] or double[]
+    //pro double[][]:
+    //this is probably what most people expect
+    //can supply a double[][] at creation time
+    //can return the double[][] array at any time
+    //no limititations of 2^31 elements
+    
+    
+    //pro double[]::
+    //we can use ParallelDoubleArray for add, scalar multiplication
+    //apply, reduce
+    //we can create a Matrix interface that can be implemented, for example,
+    //by ParallelSparseDoubleMatrix
+    //if we don't support a getArrayOfArrays() method
+    //we can support a very efficient transpose method
+    //by just having a switch indicating whether we are using
+    //row-column-order or column-row order
     /** Array[][] for internal storage of elements. */
     private final double[][] A;
 
@@ -100,6 +118,13 @@ public class ParallelDoubleMatrix extends AbstractParallelAnyMatrix {
         return this;
     }
 
+    public static void main(String[] args) {
+        ParallelDoubleMatrix pdm = ParallelDoubleMatrix.create(3, defaultExecutor());
+        pdm.add(3);
+        pdm.multiply(2);
+        System.out.println(pdm);
+    }
+
     /**
      * Returns the entry in the specified row and column.
      * <p>
@@ -167,20 +192,16 @@ public class ParallelDoubleMatrix extends AbstractParallelAnyMatrix {
     }
 
     public String toString() {
+        //need a better to string
         StringBuffer res = new StringBuffer();
-        res.append("{");
         for (int i = originM; i < m; i++) {
-            if (i > 0)
-                res.append(",");
-            res.append("{");
+            res.append("| ");
             for (int j = originN; j < n; j++) {
-                if (j > 0)
-                    res.append(",");
                 res.append(A[i][j]);
+                res.append(" ");
             }
-            res.append("}");
+            res.append(" |\n");
         }
-        res.append("}");
         return res.toString();
     }
 

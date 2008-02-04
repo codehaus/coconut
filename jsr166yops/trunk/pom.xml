@@ -4,12 +4,12 @@
   <parent>
    <groupId>org.codehaus.cake</groupId>
     <artifactId>cake-root-pom</artifactId>
-    <version>1.0</version>
+    <version>0.1</version>
   </parent>
-  <groupId>org.codehaus.cake.jsr166yops</groupId>
-  <artifactId>jsr166yops-parent</artifactId>
+  <groupId>org.codehaus.cake.jsr166y</groupId>
+  <artifactId>jsr166y-parent</artifactId>
   <version>0.1</version>
-  <name>Jsr166yops (parent-pom)</name>
+  <name>Jsr166y (parent-pom)</name>
   <packaging>pom</packaging>
   <scm>
     <connection>
