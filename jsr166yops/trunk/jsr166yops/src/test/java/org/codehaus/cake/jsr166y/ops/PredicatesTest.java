@@ -1,13 +1,13 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.jsr166yops;
+package org.codehaus.cake.jsr166y.ops;
 
-import static org.codehaus.cake.jsr166yops.Predicates.FALSE;
-import static org.codehaus.cake.jsr166yops.Predicates.TRUE;
-import static org.codehaus.cake.jsr166yops.Predicates.greaterThen;
-import static org.codehaus.cake.jsr166yops.Predicates.greaterThenOrEqual;
-import static org.codehaus.cake.jsr166yops.Predicates.lessThen;
-import static org.codehaus.cake.jsr166yops.Predicates.lessThenOrEqual;
+import static org.codehaus.cake.jsr166y.ops.Predicates.FALSE;
+import static org.codehaus.cake.jsr166y.ops.Predicates.TRUE;
+import static org.codehaus.cake.jsr166y.ops.Predicates.greaterThen;
+import static org.codehaus.cake.jsr166y.ops.Predicates.greaterThenOrEqual;
+import static org.codehaus.cake.jsr166y.ops.Predicates.lessThen;
+import static org.codehaus.cake.jsr166y.ops.Predicates.lessThenOrEqual;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.codehaus.cake.test.util.TestUtil.dummy;
 import static org.junit.Assert.assertEquals;
@@ -26,15 +26,18 @@ import java.util.Map;
 import jsr166y.forkjoin.Ops.Op;
 import jsr166y.forkjoin.Ops.Predicate;
 
-import org.codehaus.cake.jsr166yops.Predicates.AllPredicate;
-import org.codehaus.cake.jsr166yops.Predicates.AnyPredicate;
-import org.codehaus.cake.jsr166yops.Predicates.GreaterThenOrEqualPredicate;
-import org.codehaus.cake.jsr166yops.Predicates.GreaterThenPredicate;
-import org.codehaus.cake.jsr166yops.Predicates.IsEqualsPredicate;
-import org.codehaus.cake.jsr166yops.Predicates.IsSamePredicate;
-import org.codehaus.cake.jsr166yops.Predicates.IsTypePredicate;
-import org.codehaus.cake.jsr166yops.Predicates.LessThenOrEqualPredicate;
-import org.codehaus.cake.jsr166yops.Predicates.LessThenPredicate;
+import org.codehaus.cake.jsr166y.ops.Comparators;
+import org.codehaus.cake.jsr166y.ops.Predicates;
+import org.codehaus.cake.jsr166y.ops.StringOps;
+import org.codehaus.cake.jsr166y.ops.Predicates.AllPredicate;
+import org.codehaus.cake.jsr166y.ops.Predicates.AnyPredicate;
+import org.codehaus.cake.jsr166y.ops.Predicates.GreaterThenOrEqualPredicate;
+import org.codehaus.cake.jsr166y.ops.Predicates.GreaterThenPredicate;
+import org.codehaus.cake.jsr166y.ops.Predicates.IsEqualsPredicate;
+import org.codehaus.cake.jsr166y.ops.Predicates.IsSamePredicate;
+import org.codehaus.cake.jsr166y.ops.Predicates.IsTypePredicate;
+import org.codehaus.cake.jsr166y.ops.Predicates.LessThenOrEqualPredicate;
+import org.codehaus.cake.jsr166y.ops.Predicates.LessThenPredicate;
 import org.codehaus.cake.test.util.TestUtil;
 import org.codehaus.cake.test.util.ComparatorTestUtil.Dummy;
 import org.codehaus.cake.test.util.ComparatorTestUtil.DummyComparator;

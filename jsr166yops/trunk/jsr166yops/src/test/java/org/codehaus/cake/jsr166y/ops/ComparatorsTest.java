@@ -1,15 +1,15 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.jsr166yops;
+package org.codehaus.cake.jsr166y.ops;
 
-import static org.codehaus.cake.jsr166yops.Comparators.DOUBLE_COMPARATOR;
-import static org.codehaus.cake.jsr166yops.Comparators.DOUBLE_REVERSE_COMPARATOR;
-import static org.codehaus.cake.jsr166yops.Comparators.INT_COMPARATOR;
-import static org.codehaus.cake.jsr166yops.Comparators.INT_REVERSE_COMPARATOR;
-import static org.codehaus.cake.jsr166yops.Comparators.LONG_COMPARATOR;
-import static org.codehaus.cake.jsr166yops.Comparators.LONG_REVERSE_COMPARATOR;
-import static org.codehaus.cake.jsr166yops.Comparators.NATURAL_COMPARATOR;
-import static org.codehaus.cake.jsr166yops.Comparators.NATURAL_REVERSE_COMPARATOR;
+import static org.codehaus.cake.jsr166y.ops.Comparators.DOUBLE_COMPARATOR;
+import static org.codehaus.cake.jsr166y.ops.Comparators.DOUBLE_REVERSE_COMPARATOR;
+import static org.codehaus.cake.jsr166y.ops.Comparators.INT_COMPARATOR;
+import static org.codehaus.cake.jsr166y.ops.Comparators.INT_REVERSE_COMPARATOR;
+import static org.codehaus.cake.jsr166y.ops.Comparators.LONG_COMPARATOR;
+import static org.codehaus.cake.jsr166y.ops.Comparators.LONG_REVERSE_COMPARATOR;
+import static org.codehaus.cake.jsr166y.ops.Comparators.NATURAL_COMPARATOR;
+import static org.codehaus.cake.jsr166y.ops.Comparators.NATURAL_REVERSE_COMPARATOR;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.codehaus.cake.test.util.TestUtil.dummy;
 import static org.junit.Assert.assertEquals;
@@ -26,6 +26,7 @@ import jsr166y.forkjoin.Ops.IntComparator;
 import jsr166y.forkjoin.Ops.LongComparator;
 import jsr166y.forkjoin.Ops.Op;
 
+import org.codehaus.cake.jsr166y.ops.Comparators;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 

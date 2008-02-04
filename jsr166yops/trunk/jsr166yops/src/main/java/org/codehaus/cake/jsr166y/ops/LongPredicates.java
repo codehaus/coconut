@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.jsr166yops;
+package org.codehaus.cake.jsr166y.ops;
 
 import java.io.Serializable;
 

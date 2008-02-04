@@ -1,18 +1,18 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.jsr166yops;
+package org.codehaus.cake.jsr166y.ops;
 
-import static org.codehaus.cake.jsr166yops.Reducers.DOUBLE_ADDER_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.DOUBLE_MAX_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.DOUBLE_MIN_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.INT_ADDER_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.INT_MAX_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.INT_MIN_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.LONG_ADDER_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.LONG_MAX_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.LONG_MIN_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.MAX_REDUCER;
-import static org.codehaus.cake.jsr166yops.Reducers.MIN_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.DOUBLE_ADDER_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.DOUBLE_MAX_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.DOUBLE_MIN_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.INT_ADDER_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.INT_MAX_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.INT_MIN_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.LONG_ADDER_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.LONG_MAX_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.LONG_MIN_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.MAX_REDUCER;
+import static org.codehaus.cake.jsr166y.ops.Reducers.MIN_REDUCER;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -22,6 +22,8 @@ import jsr166y.forkjoin.Ops.IntReducer;
 import jsr166y.forkjoin.Ops.LongReducer;
 import jsr166y.forkjoin.Ops.Reducer;
 
+import org.codehaus.cake.jsr166y.ops.Comparators;
+import org.codehaus.cake.jsr166y.ops.Reducers;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 

@@ -1,9 +1,9 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.jsr166yops;
+package org.codehaus.cake.jsr166y.ops;
 
-import static org.codehaus.cake.jsr166yops.LongPredicates.FALSE;
-import static org.codehaus.cake.jsr166yops.LongPredicates.TRUE;
+import static org.codehaus.cake.jsr166y.ops.LongPredicates.FALSE;
+import static org.codehaus.cake.jsr166y.ops.LongPredicates.TRUE;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,12 +13,13 @@ import jsr166y.forkjoin.Ops.LongPredicate;
 import jsr166y.forkjoin.Ops.ObjectToLong;
 import jsr166y.forkjoin.Ops.Predicate;
 
-import org.codehaus.cake.jsr166yops.LongPredicates.EqualsToLongPredicate;
-import org.codehaus.cake.jsr166yops.LongPredicates.GreaterThenLongPredicate;
-import org.codehaus.cake.jsr166yops.LongPredicates.GreaterThenOrEqualsLongPredicate;
-import org.codehaus.cake.jsr166yops.LongPredicates.LessThenLongPredicate;
-import org.codehaus.cake.jsr166yops.LongPredicates.LessThenOrEqualsLongPredicate;
-import org.codehaus.cake.jsr166yops.LongPredicates.NotLongPredicate;
+import org.codehaus.cake.jsr166y.ops.LongPredicates;
+import org.codehaus.cake.jsr166y.ops.LongPredicates.EqualsToLongPredicate;
+import org.codehaus.cake.jsr166y.ops.LongPredicates.GreaterThenLongPredicate;
+import org.codehaus.cake.jsr166y.ops.LongPredicates.GreaterThenOrEqualsLongPredicate;
+import org.codehaus.cake.jsr166y.ops.LongPredicates.LessThenLongPredicate;
+import org.codehaus.cake.jsr166y.ops.LongPredicates.LessThenOrEqualsLongPredicate;
+import org.codehaus.cake.jsr166y.ops.LongPredicates.NotLongPredicate;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 

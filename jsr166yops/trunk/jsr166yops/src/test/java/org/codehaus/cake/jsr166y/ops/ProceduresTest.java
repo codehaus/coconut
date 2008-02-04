@@ -1,12 +1,13 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.jsr166yops;
+package org.codehaus.cake.jsr166y.ops;
 
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import jsr166y.forkjoin.Ops.Procedure;
 
+import org.codehaus.cake.jsr166y.ops.Procedures;
 import org.codehaus.cake.test.util.SystemOutCatcher;
 import org.codehaus.cake.test.util.TestUtil;
 import org.jmock.Mockery;

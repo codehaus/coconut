@@ -1,9 +1,9 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.jsr166yops;
+package org.codehaus.cake.jsr166y.ops;
 
-import static org.codehaus.cake.jsr166yops.CollectionOps.MAP_ENTRY_TO_KEY_OP;
-import static org.codehaus.cake.jsr166yops.CollectionOps.MAP_ENTRY_TO_VALUE_OP;
+import static org.codehaus.cake.jsr166y.ops.CollectionOps.MAP_ENTRY_TO_KEY_OP;
+import static org.codehaus.cake.jsr166y.ops.CollectionOps.MAP_ENTRY_TO_VALUE_OP;
 import static org.codehaus.cake.test.util.CollectionTestUtil.M1;
 import static org.codehaus.cake.test.util.CollectionTestUtil.M1_NULL;
 import static org.codehaus.cake.test.util.CollectionTestUtil.NULL_A;
@@ -26,6 +26,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import jsr166y.forkjoin.Ops.Predicate;
 import jsr166y.forkjoin.Ops.Procedure;
 
+import org.codehaus.cake.jsr166y.ops.CollectionOps;
+import org.codehaus.cake.jsr166y.ops.Mappers;
+import org.codehaus.cake.jsr166y.ops.Predicates;
 import org.codehaus.cake.test.util.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

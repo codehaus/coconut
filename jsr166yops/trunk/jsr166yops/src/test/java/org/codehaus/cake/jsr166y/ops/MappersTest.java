@@ -1,8 +1,8 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.jsr166yops;
+package org.codehaus.cake.jsr166y.ops;
 
-import static org.codehaus.cake.jsr166yops.Mappers.CONSTANT_MAPPER;
+import static org.codehaus.cake.jsr166y.ops.Mappers.CONSTANT_MAPPER;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 import jsr166y.forkjoin.Ops.Op;
 
+import org.codehaus.cake.jsr166y.ops.Mappers;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 
