@@ -160,7 +160,7 @@ public final class LongPredicates {
      * @throws NullPointerException
      *             if the specified predicate is <code>null</code>
      */
-    public static NotLongPredicate not(LongPredicate predicate) {
+    public static LongPredicate not(LongPredicate predicate) {
         return new NotLongPredicate(predicate);
     }
 

@@ -42,23 +42,6 @@ public final class Procedures {
     private Procedures() {}
 
     /**
-     * Wraps the {@link Collection#add(Object)} method in an {@link Procedure}.
-     * <p>
-     * The returned Procedure is serializable if the specified Collection is serializable.
-     * 
-     * @param collection
-     *            the collection to wrap
-     * @return the newly created Procedure
-     * @throws NullPointerException
-     *             if the specified collection is <code>null</code>
-     * @param <E>
-     *            the types of elements accepted by the specified Collection
-     */
-    public static <E> Procedure<E> collectionAdd(Collection<? super E> collection) {
-        return new CollectionAdd<E>(collection);
-    }
-
-    /**
      * Returns a Procedure that does nothing.
      * 
      * @return a Procedure that does nothing.
@@ -67,23 +50,6 @@ public final class Procedures {
      */
     public static <T> Procedure<T> ignore() {
         return IGNORE_PROCEDURE;
-    }
-
-    /**
-     * Wraps the {@link Queue#offer(Object)} method in an {@link Procedure}.
-     * <p>
-     * The returned Procedure is serializable if the specified Queue is serializable.
-     * 
-     * @param queue
-     *            the queue to wrap
-     * @return the newly created Procedure
-     * @throws NullPointerException
-     *             if the specified queue is <code>null</code>
-     * @param <E>
-     *            the types of elements accepted by the specified Queue
-     */
-    public static <E> Procedure<E> queueOffer(Queue<? super E> queue) {
-        return new QueueOffer<E>(queue);
     }
 
     /**
