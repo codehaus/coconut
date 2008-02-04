@@ -21,7 +21,7 @@ public class ParallelDoubleMatrix extends AbstractParallelAnyMatrix {
     //apply, reduce
     //we can create a Matrix interface that can be implemented, for example,
     //by ParallelSparseDoubleMatrix
-    //if we don't support a getArrayOfArrays() method
+    //If we don't support a double[][] getArrayOfArrays() method
     //we can support a very efficient transpose method
     //by just having a switch indicating whether we are using
     //row-column-order or column-row order
@@ -116,13 +116,6 @@ public class ParallelDoubleMatrix extends AbstractParallelAnyMatrix {
             }
         }
         return this;
-    }
-
-    public static void main(String[] args) {
-        ParallelDoubleMatrix pdm = ParallelDoubleMatrix.create(3, defaultExecutor());
-        pdm.add(3);
-        pdm.multiply(2);
-        System.out.println(pdm);
     }
 
     /**
