@@ -13,7 +13,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <version>1.0</version>
+  <version>0.1</version>
   <inceptionYear>2004</inceptionYear>
   <distributionManagement>
     <repository>
@@ -42,8 +42,7 @@
       </roles>
     </developer>
   </developers>
-  <!-- 
-  <build>
+    <build>
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
@@ -52,7 +51,6 @@
       </extension>
     </extensions>
   </build>
-   -->
   <organization>
     <name>Codehaus</name>
     <url>http://www.codehaus.org/</url>
