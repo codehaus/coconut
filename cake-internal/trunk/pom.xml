@@ -9,7 +9,7 @@
   <licenses>
     <license>
       <name>The Apache License, Version 2.0</name>
-      <url>http://svn.codehaus.org/coconut/LICENSE.txt</url>
+      <url>http://svn.codehaus.org/cake/LICENSE.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -19,16 +19,16 @@
     <repository>
       <id>codehaus.org</id>
       <name>Cake's release repository</name>
-      <url>dav:https://dav.codehaus.org/repository/coconut</url>
+      <url>dav:https://dav.codehaus.org/repository/cake</url>
     </repository>
     <snapshotRepository>
       <id>codehaus.org</id>
       <name>Cake's snapshot repository</name>
-      <url>dav:https://dav.codehaus.org/snapshots.repository/coconut</url>
+      <url>dav:https://dav.codehaus.org/snapshots.repository/cake</url>
     </snapshotRepository>
     <site>
       <id>codehaus.org</id>
-      <url>dav:https://dav.codehaus.org/coconut</url>
+      <url>dav:https://dav.codehaus.org/cake</url>
     </site>
   </distributionManagement>
   <developers>
@@ -71,13 +71,11 @@
     </repository>
   </repositories>
   <pluginRepositories>
-  <!-- 
     <pluginRepository>
       <id>atlassian-m2-repository</id>
       <name>Atlassian Maven 2.x Repository</name>
       <url>http://repository.atlassian.com/maven2</url>
     </pluginRepository>
-     -->
     <pluginRepository>
       <id>apache.org</id>
       <name>Maven Plugin Snapshots</name>
