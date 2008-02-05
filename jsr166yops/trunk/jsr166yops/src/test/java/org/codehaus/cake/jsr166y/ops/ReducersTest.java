@@ -60,7 +60,7 @@ public class ReducersTest {
 
     /**
      * Tests
-     * {@link Reducers#doubleMaxReducer(org.coconut.util.operations.Ops.DoubleComparator)}.
+     * {@link Reducers#doubleMaxReducer(jsr166y.forkjoin.Ops.DoubleComparator)}
      */
     @Test
     public void doubleMaxReducerComparator() {

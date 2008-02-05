@@ -13,10 +13,10 @@
   <packaging>pom</packaging>
   <scm>
     <connection>
-      scm:svn:http://svn.codehaus.org/coconut/jsr166yops/trunk
+      scm:svn:http://svn.codehaus.org/cake/cake-jsr166y/trunk
     </connection>
     <developerConnection>
-      scm:svn:https://svn.codehaus.org/coconut/jsr166yops/trunk
+      scm:svn:https://svn.codehaus.org/cake/cake-jsr166y/trunk
     </developerConnection>
   </scm>
   <build>

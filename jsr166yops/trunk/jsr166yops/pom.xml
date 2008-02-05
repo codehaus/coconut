@@ -14,7 +14,7 @@
   <distributionManagement>
     <site>
       <id>codehaus.org</id>
-      <url>dav:https://dav.codehaus.org/coconut/jsr166yops</url>
+      <url>dav:https://dav.codehaus.org/cake/cake-jsr166y</url>
     </site>
   </distributionManagement>
   <dependencies>
