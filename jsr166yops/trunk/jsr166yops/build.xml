@@ -1,4 +1,4 @@
-<project default="package" name="jsr166yops">
+<project default="package" name="cake-jsr166y">
 	<property name="src.dir" value="src" />
 	<property name="src.test.dir" value="${src.dir}/test/java" />
 	<property name="src.java.dir" value="${src.dir}/main/java" />
