@@ -48,7 +48,7 @@ public interface DoubleMatrix extends Matrix /*, Iterable<DoubleMatrix.Entry> */
     /**
      * @return a (deep) copy of this matrix
      */
-    DoubleMatrix all();
+    DoubleMatrix copy();
 
     /**
      * @return a 2 dimensional array with the contents of this matrix

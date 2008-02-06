@@ -89,7 +89,7 @@ public class ParallelDoubleMatrix extends AbstractParallelAnyMatrix implements D
         return t;
     }
 
-    public ParallelDoubleMatrix all() {
+    public ParallelDoubleMatrix copy() {
         return new ParallelDoubleMatrix(this);
     }
 
