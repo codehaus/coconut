@@ -1,11 +1,26 @@
-/* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
- * Licensed under the Apache 2.0 License. */
+/*
+ * Copyright 2008 Kasper Nielsen.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.codehaus.cake.jsr166y.math.matrix;
 
 import jsr166y.forkjoin.ForkJoinExecutor;
 import jsr166y.forkjoin.ForkJoinPool;
 
-public abstract class AbstractParallelAnyMatrix {
+import org.codehaus.cake.jsr166y.math.matrix.Matrix;
+
+public abstract class AbstractParallelAnyMatrix implements Matrix {
     /** Global default executor */
     private static volatile ForkJoinPool defaultExecutor;
 
@@ -20,61 +35,52 @@ public abstract class AbstractParallelAnyMatrix {
     /** column dimensions. */
     final int n;
 
-    final int originM;
-
-    final int originN;
-
     AbstractParallelAnyMatrix(AbstractParallelAnyMatrix matrix) {
         this.ex = matrix.ex;
         this.m = matrix.m;
         this.n = matrix.n;
-        this.originM = matrix.originM;
-        this.originN = matrix.originN;
     }
 
-    AbstractParallelAnyMatrix(ForkJoinExecutor ex, int originM, int originN, int m, int n) {
+    AbstractParallelAnyMatrix(ForkJoinExecutor ex, int m, int n) {
         this.ex = ex;
         this.m = m;
         this.n = n;
-        this.originM = originM;
-        this.originN = originN;
     }
 
-    public final int getNumberOfColumns() {
-        return n - originN;
+    public int getNumberOfColumns() {
+        return n;
     }
 
-    public final int getNumberOfRows() {
-        return m - originM;
+    public int getNumberOfRows() {
+        return m;
     }
 
     public boolean isSquare() {
-        return getNumberOfColumns() == getNumberOfRows();
+        return m == n;
     }
 
     void checkSameDimensions(AbstractParallelAnyMatrix other) {
-        if (getNumberOfRows() != other.getNumberOfRows()) {
+        if (m != other.m) {
             throw new IllegalArgumentException(
-                    "The specified matrix has a incompatible number of rows [this.rows ="
-                            + getNumberOfRows() + ", other.rows=" + other.getNumberOfRows() + "]");
-        } else if (getNumberOfColumns() != other.getNumberOfColumns()) {
+                    "The specified matrix has a incompatible number of rows [this.rows =" + m
+                            + ", other.rows=" + other.m + "]");
+        } else if (n != other.n) {
             throw new IllegalArgumentException(
-                    "The specified matrix has a incompatible number of columns [this.rows ="
-                            + getNumberOfColumns() + ", other.rows=" + other.getNumberOfColumns()
-                            + "]");
+                    "The specified matrix has a incompatible number of columns [this.rows =" + n
+                            + ", other.rows=" + n + "]");
         }
     }
 
     void checkValidRowColumn(int n, int m) {
-        if (n < 0) {
+        if (n <= 0) {
             throw new IllegalArgumentException(
-                    "The specified row must be a non negative number [row = " + n + " ]");
-        } else if (m < 0) {
-            throw new IllegalArgumentException(
-                    "The specified column must be a non negative number [column = " + n + " ]");
-        } else if (n >= getNumberOfRows() - originN) {
+                    "The specified row must be a positive number [row = " + n + " ]");
+        } else if (n > this.n) {
             throw new IllegalArgumentException();
-        } else if (m >= getNumberOfColumns() - originM) {
+        } else if (m <= 0) {
+            throw new IllegalArgumentException(
+                    "The specified column must be a positive number [column = " + n + " ]");
+        } else if (m > this.m) {
             throw new IllegalArgumentException();
         }
     }
