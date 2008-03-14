@@ -70,7 +70,7 @@ public final class CollectionOps {
      * @param <E>
      *            the types of elements accepted by the specified Collection
      */
-    public static <E> Procedure<E> addToCollection(Collection<? super E> collection) {
+    public static <E> Procedure<E> addToCollectionProcedure(Collection<? super E> collection) {
         return new CollectionAdd<E>(collection);
     }
 

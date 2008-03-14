@@ -63,13 +63,13 @@ public class CollectionOpsTest {
                 one(col).add(-1);
             }
         });
-        CollectionOps.addToCollection(col).op(-1);
-        assertIsSerializable(CollectionOps.addToCollection(new ArrayList(1)));
+        CollectionOps.addToCollectionProcedure(col).op(-1);
+        assertIsSerializable(CollectionOps.addToCollectionProcedure(new ArrayList(1)));
     }
 
     @Test(expected = NullPointerException.class)
     public void addToCollection_NPE() {
-        CollectionOps.addToCollection(null);
+        CollectionOps.addToCollectionProcedure(null);
     }
 
     @Test

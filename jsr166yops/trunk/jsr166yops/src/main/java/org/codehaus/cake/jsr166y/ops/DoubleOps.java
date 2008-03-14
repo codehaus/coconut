@@ -19,20 +19,25 @@ import java.io.Serializable;
 
 import jsr166y.forkjoin.Ops.BinaryDoubleOp;
 import jsr166y.forkjoin.Ops.DoubleOp;
+import jsr166y.forkjoin.Ops.DoubleReducer;
 
 public class DoubleOps {
     private final static BinaryDoubleSubtractOp BINART_DOUBLE_SUBTRACT_OP = new BinaryDoubleSubtractOp();
     private final static BinaryDoubleAddOp BINARY_DOUBLE_ADD_OP = new BinaryDoubleAddOp();
+    private final static DoubleAbs DOUBLE_ABS_OP = new DoubleAbs();
     
+    public static DoubleOp abs() {
+        return DOUBLE_ABS_OP;
+    }
     public static DoubleOp add(double add) {
         return new DoubleAddOp(add);
     }
 
-    public static BinaryDoubleOp binaryAdd() {
+    public static BinaryDoubleOp add() {
         return BINARY_DOUBLE_ADD_OP;
     }
 
-    public static BinaryDoubleOp binarySubtract() {
+    public static BinaryDoubleOp subtract() {
         return BINART_DOUBLE_SUBTRACT_OP;
     }
 
@@ -43,8 +48,10 @@ public class DoubleOps {
     public static DoubleOp multiply(double add) {
         return new DoubleMultiplyOp(add);
     }
-
-    static final class BinaryDoubleAddOp implements BinaryDoubleOp, Serializable {
+    public static BinaryDoubleOp multiply() {
+        throw new UnsupportedOperationException();
+    }
+    static final class BinaryDoubleAddOp implements DoubleReducer, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -830758681673022439L;
 
@@ -57,7 +64,7 @@ public class DoubleOps {
             return BINARY_DOUBLE_ADD_OP;
         }
     }
-    static final class BinaryDoubleSubtractOp implements BinaryDoubleOp, Serializable {
+    static final class BinaryDoubleSubtractOp implements DoubleReducer, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8583260658972887816L;
 
@@ -70,6 +77,21 @@ public class DoubleOps {
             return BINART_DOUBLE_SUBTRACT_OP;
         }
     }
+
+    static final class DoubleAbs implements DoubleOp, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -8583260658972887816L;
+
+        public double op(double a) {
+            return Math.abs(a);
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return DOUBLE_ABS_OP;
+        }
+    }
+    
     static final class DoubleAddOp implements DoubleOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -6604604690824553900L;

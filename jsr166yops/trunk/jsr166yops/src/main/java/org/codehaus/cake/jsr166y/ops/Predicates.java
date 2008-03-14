@@ -53,7 +53,7 @@ public final class Predicates {
     private Predicates() {}
 
     /**
-     * As {@link #all(Predicate[])} except taking an {@link Iterable} as parameter.
+     * As {@link #allTrue(Predicate[])} except taking an {@link Iterable} as parameter.
      *
      * @param predicates
      *            the predicates to evaluate against
@@ -64,7 +64,7 @@ public final class Predicates {
      *             if the specified iterable is <code>null</code> or contains a null
      *             element
      */
-    public static <E> Predicate<E> all(Iterable<? extends Predicate<? super E>> predicates) {
+    public static <E> Predicate<E> allTrue(Iterable<? extends Predicate<? super E>> predicates) {
         return new AllPredicate<E>(predicates);
     }
 
@@ -88,7 +88,7 @@ public final class Predicates {
      * @throws NullPointerException
      *             if any of the specified predicates are <code>null</code>
      */
-    public static <E> Predicate<E> all(Predicate<? super E>... predicates) {
+    public static <E> Predicate<E> allTrue(Predicate<? super E>... predicates) {
         return new AllPredicate<E>(predicates);
     }
 
@@ -121,7 +121,57 @@ public final class Predicates {
     }
 
     /**
-     * As {@link #any(Predicate[])} except taking an {@link Iterable} as parameter.
+     * Creates a Predicate that evaluates to true if any of the specified elements are
+     * equal to the element that is being tested. The returned predicate uses
+     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
+     * only evaluated if the previous arguments does not suffice to determine the truth
+     * value.
+     * <p>
+     * The Predicate will use a copy of the array of supplied predicates.
+     * <p>
+     * If all the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     *
+     * @param elements
+     *            the elements to test against
+     * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if any of the specified elements are <code>null</code>
+     * @see #equalsTo(Object)
+     */
+    public static <E> Predicate<E> anyEquals(E... elements) {
+        List<Predicate<E>> list = new ArrayList<Predicate<E>>();
+        for (E e : elements) {
+            list.add(equalsTo(e));
+        }
+        return anyTrue(list);
+    }
+
+    /**
+     * As {@link #anyEquals(Object...)} except taking an {@link Iterable} as parameter.
+     *
+     * @param elements
+     *            the elements to test against
+     * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified iterable is <code>null</code> or contains a null
+     *             element
+     * @see #equalsTo(Object)
+     */
+    public static <E> Predicate<E> anyEquals(Iterable<? extends E> elements) {
+        List<Predicate<E>> list = new ArrayList<Predicate<E>>();
+        for (E e : elements) {
+            list.add(equalsTo(e));
+        }
+        return anyTrue(list);
+    }
+
+    /**
+     * As {@link #anyTrue(Predicate[])} except taking an {@link Iterable} as parameter.
      *
      * @param predicates
      *            the predicates to evaluate against
@@ -132,7 +182,7 @@ public final class Predicates {
      *             if the specified iterable is <code>null</code> or contains a null
      *             element
      */
-    public static <E> Predicate<E> any(Iterable<? extends Predicate<? super E>> predicates) {
+    public static <E> Predicate<E> anyTrue(Iterable<? extends Predicate<? super E>> predicates) {
         return new AnyPredicate<E>(predicates);
     }
 
@@ -156,58 +206,8 @@ public final class Predicates {
      * @throws NullPointerException
      *             if any of the specified predicates are <code>null</code>
      */
-    public static <E> Predicate<E> any(Predicate<? super E>... predicates) {
+    public static <E> Predicate<E> anyTrue(Predicate<? super E>... predicates) {
         return new AnyPredicate<E>(predicates);
-    }
-
-    /**
-     * Creates a Predicate that evaluates to true if any of the specified elements are
-     * equal to the element that is being tested. The returned predicate uses
-     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
-     * only evaluated if the previous arguments does not suffice to determine the truth
-     * value.
-     * <p>
-     * The Predicate will use a copy of the array of supplied predicates.
-     * <p>
-     * If all the supplied predicates are serializable the returned predicate will also be
-     * serializable.
-     *
-     * @param elements
-     *            the elements to test against
-     * @return the newly created Predicate
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     * @throws NullPointerException
-     *             if any of the specified elements are <code>null</code>
-     * @see #isEquals(Object)
-     */
-    public static <E> Predicate<E> anyEquals(E... elements) {
-        List<Predicate<E>> list = new ArrayList<Predicate<E>>();
-        for (E e : elements) {
-            list.add(isEquals(e));
-        }
-        return any(list);
-    }
-
-    /**
-     * As {@link #anyEquals(Object...)} except taking an {@link Iterable} as parameter.
-     *
-     * @param elements
-     *            the elements to test against
-     * @return the newly created Predicate
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     * @throws NullPointerException
-     *             if the specified iterable is <code>null</code> or contains a null
-     *             element
-     * @see #isEquals(Object)
-     */
-    public static <E> Predicate<E> anyEquals(Iterable<? extends E> elements) {
-        List<Predicate<E>> list = new ArrayList<Predicate<E>>();
-        for (E e : elements) {
-            list.add(isEquals(e));
-        }
-        return any(list);
     }
 
     /**
@@ -229,14 +229,14 @@ public final class Predicates {
      * @return the newly created Predicate
      * @throws NullPointerException
      *             if any of the specified classes are <code>null</code>
-     * @see #isType(Class)
+     * @see #isTypeOf(Class)
      */
     public static Predicate anyType(Class<?>... classes) {
         List<Predicate<?>> list = new ArrayList<Predicate<?>>();
         for (Class<?> c : classes) {
-            list.add(isType(c));
+            list.add(isTypeOf(c));
         }
-        return any(list);
+        return anyTrue(list);
     }
 
     /**
@@ -248,14 +248,14 @@ public final class Predicates {
      * @throws NullPointerException
      *             if the specified iterable is <code>null</code> or contains a null
      *             element
-     * @see #isType(Class)
+     * @see #isTypeOf(Class)
      */
     public static Predicate anyType(Iterable<? extends Class<?>> classes) {
         List<Predicate<?>> list = new ArrayList<Predicate<?>>();
         for (Class<?> c : classes) {
-            list.add(isType(c));
+            list.add(isTypeOf(c));
         }
-        return any(list);
+        return anyTrue(list);
     }
 
     /**
@@ -316,28 +316,23 @@ public final class Predicates {
     }
 
     /**
-     * Returns a Predicate that always evaluates to <code>false</code>. The returned
-     * predicate is serializable.
+     * Creates a Predicate that evaluates to <code>true</code> iff the element being
+     * evaluated is the same or {@link Object#equals equal} to the element being specified
+     * in this method.
      * <p>
-     * This example illustrates the type-safe way to obtain a false predicate:
+     * If the specified object is serializable the returned predicate will also be
+     * serializable.
      *
-     * <pre>
-     * Predicate&lt;String&gt; s = Predicates.falsePredicate();
-     * </pre>
-     *
-     * Implementation note: Implementations of this method need not create a separate
-     * <tt>predicate</tt> object for each call. Using this method is likely to have
-     * comparable cost to using the like-named field. (Unlike this method, the field does
-     * not provide type safety.)
-     *
-     * @see #FALSE
-     * @return a Predicate that returns <tt>false</tt> for any element
+     * @param element
+     *            the element to use for comparison
+     * @return the newly created Predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
      * @param <E>
      *            the type of elements accepted by the predicate
      */
-    @SuppressWarnings("unchecked")
-    public static <E> Predicate<E> falsePredicate() {
-        return FALSE;
+    public static <E> Predicate<E> equalsTo(E element) {
+        return new IsEqualsPredicate<E>(element);
     }
 
     /**
@@ -426,25 +421,29 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to <code>true</code> iff the element being
-     * evaluated is the same or {@link Object#equals equal} to the element being specified
-     * in this method.
+     * Returns a Predicate that always evaluates to <code>false</code>. The returned
+     * predicate is serializable.
      * <p>
-     * If the specified object is serializable the returned predicate will also be
-     * serializable.
+     * This example illustrates the type-safe way to obtain a false predicate:
      *
-     * @param element
-     *            the element to use for comparison
-     * @return the newly created Predicate
-     * @throws NullPointerException
-     *             if the specified element is <code>null</code>
+     * <pre>
+     * Predicate&lt;String&gt; s = Predicates.falsePredicate();
+     * </pre>
+     *
+     * Implementation note: Implementations of this method need not create a separate
+     * <tt>predicate</tt> object for each call. Using this method is likely to have
+     * comparable cost to using the like-named field. (Unlike this method, the field does
+     * not provide type safety.)
+     *
+     * @see #FALSE
+     * @return a Predicate that returns <tt>false</tt> for any element
      * @param <E>
      *            the type of elements accepted by the predicate
      */
-    public static <E> Predicate<E> isEquals(E element) {
-        return new IsEqualsPredicate<E>(element);
+    @SuppressWarnings("unchecked")
+    public static <E> Predicate<E> isFalse() {
+        return FALSE;
     }
-
     /**
      * Returns a Predicate that returns <code>false</code> if the element being tested
      * is <code>null</code>. This predicate is serializable.
@@ -482,23 +481,28 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to <code>true</code> iff the element being
-     * evaluated has the same object identity as the element being specified in this
-     * method.
+     * Creates a Predicate that always evaluates to <code>true</code>. The returned
+     * predicate is serializable.
      * <p>
-     * If the specified object is serializable the returned predicate will also be
-     * serializable.
+     * This example illustrates the type-safe way to obtain a true predicate:
      *
-     * @param element
-     *            the element to use for comparison
-     * @return the newly created Predicate
-     * @throws NullPointerException
-     *             if the specified element is <code>null</code>
+     * <pre>
+     * Predicate&lt;String&gt; s = Predicates.truePredicate();
+     * </pre>
+     *
+     * Implementation note: Implementations of this method need not create a separate
+     * <tt>predicate</tt> object for each call. Using this method is likely to have
+     * comparable cost to using the like-named field. (Unlike this method, the field does
+     * not provide type safety.)
+     *
+     * @see #TRUE
+     * @return a Predicate that returns <tt>true</tt> for any element
      * @param <E>
      *            the type of elements accepted by the predicate
      */
-    public static <E> Predicate<E> isSame(E element) {
-        return new IsSamePredicate<E>(element);
+    @SuppressWarnings("unchecked")
+    public static <E> Predicate<E> isTrue() {
+        return TRUE;
     }
 
     /**
@@ -518,7 +522,7 @@ public final class Predicates {
      *             if the class represents a primitive type
      * @see Class#isAssignableFrom(Class)
      */
-    public static <E> Predicate<E> isType(Class<?> clazz) {
+    public static <E> Predicate<E> isTypeOf(Class<?> clazz) {
         return new IsTypePredicate(clazz);
     }
 
@@ -660,6 +664,10 @@ public final class Predicates {
         return new NotPredicate<E>(predicate);
     }
 
+    public static <E> Predicate<E> notEqualsTo(E element) {
+        return not(equalsTo(element));
+    }
+
     /**
      * Creates a new Predicate that will evaluate to <code>false</code> if the specified
      * element is <code>null</code>. Otherwise, it will return the evalutation result
@@ -714,28 +722,23 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that always evaluates to <code>true</code>. The returned
-     * predicate is serializable.
+     * Creates a Predicate that evaluates to <code>true</code> iff the element being
+     * evaluated has the same object identity as the element being specified in this
+     * method.
      * <p>
-     * This example illustrates the type-safe way to obtain a true predicate:
+     * If the specified object is serializable the returned predicate will also be
+     * serializable.
      *
-     * <pre>
-     * Predicate&lt;String&gt; s = Predicates.truePredicate();
-     * </pre>
-     *
-     * Implementation note: Implementations of this method need not create a separate
-     * <tt>predicate</tt> object for each call. Using this method is likely to have
-     * comparable cost to using the like-named field. (Unlike this method, the field does
-     * not provide type safety.)
-     *
-     * @see #TRUE
-     * @return a Predicate that returns <tt>true</tt> for any element
+     * @param element
+     *            the element to use for comparison
+     * @return the newly created Predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
      * @param <E>
      *            the type of elements accepted by the predicate
      */
-    @SuppressWarnings("unchecked")
-    public static <E> Predicate<E> truePredicate() {
-        return TRUE;
+    public static <E> Predicate<E> sameAs(E element) {
+        return new IsSamePredicate<E>(element);
     }
 
     /**
@@ -829,6 +832,20 @@ public final class Predicates {
         }
 
         /**
+         * Returns the predicates we are testing against.
+         *
+         * @return the predicates we are testing against
+         */
+        public List<Predicate<? super E>> getPredicates() {
+            return Collections.unmodifiableList(Arrays.asList(predicates));
+        }
+
+        /** {@inheritDoc} */
+        public Iterator<Predicate<? super E>> iterator() {
+            return Arrays.asList(predicates).iterator();
+        }
+
+        /**
          * Returns <tt>true</tt> if all supplied Predicates accepts the element.
          *
          * @param element
@@ -842,20 +859,6 @@ public final class Predicates {
                 }
             }
             return true;
-        }
-
-        /**
-         * Returns the predicates we are testing against.
-         *
-         * @return the predicates we are testing against
-         */
-        public List<Predicate<? super E>> getPredicates() {
-            return Collections.unmodifiableList(Arrays.asList(predicates));
-        }
-
-        /** {@inheritDoc} */
-        public Iterator<Predicate<? super E>> iterator() {
-            return Arrays.asList(predicates).iterator();
         }
 
         /** {@inheritDoc} */
@@ -915,11 +918,6 @@ public final class Predicates {
             this.right = right;
         }
 
-        /** {@inheritDoc} */
-        public boolean op(E element) {
-            return left.op(element) && right.op(element);
-        }
-
         /**
          * Returns the left side Predicate.
          *
@@ -936,6 +934,11 @@ public final class Predicates {
          */
         public Predicate<? super E> getRightPredicate() {
             return right;
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(E element) {
+            return left.op(element) && right.op(element);
         }
 
         /** {@inheritDoc} */
@@ -987,6 +990,20 @@ public final class Predicates {
         }
 
         /**
+         * Returns the predicates we are testing against.
+         *
+         * @return the predicates we are testing against
+         */
+        public List<Predicate<? super E>> getPredicates() {
+            return Collections.unmodifiableList(Arrays.asList(predicates));
+        }
+
+        /** {@inheritDoc} */
+        public Iterator<Predicate<? super E>> iterator() {
+            return Arrays.asList(predicates).iterator();
+        }
+
+        /**
          * Returns <tt>true</tt> if all supplied Predicates accepts the element.
          *
          * @param element
@@ -1000,20 +1017,6 @@ public final class Predicates {
                 }
             }
             return false;
-        }
-
-        /**
-         * Returns the predicates we are testing against.
-         *
-         * @return the predicates we are testing against
-         */
-        public List<Predicate<? super E>> getPredicates() {
-            return Collections.unmodifiableList(Arrays.asList(predicates));
-        }
-
-        /** {@inheritDoc} */
-        public Iterator<Predicate<? super E>> iterator() {
-            return Arrays.asList(predicates).iterator();
         }
 
         /** {@inheritDoc} */
@@ -1127,12 +1130,6 @@ public final class Predicates {
             this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
-        /** {@inheritDoc} */
-        @SuppressWarnings("unchecked")
-        public boolean op(E element) {
-            return comparator.compare(object, element) <= 0;
-        }
-
         /**
          * @return the comparator to compare elements with or null if the objects natural
          *         comparator should be used.
@@ -1148,6 +1145,12 @@ public final class Predicates {
          */
         public E getObject() {
             return (E) object;
+        }
+
+        /** {@inheritDoc} */
+        @SuppressWarnings("unchecked")
+        public boolean op(E element) {
+            return comparator.compare(object, element) <= 0;
         }
 
         /** {@inheritDoc} */
@@ -1208,12 +1211,6 @@ public final class Predicates {
             this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
-        /** {@inheritDoc} */
-        @SuppressWarnings("unchecked")
-        public boolean op(E element) {
-            return comparator.compare(object, element) < 0;
-        }
-
         /**
          * @return the comparator to compare elements with or null if the objects natural
          *         comparator should be used.
@@ -1229,6 +1226,12 @@ public final class Predicates {
          */
         public E getObject() {
             return (E) object;
+        }
+
+        /** {@inheritDoc} */
+        @SuppressWarnings("unchecked")
+        public boolean op(E element) {
+            return comparator.compare(object, element) < 0;
         }
 
         /** {@inheritDoc} */
@@ -1265,11 +1268,6 @@ public final class Predicates {
             this.element = element;
         }
 
-        /** {@inheritDoc} */
-        public boolean op(E element) {
-            return this.element == element || this.element.equals(element);
-        }
-
         /**
          * Returns the element we are comparing with.
          *
@@ -1277,6 +1275,11 @@ public final class Predicates {
          */
         public E getElement() {
             return element;
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(E element) {
+            return this.element == element || this.element.equals(element);
         }
 
         /** {@inheritDoc} */
@@ -1338,11 +1341,6 @@ public final class Predicates {
             this.element = element;
         }
 
-        /** {@inheritDoc} */
-        public boolean op(E element) {
-            return this.element == element;
-        }
-
         /**
          * Returns the element we are comparing with.
          *
@@ -1350,6 +1348,11 @@ public final class Predicates {
          */
         public E getElement() {
             return element;
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(E element) {
+            return this.element == element;
         }
 
         /** {@inheritDoc} */
@@ -1397,6 +1400,15 @@ public final class Predicates {
         }
 
         /**
+         * Returns the class we are testing against.
+         *
+         * @return Returns the theClass.
+         */
+        public Class<?> getType() {
+            return theClass;
+        }
+
+        /**
          * Tests the given element for acceptance.
          *
          * @param element
@@ -1406,15 +1418,6 @@ public final class Predicates {
          */
         public boolean op(E element) {
             return theClass.isAssignableFrom(element.getClass());
-        }
-
-        /**
-         * Returns the class we are testing against.
-         *
-         * @return Returns the theClass.
-         */
-        public Class<?> getType() {
-            return theClass;
         }
     }
 
@@ -1469,12 +1472,6 @@ public final class Predicates {
             this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
-        /** {@inheritDoc} */
-        @SuppressWarnings("unchecked")
-        public boolean op(E element) {
-            return comparator.compare(object, element) >= 0;
-        }
-
         /**
          * @return the comparator to compare elements with or null if the objects natural
          *         comparator should be used.
@@ -1490,6 +1487,12 @@ public final class Predicates {
          */
         public E getObject() {
             return (E) object;
+        }
+
+        /** {@inheritDoc} */
+        @SuppressWarnings("unchecked")
+        public boolean op(E element) {
+            return comparator.compare(object, element) >= 0;
         }
 
         /** {@inheritDoc} */
@@ -1551,12 +1554,6 @@ public final class Predicates {
             this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
-        /** {@inheritDoc} */
-        @SuppressWarnings("unchecked")
-        public boolean op(E element) {
-            return comparator.compare(object, element) > 0;
-        }
-
         /**
          * @return the comparator to compare elements with or null if the objects natural
          *         comparator should be used.
@@ -1572,6 +1569,12 @@ public final class Predicates {
          */
         public E getObject() {
             return (E) object;
+        }
+
+        /** {@inheritDoc} */
+        @SuppressWarnings("unchecked")
+        public boolean op(E element) {
+            return comparator.compare(object, element) > 0;
         }
 
         /** {@inheritDoc} */
@@ -1615,19 +1618,6 @@ public final class Predicates {
         }
 
         /**
-         * Accepts all elements that are {@link Object#equals equal} to the specified
-         * object.
-         *
-         * @param element
-         *            the element to test against.
-         * @return <code>true</code> if the predicate accepts the element;
-         *         <code>false</code> otherwise.
-         */
-        public boolean op(F element) {
-            return predicate.op(mapper.op(element));
-        }
-
-        /**
          * Returns the mapper that will map the object before applying the predicate on
          * it.
          *
@@ -1644,6 +1634,19 @@ public final class Predicates {
          */
         public Predicate<? super T> getPredicate() {
             return predicate;
+        }
+
+        /**
+         * Accepts all elements that are {@link Object#equals equal} to the specified
+         * object.
+         *
+         * @param element
+         *            the element to test against.
+         * @return <code>true</code> if the predicate accepts the element;
+         *         <code>false</code> otherwise.
+         */
+        public boolean op(F element) {
+            return predicate.op(mapper.op(element));
         }
 
         /** {@inheritDoc} */
@@ -1681,6 +1684,15 @@ public final class Predicates {
         }
 
         /**
+         * Returns the predicate that is being negated.
+         *
+         * @return the predicate that is being negated.
+         */
+        public Predicate<? super E> getPredicate() {
+            return predicate;
+        }
+
+        /**
          * Returns a boolean representing the logical NOT value of the supplied Predicate.
          *
          * @param element
@@ -1689,15 +1701,6 @@ public final class Predicates {
          */
         public boolean op(E element) {
             return !predicate.op(element);
-        }
-
-        /**
-         * Returns the predicate that is being negated.
-         *
-         * @return the predicate that is being negated.
-         */
-        public Predicate<? super E> getPredicate() {
-            return predicate;
         }
 
         /** {@inheritDoc} */
@@ -1741,11 +1744,6 @@ public final class Predicates {
             this.right = right;
         }
 
-        /** {@inheritDoc} */
-        public boolean op(E element) {
-            return left.op(element) || right.op(element);
-        }
-
         /**
          * Returns the left side Predicate.
          *
@@ -1762,6 +1760,11 @@ public final class Predicates {
          */
         public Predicate<? super E> getRightPredicate() {
             return right;
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(E element) {
+            return left.op(element) || right.op(element);
         }
 
         /** {@inheritDoc} */
@@ -1842,11 +1845,6 @@ public final class Predicates {
             this.right = right;
         }
 
-        /** {@inheritDoc} */
-        public boolean op(E element) {
-            return left.op(element) ^ right.op(element);
-        }
-
         /**
          * Returns the left side Predicate.
          *
@@ -1863,6 +1861,11 @@ public final class Predicates {
          */
         public Predicate<? super E> getRightPredicate() {
             return right;
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(E element) {
+            return left.op(element) ^ right.op(element);
         }
 
         /** {@inheritDoc} */

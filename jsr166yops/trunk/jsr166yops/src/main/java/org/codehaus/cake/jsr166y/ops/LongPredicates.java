@@ -79,7 +79,7 @@ public final class LongPredicates {
      *            the value of the equals predicate
      * @return a predicate that accepts any long that is equal to the value specified
      */
-    public static LongPredicate equalsTo(long element) {
+    public static LongPredicate equalsToPredicate(long element) {
         return new EqualsToLongPredicate(element);
     }
 

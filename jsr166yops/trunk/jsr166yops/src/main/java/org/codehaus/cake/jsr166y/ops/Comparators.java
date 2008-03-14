@@ -22,28 +22,28 @@ import java.util.Comparator;
 import jsr166y.forkjoin.Ops.DoubleComparator;
 import jsr166y.forkjoin.Ops.IntComparator;
 import jsr166y.forkjoin.Ops.LongComparator;
+import jsr166y.forkjoin.Ops.ObjectToLong;
 import jsr166y.forkjoin.Ops.Op;
 
 /**
- * Various implementations of {@link Comparator}, {@link LongComparator},
- * {@link DoubleComparator} and {@link IntComparator}.
+ * Various implementations of {@link Comparator}, {@link LongComparator}, {@link DoubleComparator}
+ * and {@link IntComparator}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public final class Comparators {
 
     /**
-     * A comparator for doubles relying on natural ordering. The comparator is
-     * Serializable.
+     * A comparator for doubles relying on natural ordering. The comparator is Serializable.
      */
     public static final DoubleComparator DOUBLE_COMPARATOR = new NaturalDoubleComparator();
 
     /**
-     * A comparator that imposes the reverse of the <i>natural ordering</i> on doubles.
-     * The comparator is Serializable.
+     * A comparator that imposes the reverse of the <i>natural ordering</i> on doubles. The
+     * comparator is Serializable.
      */
     public static final DoubleComparator DOUBLE_REVERSE_COMPARATOR = new NaturalDoubleReverseComparator();
 
@@ -53,8 +53,8 @@ public final class Comparators {
     public static final IntComparator INT_COMPARATOR = new NaturalIntComparator();
 
     /**
-     * A comparator that imposes the reverse of the <i>natural ordering</i> on ints. The
-     * comparator is Serializable.
+     * A comparator that imposes the reverse of the <i>natural ordering</i> on ints. The comparator
+     * is Serializable.
      */
     public static final IntComparator INT_REVERSE_COMPARATOR = new NaturalIntReverseComparator();
 
@@ -70,14 +70,14 @@ public final class Comparators {
     public static final LongComparator LONG_REVERSE_COMPARATOR = new NaturalLongReverseComparator();
 
     /**
-     * A Comparator for Comparable.objects using their <i>natural ordering</i>. The
-     * comparator is Serializable.
+     * A Comparator for Comparable.objects using their <i>natural ordering</i>. The comparator is
+     * Serializable.
      */
     public static final Comparator NATURAL_COMPARATOR = new NaturalComparator();
 
     /**
-     * A comparator that imposes the reverse of the <i>natural ordering</i>. This
-     * comparator is Serializable.
+     * A comparator that imposes the reverse of the <i>natural ordering</i>. This comparator is
+     * Serializable.
      */
     public static final Comparator NATURAL_REVERSE_COMPARATOR = Collections.reverseOrder();
 
@@ -91,6 +91,15 @@ public final class Comparators {
     /** Cannot instantiate. */
     private Comparators() {}
 
+    public static <T> Comparator<T> mappedComparator(ObjectToLong<? super T> mapper) {
+        return mappedComparator(mapper, LONG_COMPARATOR);
+    }
+
+    public static <T> Comparator<T> mappedComparator(ObjectToLong<? super T> mapper,
+            LongComparator comparator) {
+        throw new UnsupportedOperationException();
+    }
+
     public static <T, U extends Comparable<? super U>> Comparator<T> mappedComparator(
             Op<? super T, U> mapper) {
         return mappedComparator(mapper, NATURAL_COMPARATOR);
@@ -102,20 +111,20 @@ public final class Comparators {
     }
 
     /**
-     * Returns a Comparator that use the objects natural comparator. The returned
-     * comparator is serializable.
+     * Returns a Comparator that use the objects natural comparator. The returned comparator is
+     * serializable.
      * <p>
      * This example illustrates the type-safe way to obtain a natural comparator:
-     *
+     * 
      * <pre>
      * Comparator&lt;String&gt; s = Comparators.naturalComparator();
      * </pre>
-     *
+     * 
      * Implementation note: Implementations of this method need not create a separate
-     * <tt>comparator</tt> object for each call. Using this method is likely to have
-     * comparable cost to using the like-named field. (Unlike this method, the field does
-     * not provide type safety.)
-     *
+     * <tt>comparator</tt> object for each call. Using this method is likely to have comparable
+     * cost to using the like-named field. (Unlike this method, the field does not provide type
+     * safety.)
+     * 
      * @return a comparator for Comparable.objects
      * @param <T>
      *            the type of elements accepted by the comparator
@@ -141,17 +150,16 @@ public final class Comparators {
     }
 
     /**
-     * Returns a comparator that imposes the reverse of the <i>natural ordering</i> on a
-     * collection of objects that implement the <tt>Comparable</tt> interface. (The
-     * natural ordering is the ordering imposed by the objects' own <tt>compareTo</tt>
-     * method.) This enables a simple idiom for sorting (or maintaining) collections (or
-     * arrays) of objects that implement the <tt>Comparable</tt> interface in
-     * reverse-natural-order.
+     * Returns a comparator that imposes the reverse of the <i>natural ordering</i> on a collection
+     * of objects that implement the <tt>Comparable</tt> interface. (The natural ordering is the
+     * ordering imposed by the objects' own <tt>compareTo</tt> method.) This enables a simple
+     * idiom for sorting (or maintaining) collections (or arrays) of objects that implement the
+     * <tt>Comparable</tt> interface in reverse-natural-order.
      * <p>
      * The returned comparator is serializable.
-     *
-     * @return a comparator that imposes the reverse of the <i>natural ordering</i> on a
-     *         collection of objects that implement the <tt>Comparable</tt> interface.
+     * 
+     * @return a comparator that imposes the reverse of the <i>natural ordering</i> on a collection
+     *         of objects that implement the <tt>Comparable</tt> interface.
      * @param <T>
      *            the Comparable types accepted by the Comparator
      * @see Comparable
@@ -165,7 +173,7 @@ public final class Comparators {
      * <p>
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
-     *
+     * 
      * @param comparator
      *            the Comparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
@@ -184,7 +192,7 @@ public final class Comparators {
      * <p>
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
-     *
+     * 
      * @param comparator
      *            the DoubleComparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
@@ -198,7 +206,7 @@ public final class Comparators {
      * <p>
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
-     *
+     * 
      * @param comparator
      *            the IntComparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
@@ -212,7 +220,7 @@ public final class Comparators {
      * <p>
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
-     *
+     * 
      * @param comparator
      *            the LongComparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
@@ -442,7 +450,7 @@ public final class Comparators {
 
         /**
          * Creates a new ReverseDoubleComparator.
-         *
+         * 
          * @param comparator
          *            the comparator to reverse
          */
@@ -470,7 +478,7 @@ public final class Comparators {
 
         /**
          * Creates a new ReverseIntComparator.
-         *
+         * 
          * @param comparator
          *            the comparator to reverse
          */
@@ -497,7 +505,7 @@ public final class Comparators {
 
         /**
          * Creates a new ReverseLongComparator.
-         *
+         * 
          * @param comparator
          *            the comparator to reverse
          */

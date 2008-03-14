@@ -235,7 +235,7 @@ public class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void equalsTo() {
-        LongPredicate f = LongPredicates.equalsTo(5);
+        LongPredicate f = LongPredicates.equalsToPredicate(5);
         assertEquals(5L, new EqualsToLongPredicate(5).getEqualsTo());
         assertFalse(f.op(4));
         assertTrue(f.op(5));
@@ -248,7 +248,7 @@ public class LongPredicatesTest {
 
     @Test
     public void mapperPredicate() {
-        LongPredicate p = LongPredicates.equalsTo(9);
+        LongPredicate p = LongPredicates.equalsToPredicate(9);
 
         ObjectToLong<Integer> m = new ObjectToLong<Integer>() {
             public long op(Integer from) {
