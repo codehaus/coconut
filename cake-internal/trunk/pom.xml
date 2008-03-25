@@ -89,7 +89,6 @@
     </pluginRepository>
   </pluginRepositories>
   <modules>
-    <module>cake-testutil</module>
     <module>cake-buildtools</module>
   </modules>
 </project>
