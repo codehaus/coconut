@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.codehaus.cake</groupId>
+    <artifactId>cake-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <groupId>org.codehaus.cake.test</groupId>
+  <artifactId>cake-test-parent</artifactId>
+  <name>Cake Test (pom)</name>
+  <description>Root Pom for Cake Test</description>
+  <packaging>pom</packaging>
+  <profiles>
+    <profile>
+      <id>run-no-clover</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>cake-test-util</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>release</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>cake-cache-api</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>run-clover</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>clover</name>
+        </property>
+      </activation>
+      <modules>
+        <module>cake-cache-api</module>
+        <module>cake-cache-impl</module>
+        <module>cake-cache-policies</module>
+      </modules>
+    </profile>
+  </profiles>
+</project>
