@@ -1,0 +1,4 @@
+configuration = org.codehaus.cake.cache.CacheConfiguration
+
+container = org.codehaus.cake.cache.defaults.UnsynchronizedCache
+#container=org.codehaus.cake.cache.defaults.SynchronizedCache

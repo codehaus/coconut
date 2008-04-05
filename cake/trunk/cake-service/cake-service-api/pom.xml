@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.codehaus.cake.service</groupId>
+    <artifactId>cake-service-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>cake-service-api</artifactId>
+  <name>Cake Service API</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.codehaus.cake.test</groupId>
+      <artifactId>cake-test-util</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
