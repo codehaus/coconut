@@ -2,6 +2,8 @@
  * Licensed under the Apache 2.0 License. */
 package org.codehaus.cake.util.attribute;
 
+import java.util.Comparator;
+
 import jsr166y.forkjoin.Ops.ObjectToLong;
 
 /**
@@ -11,7 +13,8 @@ import jsr166y.forkjoin.Ops.ObjectToLong;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class LongAttribute extends Attribute<Long> implements ObjectToLong<WithAttributes> {
+public abstract class LongAttribute extends Attribute<Long> implements
+        ObjectToLong<WithAttributes>, Comparator<WithAttributes> {
 
     /** The default value of this attribute. */
     private final transient long defaultLongValue;
@@ -77,6 +80,22 @@ public abstract class LongAttribute extends Attribute<Long> implements ObjectToL
      */
     public long getValue(AttributeMap attributes) {
         return attributes.getLong(this, defaultLongValue);
+    }
+
+    public long getValue(WithAttributes withAttributes) {
+        return getValue(withAttributes.getAttributes());
+    }
+
+    public long getValue(WithAttributes attributes, long defaultValue) {
+        return getValue(attributes.getAttributes(), defaultValue);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int compare(WithAttributes w1, WithAttributes w2) {
+        long thisVal = getValue(w1);
+        long anotherVal = getValue(w2);
+        return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
     }
 
     /**

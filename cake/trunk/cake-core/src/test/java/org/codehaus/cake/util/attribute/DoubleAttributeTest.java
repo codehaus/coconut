@@ -9,12 +9,12 @@ import static org.junit.Assert.assertTrue;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 
-public class DoubleAttributeTest {
+public class DoubleAttributeTest extends AtrStubs {
     static final DoubleAttribute LA = new DoubleAttribute("foo", 100.5d) {};
 
     @Test
     public void testDefault() {
-        assertEquals(100.5D, LA.getDefault().doubleValue(),0);
+        assertEquals(100.5D, LA.getDefault().doubleValue(), 0);
     }
 
     @Test
@@ -59,18 +59,20 @@ public class DoubleAttributeTest {
         AttributeMap ammax = Attributes.singleton(LA, Double.MAX_VALUE);
         AttributeMap amINf = Attributes.singleton(LA, Double.POSITIVE_INFINITY);
 
-        assertEquals(100.5, LA.getValue(am),0);
-        assertEquals(-1D, LA.getValue(am1),0);
-        assertEquals(10000D, LA.getValue(am10000),0);
-        assertEquals(Double.MAX_VALUE, LA.getValue(ammax),0);
-        assertEquals(Double.POSITIVE_INFINITY, LA.getValue(amINf),0);
+        assertEquals(100.5, LA.getValue(am), 0);
+        assertEquals(-1D, LA.getValue(am1), 0);
+        assertEquals(10000D, LA.getValue(am10000), 0);
+        assertEquals(Double.MAX_VALUE, LA.getValue(ammax), 0);
+        assertEquals(Double.POSITIVE_INFINITY, LA.getValue(amINf), 0);
+        assertEquals(Double.MAX_VALUE, LA.getValue(withAtr(ammax)), 0);
+        assertEquals(Double.POSITIVE_INFINITY, LA.getValue(withAtr(amINf)), 0);
 
-        assertEquals(10D, LA.getValue(am, 10D),0);
-        assertEquals(-1D, LA.getValue(am1, 10),0);
-        assertEquals(10000D, LA.getValue(am10000, 10),0);
-        assertEquals(Double.MAX_VALUE, LA.getValue(ammax, 10),0);
-        assertEquals(Double.POSITIVE_INFINITY, LA.getValue(amINf, 10),0);
-
+        assertEquals(10D, LA.getValue(am, 10D), 0);
+        assertEquals(-1D, LA.getValue(am1, 10), 0);
+        assertEquals(10000D, LA.getValue(am10000, 10), 0);
+        assertEquals(Double.MAX_VALUE, LA.getValue(ammax, 10), 0);
+        assertEquals(Double.POSITIVE_INFINITY, LA.getValue(amINf, 10), 0);
+        assertEquals(Double.POSITIVE_INFINITY, LA.getValue(withAtr(amINf), 10), 0);
     }
 
     @Test
@@ -105,26 +107,50 @@ public class DoubleAttributeTest {
 
     @Test
     public void fromString() {
-        assertEquals(-1D, LA.fromString(new Double(-1).toString()),0);
-        assertEquals(Double.MIN_VALUE, LA.fromString(new Double(Double.MIN_VALUE).toString()),0);
-        assertEquals(Double.MAX_VALUE, LA.fromString(new Double(Double.MAX_VALUE).toString()),0);
+        assertEquals(-1D, LA.fromString(new Double(-1).toString()), 0);
+        assertEquals(Double.MIN_VALUE, LA.fromString(new Double(Double.MIN_VALUE).toString()), 0);
+        assertEquals(Double.MAX_VALUE, LA.fromString(new Double(Double.MAX_VALUE).toString()), 0);
         assertEquals(Double.POSITIVE_INFINITY, LA.fromString(new Double(Double.POSITIVE_INFINITY)
-                .toString()),0);
+                .toString()), 0);
         assertEquals(Double.NEGATIVE_INFINITY, LA.fromString(new Double(Double.NEGATIVE_INFINITY)
-                .toString()),0);
-        assertEquals(Double.NaN, LA.fromString(new Double(Double.NaN).toString()),0);
+                .toString()), 0);
+        assertEquals(Double.NaN, LA.fromString(new Double(Double.NaN).toString()), 0);
     }
 
     @Test
     public void mapToLong() {
         TestUtil.assertIsSerializable(LA.mapToDouble());
         AttributeMap am = Attributes.singleton(LA, 100.1);
-        assertEquals(100.1, LA.mapToDouble().op(am),0);
-        assertEquals(100.5, LA.mapToDouble().op(Attributes.EMPTY_ATTRIBUTE_MAP),0);
+        assertEquals(100.1, LA.mapToDouble().op(am), 0);
+        assertEquals(100.5, LA.mapToDouble().op(Attributes.EMPTY_ATTRIBUTE_MAP), 0);
     }
 
     @Test(expected = NullPointerException.class)
     public void mapper() {
         LA.mapToDouble().op(null);
+    }
+    @Test(expected = NullPointerException.class)
+    public void opNPE() {
+        D_1.op(null);
+    }
+
+    @Test
+    public void op() {
+        assertEquals(5, D_1.op(withAtr(D_1.singleton(5))),0);
+    }
+    @Test
+    public void comparator() {
+        WithAttributes wa1 = withAtr(D_1.singleton(1));
+        WithAttributes wa2 = withAtr(D_1.singleton(2));
+        WithAttributes wa22 = withAtr(D_1.singleton(2));
+        WithAttributes wa3 = withAtr(D_1.singleton(3));
+        assertEquals(0, D_1.compare(wa2, wa2));
+        assertEquals(0, D_1.compare(wa2, wa22));
+        assertEquals(0, D_1.compare(wa22, wa2));
+        assertTrue(D_1.compare(wa1, wa2) < 0);
+        assertTrue(D_1.compare(wa2, wa1) > 0);
+        assertTrue(D_1.compare(wa1, wa3) < 0);
+        assertTrue(D_1.compare(wa3, wa2) > 0);
+        assertTrue(D_1.compare(wa2, wa3) < 0);
     }
 }

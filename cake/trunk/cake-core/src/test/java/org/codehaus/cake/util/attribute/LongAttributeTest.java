@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class LongAttributeTest {
+public class LongAttributeTest extends AtrStubs {
     static final LongAttribute LONG_A = new LongAttribute("foo", 100) {};
 
     static final LongAttribute NON_NEGATIVE = new LongAttribute("foo", 1) {
@@ -63,12 +63,16 @@ public class LongAttributeTest {
         assertEquals(-1l, LONG_A.getValue(am1));
         assertEquals(10000l, LONG_A.getValue(am10000));
         assertEquals(Long.MAX_VALUE, LONG_A.getValue(ammax));
-
+        assertEquals(10000l, LONG_A.getValue(withAtr(am10000)));
+        assertEquals(Long.MAX_VALUE, LONG_A.getValue(withAtr(ammax)));
+        
         assertEquals(10L, LONG_A.getValue(am, 10L));
         assertEquals(-1l, LONG_A.getValue(am1, 10));
         assertEquals(10000l, LONG_A.getValue(am10000, 10));
         assertEquals(Long.MAX_VALUE, LONG_A.getValue(ammax, 10));
-
+        assertEquals(10000l, LONG_A.getValue(withAtr(am10000), 10));
+        assertEquals(Long.MAX_VALUE, LONG_A.getValue(withAtr(ammax), 10));
+        
         assertEquals(-1l, NON_NEGATIVE.getValue(am, -1));
     }
 
@@ -117,15 +121,28 @@ public class LongAttributeTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void filterOnLongNPE() {
+    public void opNPE() {
         LONG_A.op(null);
     }
 
     @Test
-    public void filterOnLong() {
-    // Predicate<AttributeMap> filter = LONG_A.filterLong(LongPredicates.greaterThen(5));
-    // assertTrue(filter.op(Attributes.singleton(LONG_A, 6L)));
-    // assertFalse(filter.op(Attributes.singleton(LONG_A, 5L)));
-    // assertFalse(filter.op(Attributes.singleton(LONG_A, 4L)));
+    public void op() {
+        assertEquals(5, L_1.op(withAtr(L_1.singleton(5))));
+    }
+
+    @Test
+    public void comparator() {
+        WithAttributes wa1 = withAtr(L_1.singleton(1));
+        WithAttributes wa2 = withAtr(L_1.singleton(2));
+        WithAttributes wa22 = withAtr(L_1.singleton(2));
+        WithAttributes wa3 = withAtr(L_1.singleton(3));
+        assertEquals(0, L_1.compare(wa2, wa2));
+        assertEquals(0, L_1.compare(wa2, wa22));
+        assertEquals(0, L_1.compare(wa22, wa2));
+        assertTrue(L_1.compare(wa1, wa2) < 0);
+        assertTrue(L_1.compare(wa2, wa1) > 0);
+        assertTrue(L_1.compare(wa1, wa3) < 0);
+        assertTrue(L_1.compare(wa3, wa2) > 0);
+        assertTrue(L_1.compare(wa2, wa3) < 0);
     }
 }

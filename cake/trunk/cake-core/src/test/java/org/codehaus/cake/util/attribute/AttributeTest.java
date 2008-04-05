@@ -172,8 +172,8 @@ public class AttributeTest {
     public void map() {
         TestUtil.assertIsSerializable(ATR.map());
         AttributeMap am = Attributes.singleton(ATR, "abc");
-        assertEquals("abc", ATR.map().op(am));
-        assertEquals("default", ATR.map().op(Attributes.EMPTY_ATTRIBUTE_MAP));
+        assertEquals("abc", ATR.map().op(withAtr(am)));
+        assertEquals("default", ATR.map().op(withAtr(Attributes.EMPTY_ATTRIBUTE_MAP)));
     }
 
     @Test(expected = NullPointerException.class)
@@ -188,10 +188,10 @@ public class AttributeTest {
 
     @Test
     public void filter() {
-        Predicate<AttributeMap> filter = ATR.filter(StringOps.startsWith("A"));
-        assertTrue(filter.op(Attributes.singleton(ATR, "Adf")));
-        assertFalse(filter.op(Attributes.singleton(ATR, "Bdf")));
-        assertFalse(filter.op(Attributes.singleton(ATR, "adf")));
+        Predicate<WithAttributes> filter = ATR.filter(StringOps.startsWith("A"));
+        assertTrue(filter.op(withAtr(Attributes.singleton(ATR, "Adf"))));
+        assertFalse(filter.op(withAtr(Attributes.singleton(ATR, "Bdf"))));
+        assertFalse(filter.op(withAtr(Attributes.singleton(ATR, "adf"))));
     }
 
     static class DefaultAttribute extends Attribute<String> {

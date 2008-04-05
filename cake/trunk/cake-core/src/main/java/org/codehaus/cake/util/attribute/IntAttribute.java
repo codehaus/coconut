@@ -3,6 +3,7 @@
 package org.codehaus.cake.util.attribute;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import jsr166y.forkjoin.Ops.ObjectToInt;
 
@@ -13,7 +14,8 @@ import jsr166y.forkjoin.Ops.ObjectToInt;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class IntAttribute extends Attribute<Integer> {
+public abstract class IntAttribute extends Attribute<Integer> implements
+        ObjectToInt<WithAttributes>, Comparator<WithAttributes> {
 
     /** The default value of this attribute. */
     private final int defaultIntValue;
@@ -39,8 +41,13 @@ public abstract class IntAttribute extends Attribute<Integer> {
         super(name, Integer.TYPE, defaultValue);
         this.defaultIntValue = defaultValue;
     }
+
     public int getDefaultValue() {
         return defaultIntValue;
+    }
+    /** {@inheritDoc} */
+    public int op(WithAttributes t) {
+        return getValue(t.getAttributes());
     }
     /**
      * Analogous to {@link #checkValid(Integer)} except taking a primitive Integer.
@@ -79,13 +86,23 @@ public abstract class IntAttribute extends Attribute<Integer> {
     public int getValue(AttributeMap attributes) {
         return attributes.getInt(this, defaultIntValue);
     }
+
     public int getValue(WithAttributes attributes) {
         return getValue(attributes.getAttributes());
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public int compare(WithAttributes w1, WithAttributes w2) {
+        int thisVal = getValue(w1);
+        int anotherVal = getValue(w2);
+        return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
+    }
+
     public int getValue(WithAttributes attributes, int defaultValue) {
         return getValue(attributes.getAttributes(), defaultValue);
     }
+
     /**
      * Analogous to {@link #get(AttributeMap, Integer)} except returning a primitive
      * <tt>Integer</tt>.

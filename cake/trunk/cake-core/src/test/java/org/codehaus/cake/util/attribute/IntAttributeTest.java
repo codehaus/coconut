@@ -125,7 +125,28 @@ public class IntAttributeTest extends AtrStubs {
     }
 
     @Test(expected = NullPointerException.class)
-    public void mapper() {
-        LONG_A.mapToInt().op(null);
+    public void opNPE() {
+        I_1.op(null);
+    }
+
+    @Test
+    public void op() {
+        assertEquals(5, I_1.op(withAtr(I_1.singleton(5))));
+    }
+    
+    @Test
+    public void comparator() {
+        WithAttributes wa1 = withAtr(I_1.singleton(1));
+        WithAttributes wa2 = withAtr(I_1.singleton(2));
+        WithAttributes wa22 = withAtr(I_1.singleton(2));
+        WithAttributes wa3 = withAtr(I_1.singleton(3));
+        assertEquals(0, I_1.compare(wa2, wa2));
+        assertEquals(0, I_1.compare(wa2, wa22));
+        assertEquals(0, I_1.compare(wa22, wa2));
+        assertTrue(I_1.compare(wa1, wa2) < 0);
+        assertTrue(I_1.compare(wa2, wa1) > 0);
+        assertTrue(I_1.compare(wa1, wa3) < 0);
+        assertTrue(I_1.compare(wa3, wa2) > 0);
+        assertTrue(I_1.compare(wa2, wa3) < 0);
     }
 }

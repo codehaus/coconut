@@ -28,13 +28,13 @@ public abstract class Attribute<T> implements Serializable {
     /**
      * A MapperToLong that maps from an attribute map to the value of this attribute.
      */
-    class AttributeMapToT implements Op<AttributeMap, T>, Serializable {
+    class AttributeMapToT implements Op<WithAttributes, T>, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -953844729549732090L;
 
         /** {@inheritDoc} */
-        public T op(AttributeMap t) {
+        public T op(WithAttributes t) {
             return get(t);
         }
     }
@@ -48,7 +48,7 @@ public abstract class Attribute<T> implements Serializable {
     /**
      * A Mapper that takes an AttributeMap and returns the value of this attribute.
      */
-    private final transient Op<AttributeMap, T> mapper = new AttributeMapToT();
+    private final transient Op<WithAttributes, T> mapper = new AttributeMapToT();
 
     /** The name of this attribute. */
     private final transient String name;
@@ -91,8 +91,8 @@ public abstract class Attribute<T> implements Serializable {
         }
     }
 
-    protected Predicate<AttributeMap> filter(Predicate<? super T> p) {
-        return Predicates.mapAndEvaluate(map(), p);
+    protected Predicate<WithAttributes> filter(Predicate<? super T> p) {
+        return Predicates.mapAndEvaluate(mapper, p);
     }
 
     /**
@@ -202,7 +202,7 @@ public abstract class Attribute<T> implements Serializable {
      * 
      * @return a mapper from an AttributeMap to the value of this attribute
      */
-    public Op<AttributeMap, T> map() {
+    public Op<WithAttributes, T> map() {
         return mapper;
     }
 

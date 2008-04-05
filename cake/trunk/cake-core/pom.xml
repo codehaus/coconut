@@ -20,7 +20,6 @@
     <dependency>
       <groupId>org.codehaus.cake.test</groupId>
       <artifactId>cake-test-util</artifactId>
-      <version>0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
