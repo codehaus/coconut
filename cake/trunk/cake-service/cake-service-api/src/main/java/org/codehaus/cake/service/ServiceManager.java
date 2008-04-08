@@ -5,7 +5,7 @@ package org.codehaus.cake.service;
 import java.util.Map;
 
 /**
- * This is the main interface for controlling other services.
+ * An interface giving access to services.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: CacheServiceManagerService.java 537 2007-12-30 19:21:20Z kasper $

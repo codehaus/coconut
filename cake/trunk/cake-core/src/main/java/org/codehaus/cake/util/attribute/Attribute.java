@@ -25,20 +25,6 @@ import org.codehaus.cake.jsr166y.ops.Predicates;
 public abstract class Attribute<T> implements Serializable {
     /* All fields are transient because attributes should be a singleton. */
 
-    /**
-     * A MapperToLong that maps from an attribute map to the value of this attribute.
-     */
-    class AttributeMapToT implements Op<WithAttributes, T>, Serializable {
-
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -953844729549732090L;
-
-        /** {@inheritDoc} */
-        public T op(WithAttributes t) {
-            return get(t);
-        }
-    }
-
     /** The type of this attribute, as returned {@link #getType()}. */
     private final transient Class<T> clazz;
 
@@ -52,6 +38,18 @@ public abstract class Attribute<T> implements Serializable {
 
     /** The name of this attribute. */
     private final transient String name;
+
+    /**
+     * Creates a new Attribute with <code>null</code> as default value.
+     * 
+     * @param name
+     *            the name of the attribute
+     * @param clazz
+     *            the type of this attribute
+     */
+    public Attribute(String name, Class<T> clazz) {
+        this(name, clazz, null);
+    }
 
     /**
      * Creates a new AbstractAttribute.
@@ -111,6 +109,59 @@ public abstract class Attribute<T> implements Serializable {
     }
 
     /**
+     * Returns the value of this attribute from the specified attribute map. If this attribute is
+     * not set in the map, the value of {@link #getDefault()} will be returned instead.
+     * 
+     * @param attributes
+     *            the attribute map for which to retrieve the value of this attribute
+     * @return the value of this attribute
+     */
+    public final T get(AttributeMap attributes) {
+        return get(attributes, defaultValue);
+    }
+
+    /**
+     * Returns the value of this attribute from the specified attribute map. If this attribute is
+     * not set in the map, the specified defaultValue will be returned instead.
+     * 
+     * @param attributes
+     *            the attribute map for which to retrieve the value of this attribute
+     * @param defaultValue
+     *            the value to return if this attribute is not set in the specified attribute map
+     * @return the value of this attribute
+     */
+    public T get(AttributeMap attributes, T defaultValue) {
+        return (T) attributes.get(this, defaultValue);
+    }
+
+    /**
+     * Extracts the attribute map from the specified {@link WithAttributes} and returns the value of
+     * this attribute from the map. If this attribute is not set in the map, the value of
+     * {@link #getDefault()} will be returned instead.
+     * 
+     * @param attributes
+     *            the attribute map for which to retrieve the value of this attribute
+     * @return the value of this attribute
+     */
+    public final T get(WithAttributes withAttributes) {
+        return get(withAttributes.getAttributes());
+    }
+
+    /**
+     * Extracts the attribute map from the specified {@link WithAttributes} and returns the value of
+     * this attribute from the map. If this attribute is not set in the map, the specified default
+     * value will be returned.
+     * 
+     * @param attributes
+     *            the attribute map for which to retrieve the value of this attribute
+     * @return the value of this attribute
+     */
+
+    public final T get(WithAttributes withAttributes, T defaultValue) {
+        return get(withAttributes.getAttributes(), defaultValue);
+    }
+
+    /**
      * Returns the default value of this attribute (<code>null</code> values are allowed).
      * 
      * @return the default value of this attribute
@@ -137,43 +188,10 @@ public abstract class Attribute<T> implements Serializable {
         return clazz;
     }
 
-    public final T get(WithAttributes withAttributes) {
-        return get(withAttributes.getAttributes());
-    }
-
-    /**
-     * Returns the value of this attribute from the specified attribute map. If this attribute is
-     * not set in the map, the value of {@link #getDefault()} will be returned instead.
-     * 
-     * @param attributes
-     *            the attribute map for which to retrieve the value of this attribute
-     * @return the value of this attribute
-     */
-    public final T get(AttributeMap attributes) {
-        return get(attributes, defaultValue);
-    }
-
-    public final T get(WithAttributes withAttributes, T defaultValue) {
-        return get(withAttributes.getAttributes(), defaultValue);
-    }
-
-    /**
-     * Returns the value of this attribute from the specified attribute map. If this attribute is
-     * not set in the map, the specified defaultValue will be returned instead.
-     * 
-     * @param attributes
-     *            the attribute map for which to retrieve the value of this attribute
-     * @param defaultValue
-     *            the value to return if this attribute is not set in the specified attribute map
-     * @return the value of this attribute
-     */
-    public T get(AttributeMap attributes, T defaultValue) {
-        return (T) attributes.get(this, defaultValue);
-    }
-
     /**
      * Returns whether or not this attribute is set in the specified attribute map. This method is
-     * useful for distinguishing those case where an attribute maps to <code>null</code> or 0.
+     * useful for distinguishing those case where an attribute maps to the default value of the
+     * attribute.
      * 
      * @param attributes
      *            the attribute map to check if this attribute is set
@@ -185,7 +203,8 @@ public abstract class Attribute<T> implements Serializable {
     }
 
     /**
-     * Returns whether or not the specified value is valid for this attribute.
+     * Returns whether or not the specified value is valid for this attribute. This method can be
+     * overriden to only accept certain values.
      * 
      * @param value
      *            the specified value to check
@@ -197,10 +216,10 @@ public abstract class Attribute<T> implements Serializable {
     }
 
     /**
-     * Returns a mapper that extracts the value of this attribute from an {@link AttributeMap}, or
-     * returns {@link #getDefault()} if this attribute is not present.
+     * Returns an {@link Op} that extracts the value of this attribute from an {@link AttributeMap},
+     * or returns {@link #getDefault()} if this attribute is not present.
      * 
-     * @return a mapper from an AttributeMap to the value of this attribute
+     * @return an Op from a {@link WithAttributes} to the value of this attribute
      */
     public Op<WithAttributes, T> map() {
         return mapper;
@@ -241,7 +260,8 @@ public abstract class Attribute<T> implements Serializable {
     }
 
     /**
-     * Returns an AttributeMap containing only this attribute mapping to the specified value.
+     * Returns an AttributeMap containing only this attribute mapping to the specified value. The
+     * returned map is immutable.
      * 
      * @param value
      *            the value to create the singleton from
@@ -256,5 +276,19 @@ public abstract class Attribute<T> implements Serializable {
     @Override
     public String toString() {
         return name;
+    }
+
+    /**
+     * A MapperToLong that maps from an attribute map to the value of this attribute.
+     */
+    class AttributeMapToT implements Op<WithAttributes, T>, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -953844729549732090L;
+
+        /** {@inheritDoc} */
+        public T op(WithAttributes t) {
+            return get(t);
+        }
     }
 }

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 
 public class DoubleAttributeTest extends AtrStubs {
@@ -117,18 +116,6 @@ public class DoubleAttributeTest extends AtrStubs {
         assertEquals(Double.NaN, LA.fromString(new Double(Double.NaN).toString()), 0);
     }
 
-    @Test
-    public void mapToLong() {
-        TestUtil.assertIsSerializable(LA.mapToDouble());
-        AttributeMap am = Attributes.singleton(LA, 100.1);
-        assertEquals(100.1, LA.mapToDouble().op(am), 0);
-        assertEquals(100.5, LA.mapToDouble().op(Attributes.EMPTY_ATTRIBUTE_MAP), 0);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void mapper() {
-        LA.mapToDouble().op(null);
-    }
     @Test(expected = NullPointerException.class)
     public void opNPE() {
         D_1.op(null);

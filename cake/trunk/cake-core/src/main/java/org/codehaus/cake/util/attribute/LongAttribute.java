@@ -20,7 +20,7 @@ public abstract class LongAttribute extends Attribute<Long> implements
     private final transient long defaultLongValue;
 
     /**
-     * Creates a new AbstractLongAttribute.
+     * Creates a new LongAttribute.
      * 
      * @param name
      *            the name of the attribute
@@ -67,6 +67,12 @@ public abstract class LongAttribute extends Attribute<Long> implements
         }
     }
 
+    /**
+     * Returns the default primitive value of this attribute. This is equivalent to calling
+     * {@link #getDefault()} except returning a primitive long.
+     * 
+     * @return the default value of this attribute
+     */
     public long getDefaultValue() {
         return defaultLongValue;
     }
@@ -158,7 +164,8 @@ public abstract class LongAttribute extends Attribute<Long> implements
      * 
      * @param value
      *            the value to create the singleton from
-     * @return an AttributeMap containing only this attribute mapping to the specified value
+     * @return an immutable AttributeMap containing only this attribute mapping to the specified
+     *         value
      */
     public AttributeMap singleton(long value) {
         checkValid(value);

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 
 public class IntAttributeTest extends AtrStubs {
@@ -114,14 +113,6 @@ public class IntAttributeTest extends AtrStubs {
     @Test(expected = IllegalArgumentException.class)
     public void toSingletonIAE() {
         NON_NEGATIVE.singleton(-10);
-    }
-
-    @Test
-    public void mapToLong() {
-        TestUtil.assertIsSerializable(LONG_A.mapToInt());
-        AttributeMap am = Attributes.singleton(LONG_A, 10000);
-        assertEquals(10000, LONG_A.mapToInt().op(am));
-        assertEquals(100, LONG_A.mapToInt().op(Attributes.EMPTY_ATTRIBUTE_MAP));
     }
 
     @Test(expected = NullPointerException.class)

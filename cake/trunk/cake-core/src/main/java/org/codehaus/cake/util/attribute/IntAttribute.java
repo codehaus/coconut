@@ -18,12 +18,7 @@ public abstract class IntAttribute extends Attribute<Integer> implements
         ObjectToInt<WithAttributes>, Comparator<WithAttributes> {
 
     /** The default value of this attribute. */
-    private final int defaultIntValue;
-
-    /**
-     * A MapperToInteger that takes an AttributeMap and returns the value of this attribute.
-     */
-    private final ObjectToInt<AttributeMap> mapperToInt = new AttributeMapToInt();
+    private final transient int defaultIntValue;
 
     /**
      * Creates a new AbstractIntegerAttribute.
@@ -42,15 +37,23 @@ public abstract class IntAttribute extends Attribute<Integer> implements
         this.defaultIntValue = defaultValue;
     }
 
+    /**
+     * Returns the default scalar value of this attribute. This is equivalent to calling
+     * {@link #getDefault()}.
+     * 
+     * @return the default value of this attribute
+     */
     public int getDefaultValue() {
         return defaultIntValue;
     }
+
     /** {@inheritDoc} */
     public int op(WithAttributes t) {
         return getValue(t.getAttributes());
     }
+
     /**
-     * Analogous to {@link #checkValid(Integer)} except taking a primitive Integer.
+     * Analogous to {@link #checkValid(Integer)} except taking a scalar int.
      * 
      * @param value
      *            the value to check
@@ -77,7 +80,7 @@ public abstract class IntAttribute extends Attribute<Integer> implements
     }
 
     /**
-     * Analogous to {@link #get(AttributeMap)} except returning a primitive <tt>Integer</tt>.
+     * Analogous to {@link #get(AttributeMap)} except returning a scalar <tt>int</tt>.
      * 
      * @param attributes
      *            the attribute map to retrieve the value of this attribute from
@@ -86,7 +89,13 @@ public abstract class IntAttribute extends Attribute<Integer> implements
     public int getValue(AttributeMap attributes) {
         return attributes.getInt(this, defaultIntValue);
     }
-
+    /**
+     * Analogous to {@link #get(WithAttributes)} except returning a scalar <tt>int</tt>.
+     * 
+     * @param attributes
+     *            the attribute map to retrieve the value of this attribute from
+     * @return the value of this attribute
+     */
     public int getValue(WithAttributes attributes) {
         return getValue(attributes.getAttributes());
     }
@@ -135,15 +144,6 @@ public abstract class IntAttribute extends Attribute<Integer> implements
         return isValid(value.intValue());
     }
 
-    /**
-     * Returns a mapper that extracts the value of this attribute from an {@link AttributeMap}, or
-     * returns {@link #getDefault()} if this attribute is not present.
-     * 
-     * @return a mapper from an AttributeMap to the value of this attribute
-     */
-    public ObjectToInt<AttributeMap> mapToInt() {
-        return mapperToInt;
-    }
 
     /**
      * Analogous to {@link #set(AttributeMap, Integer)} except taking a primitive Integer as

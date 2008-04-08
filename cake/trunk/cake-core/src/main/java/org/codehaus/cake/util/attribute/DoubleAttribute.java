@@ -18,12 +18,7 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
         ObjectToDouble<WithAttributes>, Comparator<WithAttributes> {
 
     /** The default value of this attribute. */
-    private final double defaultDoubleValue;
-
-    /**
-     * A MapperToDouble that takes an AttributeMap and returns the value of this attribute.
-     */
-    private final AttributeMapToDouble mapperToDouble = new AttributeMapToDouble();
+    private final transient double defaultDoubleValue;
 
     /**
      * Creates a new AbstractDoubleAttribute.
@@ -129,16 +124,6 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
      */
     public boolean isValid(double value) {
         return !isNaNInfinity(value);
-    }
-
-    /**
-     * Returns a mapper that extracts the value of this attribute from an {@link AttributeMap}, or
-     * returns {@link #getDefault()} if this attribute is not present.
-     * 
-     * @return a mapper from an AttributeMap to the value of this attribute
-     */
-    public ObjectToDouble<AttributeMap> mapToDouble() {
-        return mapperToDouble;
     }
 
     /**

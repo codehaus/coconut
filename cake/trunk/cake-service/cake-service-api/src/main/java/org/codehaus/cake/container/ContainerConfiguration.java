@@ -28,25 +28,11 @@ import org.codehaus.cake.util.management.ManagedGroup;
 
 /**
  * This class is the primary class used for representing the configuration of a container. All
- * general-purpose <tt>Container</tt> implementation classes should have a constructor with
- * a single argument taking a ContainerConfiguration.
+ * general-purpose <tt>Container</tt> implementation classes should have a constructor with a
+ * single argument taking a class extending ContainerConfiguration.
  * <p>
- * <b>Usage Examples.</b> The following creates a new container with the name <I>MyContainer</I>.
- * The container can hold a maximum of 1000 elements and uses a least-recently-used policy to
- * determine which elements to evict when the specified maximum size has been reached.
- * Elements will automatically expire after having been in the container for 1 hour. Finally,
- * the container and all of its services are registered as a mbean with the
- * {@link java.lang.management.ManagementFactory#getPlatformMBeanServer platform
- * <tt>MBeanServer</tt>} using the name of the container.
- * 
- * <pre>
- * ContainerConfiguration&lt;String, Integer&gt; cc = ContainerConfiguration.create();
- * cc.setName(&quot;MyContainer&quot;);
- * cc.eviction().setPolicy(Policies.newLRU()).setMaximumSize(1000);
- * cc.expiration().setDefaultTimeToLive(60 * 60, TimeUnit.SECONDS);
- * cc.management().setEnabled(true);
- * Container&lt;String, Integer&gt; instance = cc.newInstance(SynchronizedContainer.class);
- * </pre>
+ * This class is not meant to be directly instantiated, instead it should be overriden with a
+ * configuration object for a concrete container type.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: ContainerConfiguration.java 559 2008-01-09 16:28:27Z kasper $
@@ -102,14 +88,14 @@ public abstract class ContainerConfiguration<T> {
 
     /**
      * Registers a object for the container. Only objects of type {@link MapLifecycle} or
-     * {@link Manageable}, are valid. If the object is of type {@link MapLifecycle} the
-     * container will invoke the respectic lifecycle methods on the object. If the object is
-     * of type {@link Manageable} and management is enabled for the container (see
-     * {@link MapManagementConfiguration#setEnabled(boolean)}). It can be registered with
-     * a {@link ManagedGroup}.
+     * {@link Manageable}, are valid. If the object is of type {@link MapLifecycle} the container
+     * will invoke the respectic lifecycle methods on the object. If the object is of type
+     * {@link Manageable} and management is enabled for the container (see
+     * {@link MapManagementConfiguration#setEnabled(boolean)}). It can be registered with a
+     * {@link ManagedGroup}.
      * <p>
-     * Attaches the specified instance to the service map of the container. This object can
-     * then later be retrived by calling {@link org.coconut.map.Container#getService(Class)}.
+     * Attaches the specified instance to the service map of the container. This object can then
+     * later be retrived by calling {@link org.coconut.map.Container#getService(Class)}.
      * 
      * <pre>
      * ContainerServiceManagerConfiguration csmc;
@@ -120,15 +106,15 @@ public abstract class ContainerConfiguration<T> {
      * assert &quot;fooboo&quot; = c.getService(String.class);
      * </pre>
      * 
-     * If the specified key conflicts with the key-type of any of the build in service an
-     * exception will be thrown when the container is constructed.
+     * If the specified key conflicts with the key-type of any of the build in service an exception
+     * will be thrown when the container is constructed.
      * 
      * @param o
      *            the object to register
      * @return this configuration
      * @throws IllegalArgumentException
-     *             in case of an argument of invalid type or if the object has already
-     *             been registered.
+     *             in case of an argument of invalid type or if the object has already been
+     *             registered.
      */
     public ContainerConfiguration addService(Object o) {
         if (o == null) {
@@ -160,11 +146,11 @@ public abstract class ContainerConfiguration<T> {
     }
 
     /**
-     * Returns the default logger configured for this container or <tt>null</tt> if no
-     * default logger has been configured.
+     * Returns the default logger configured for this container or <tt>null</tt> if no default
+     * logger has been configured.
      * 
-     * @return the default logger configured for this container or null if no default logger
-     *         has been configured
+     * @return the default logger configured for this container or null if no default logger has
+     *         been configured
      * @see #setDefaultLogger(Logger)
      */
     public Logger getDefaultLogger() {
@@ -202,9 +188,9 @@ public abstract class ContainerConfiguration<T> {
     }
 
     /**
-     * Returns the property value for the specified key or <tt>null</tt> if no such
-     * property exists. A <tt>null</tt> can also indicate that the key was explicitly
-     * mapped to <tt>null</tt>.
+     * Returns the property value for the specified key or <tt>null</tt> if no such property
+     * exists. A <tt>null</tt> can also indicate that the key was explicitly mapped to
+     * <tt>null</tt>.
      * 
      * @param key
      *            the key for which to retrieve the value
@@ -217,16 +203,16 @@ public abstract class ContainerConfiguration<T> {
     }
 
     /**
-     * Returns the property value for the specified key or the specified default value if
-     * no such property exists. A property does not exists if it is mapped to
-     * <tt>null</tt> either explicitly or because no such entry exists.
+     * Returns the property value for the specified key or the specified default value if no such
+     * property exists. A property does not exists if it is mapped to <tt>null</tt> either
+     * explicitly or because no such entry exists.
      * 
      * @param key
      *            the key for which to retrieve the value
      * @param defaultValue
      *            the default value to return if the property does not exist
-     * @return the value of the property or the specified default value if the property
-     *         does not exist
+     * @return the value of the property or the specified default value if the property does not
+     *         exist
      * @throws NullPointerException
      *             if key is <tt>null</tt>
      */
@@ -269,8 +255,8 @@ public abstract class ContainerConfiguration<T> {
     /**
      * Creates a new container instance of the specified type using this configuration.
      * <p>
-     * The behavior of this operation is undefined if this configuration is modified while
-     * the operation is in progress.
+     * The behavior of this operation is undefined if this configuration is modified while the
+     * operation is in progress.
      * 
      * @param containerType
      *            the type of container that should be created
@@ -314,9 +300,9 @@ public abstract class ContainerConfiguration<T> {
 
     /**
      * Sets the {@link org.codehaus.cake.util.Clock} that the container should use. Normally users
-     * should not need to set this, only if they want to provide another timing mechanism
-     * then the built-in {@link java.lang.System#currentTimeMillis()} and
-     * {@link java.lang.System#nanoTime()}. For example, a custom NTP protocol.
+     * should not need to set this, only if they want to provide another timing mechanism then the
+     * built-in {@link java.lang.System#currentTimeMillis()} and {@link java.lang.System#nanoTime()}.
+     * For example, a custom NTP protocol.
      * <p>
      * This method is also useful for tests that rely on exact timing of events.
      * 
@@ -336,14 +322,14 @@ public abstract class ContainerConfiguration<T> {
 
     /**
      * Sets the default loggger for this container. If for some reason the container or one of its
-     * services needs to notify users of some kind of events this logger should be used.
-     * Some services might allow to set a special logger. For example, for logging timing
-     * informations, auditting, ... etc. In this case this special logger will take
-     * precedence over this specified logger when logging for the service.
+     * services needs to notify users of some kind of events this logger should be used. Some
+     * services might allow to set a special logger. For example, for logging timing informations,
+     * auditting, ... etc. In this case this special logger will take precedence over this specified
+     * logger when logging for the service.
      * <p>
-     * All available containers in Coconut Container strives to be very conservertive about what
-     * is logged, log as little as possible. That is, we actually recommend running with
-     * log level set at {@link org.codehaus.cake.util.Logger.Level#Info} even in production.
+     * All available containers in Coconut Container strives to be very conservertive about what is
+     * logged, log as little as possible. That is, we actually recommend running with log level set
+     * at {@link org.codehaus.cake.util.Logger.Level#Info} even in production.
      * 
      * @param logger
      *            the logger to use
@@ -359,13 +345,13 @@ public abstract class ContainerConfiguration<T> {
     }
 
     /**
-     * Sets the name of the container. The name should be unique among other configured
-     * containers. The name must consists only of alphanumeric characters and '_' or '-'.
+     * Sets the name of the container. The name should be unique among other configured containers.
+     * The name must consists only of alphanumeric characters and '_' or '-'.
      * <p>
-     * If no name is set in the configuration, any container implementation must generate a
-     * name for the container. How exactly the name is generated is implementation specific.
-     * But the recommended way is to use {@link UUID#randomUUID()} or a similar mechanism
-     * to generate a random name.
+     * If no name is set in the configuration, any container implementation must generate a name for
+     * the container. How exactly the name is generated is implementation specific. But the
+     * recommended way is to use {@link UUID#randomUUID()} or a similar mechanism to generate a
+     * random name.
      * 
      * @param name
      *            the name of the container
@@ -391,8 +377,8 @@ public abstract class ContainerConfiguration<T> {
     }
 
     /**
-     * Some container implementations might allow additional properties to be set then those
-     * defined by this class. This method can be used to set these additional properties.
+     * Some container implementations might allow additional properties to be set then those defined
+     * by this class. This method can be used to set these additional properties.
      * 
      * @param key
      *            the key of the property
@@ -427,9 +413,9 @@ public abstract class ContainerConfiguration<T> {
     }
 
     /**
-     * Returns a XML-based string representation of this configuration. This xml-based
-     * string can used as input to {@link #loadConfigurationFrom(InputStream)} or to
-     * create a similar configuration.
+     * Returns a XML-based string representation of this configuration. This xml-based string can
+     * used as input to {@link #loadConfigurationFrom(InputStream)} or to create a similar
+     * configuration.
      * 
      * @return a XML-based string representation of this configuration
      * @see java.lang.Object#toString()
@@ -461,7 +447,8 @@ public abstract class ContainerConfiguration<T> {
     protected <U> U getConfigurationOfType(Class<U> configurationType) {
         Object o = configurations.get(configurationType);
         if (o == null) {
-            throw new IllegalArgumentException("Unknown service configuration [ type = " + configurationType + "]");
+            throw new IllegalArgumentException("Unknown service configuration [ type = "
+                    + configurationType + "]");
         }
         return (U) o;
     }
