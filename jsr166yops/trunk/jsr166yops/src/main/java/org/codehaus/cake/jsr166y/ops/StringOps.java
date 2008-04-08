@@ -20,7 +20,7 @@ import java.io.Serializable;
 import jsr166y.forkjoin.Ops.Predicate;
 
 /**
- * Various String based {@link Predicate} methods and utility classes.
+ * Various String based {@link Ops} methods and utility classes.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
  *

@@ -40,7 +40,7 @@ import jsr166y.forkjoin.Ops.Predicate;
 import jsr166y.forkjoin.Ops.Procedure;
 
 import org.codehaus.cake.jsr166y.ops.CollectionOps;
-import org.codehaus.cake.jsr166y.ops.Mappers;
+import org.codehaus.cake.jsr166y.ops.ObjectOps;
 import org.codehaus.cake.jsr166y.ops.Predicates;
 import org.codehaus.cake.test.util.TestUtil;
 import org.jmock.Expectations;
@@ -215,7 +215,7 @@ public class CollectionOpsTest {
     }
 
     /**
-     * Tests {@link Mappers#CONSTANT_MAPPER}.
+     * Tests {@link ObjectOps#CONSTANT_OP}.
      */
     @Test
     public void keyFromMap() {
@@ -267,7 +267,7 @@ public class CollectionOpsTest {
     }
 
     /**
-     * Tests {@link Mappers#CONSTANT_MAPPER}.
+     * Tests {@link ObjectOps#CONSTANT_OP}.
      */
     @Test
     public void valueFromMap() {

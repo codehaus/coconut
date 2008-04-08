@@ -27,12 +27,12 @@ import jsr166y.forkjoin.Ops.Op;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public final class Mappers {
+public final class ObjectOps {
     /** An Op that returns the specified argument. */
-    public static final Op CONSTANT_MAPPER = new NoOpMapper();
+    public static final Op CONSTANT_OP = new ConstantOp();
 
     /** Cannot instantiate. */
-    private Mappers() {}
+    private ObjectOps() {}
 
     /**
      * Creates a composite mapper that applies a second mapper to the results of applying
@@ -44,7 +44,7 @@ public final class Mappers {
     }
 
     public static <T> Op<T, T> constant() {
-        return CONSTANT_MAPPER;
+        return CONSTANT_OP;
     }
 
     /**
@@ -82,7 +82,7 @@ public final class Mappers {
      * @param <T>
      *            the type of objects accepted by the Mapper
      */
-    static final class NoOpMapper<T> implements Op<T, T>, Serializable {
+    static final class ConstantOp<T> implements Op<T, T>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8159540593935721003L;
 
@@ -93,7 +93,7 @@ public final class Mappers {
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return CONSTANT_MAPPER;
+            return CONSTANT_OP;
         }
     }
 }
