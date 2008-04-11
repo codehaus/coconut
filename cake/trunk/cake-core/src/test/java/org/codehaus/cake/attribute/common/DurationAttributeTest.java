@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org> 
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.attribute;
+package org.codehaus.cake.attribute.common;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.codehaus.cake.attribute.AttributeMap;
 import org.codehaus.cake.attribute.Attributes;
 import org.codehaus.cake.attribute.DefaultAttributeMap;
-import org.codehaus.cake.attribute.DurationAttribute;
+import org.codehaus.cake.attribute.common.DurationAttribute;
 import org.junit.Test;
 
 public class DurationAttributeTest {

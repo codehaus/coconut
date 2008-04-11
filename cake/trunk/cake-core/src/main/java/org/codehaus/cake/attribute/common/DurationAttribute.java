@@ -1,8 +1,11 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.attribute;
+package org.codehaus.cake.attribute.common;
 
 import java.util.concurrent.TimeUnit;
+
+import org.codehaus.cake.attribute.AttributeMap;
+import org.codehaus.cake.attribute.LongAttribute;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
