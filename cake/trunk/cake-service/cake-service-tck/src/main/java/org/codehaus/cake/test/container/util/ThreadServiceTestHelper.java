@@ -13,8 +13,8 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.codehaus.cake.attribute.AttributeMap;
 import org.codehaus.cake.service.executor.ExecutorsManager;
-import org.codehaus.cake.util.attribute.AttributeMap;
 
 public class ThreadServiceTestHelper extends ExecutorsManager {
 

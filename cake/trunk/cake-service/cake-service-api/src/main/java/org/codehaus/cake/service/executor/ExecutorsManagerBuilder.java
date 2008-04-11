@@ -5,7 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import jsr166y.forkjoin.ForkJoinExecutor;
 
-import org.codehaus.cake.util.attribute.AttributeMap;
+import org.codehaus.cake.attribute.AttributeMap;
 
 public class ExecutorsManagerBuilder {
 

@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import jsr166y.forkjoin.ForkJoinExecutor;
 import jsr166y.forkjoin.ForkJoinPool;
 
-import org.codehaus.cake.util.attribute.AttributeMap;
+import org.codehaus.cake.attribute.AttributeMap;
 
 /**
  * This class is reponsible for creating instances of {@link ExecutorService},

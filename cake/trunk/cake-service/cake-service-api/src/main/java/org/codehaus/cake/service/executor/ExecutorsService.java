@@ -7,8 +7,8 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import jsr166y.forkjoin.ForkJoinExecutor;
 
+import org.codehaus.cake.attribute.AttributeMap;
 import org.codehaus.cake.service.ServiceManager;
-import org.codehaus.cake.util.attribute.AttributeMap;
 
 /**
  * This is the main interface for scheduling and executing tasks at runtime.
