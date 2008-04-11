@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.attribute;
+package org.codehaus.cake.attribute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,6 +9,11 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import jsr166y.forkjoin.Ops.Predicate;
 
+import org.codehaus.cake.attribute.Attribute;
+import org.codehaus.cake.attribute.AttributeMap;
+import org.codehaus.cake.attribute.Attributes;
+import org.codehaus.cake.attribute.DefaultAttributeMap;
+import org.codehaus.cake.attribute.WithAttributes;
 import org.codehaus.cake.jsr166y.ops.StringOps;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;

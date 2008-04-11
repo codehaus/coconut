@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.attribute;
+package org.codehaus.cake.attribute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,6 +9,8 @@ import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 
+import org.codehaus.cake.attribute.Attribute;
+import org.codehaus.cake.attribute.AttributeMap;
 import org.junit.Before;
 import org.junit.Test;
 

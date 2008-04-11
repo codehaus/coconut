@@ -1,10 +1,10 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org> 
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.attribute;
+package org.codehaus.cake.attribute;
 
+import static org.codehaus.cake.attribute.Attributes.EMPTY_ATTRIBUTE_MAP;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.codehaus.cake.test.util.TestUtil.serializeAndUnserialize;
-import static org.codehaus.cake.util.attribute.Attributes.EMPTY_ATTRIBUTE_MAP;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
@@ -14,6 +14,8 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.codehaus.cake.attribute.Attribute;
+import org.codehaus.cake.attribute.Attributes;
 import org.junit.Test;
 
 /**

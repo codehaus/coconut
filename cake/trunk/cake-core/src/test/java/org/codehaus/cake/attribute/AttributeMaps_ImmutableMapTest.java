@@ -1,4 +1,4 @@
-package org.codehaus.cake.util.attribute;
+package org.codehaus.cake.attribute;
 
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.junit.Assert.assertEquals;
@@ -8,6 +8,10 @@ import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 
+import org.codehaus.cake.attribute.Attribute;
+import org.codehaus.cake.attribute.AttributeMap;
+import org.codehaus.cake.attribute.Attributes;
+import org.codehaus.cake.attribute.DefaultAttributeMap;
 import org.junit.Before;
 import org.junit.Test;
 

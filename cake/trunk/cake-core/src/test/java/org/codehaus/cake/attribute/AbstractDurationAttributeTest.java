@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org> 
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.attribute;
+package org.codehaus.cake.attribute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -9,6 +9,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
+import org.codehaus.cake.attribute.Attribute;
+import org.codehaus.cake.attribute.AttributeMap;
+import org.codehaus.cake.attribute.LongAttribute;
 import org.junit.Test;
 
 public abstract class AbstractDurationAttributeTest extends AbstractAttributeTest {

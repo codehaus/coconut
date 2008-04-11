@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.attribute;
+package org.codehaus.cake.attribute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -8,6 +8,9 @@ import static org.junit.Assert.assertNull;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.codehaus.cake.attribute.Attribute;
+import org.codehaus.cake.attribute.AttributeMap;
+import org.codehaus.cake.attribute.Attributes;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 

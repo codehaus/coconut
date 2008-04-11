@@ -1,4 +1,11 @@
-package org.codehaus.cake.util.attribute;
+package org.codehaus.cake.attribute;
+
+import org.codehaus.cake.attribute.Attribute;
+import org.codehaus.cake.attribute.AttributeMap;
+import org.codehaus.cake.attribute.DoubleAttribute;
+import org.codehaus.cake.attribute.IntAttribute;
+import org.codehaus.cake.attribute.LongAttribute;
+import org.codehaus.cake.attribute.WithAttributes;
 
 public class AtrStubs {
 

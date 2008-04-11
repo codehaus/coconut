@@ -1,4 +1,4 @@
-package org.codehaus.cake.util.attribute;
+package org.codehaus.cake.attribute;
 
 public abstract class TimeInstanceAttribute extends LongAttribute {
 	/** The default value of this attribute. */
