@@ -10,9 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.codehaus.cake.attribute.Attribute;
-import org.codehaus.cake.attribute.AttributeMap;
-import org.codehaus.cake.attribute.LongAttribute;
 import org.codehaus.cake.internal.util.StringUtil;
 import org.junit.Test;
 
@@ -29,11 +26,11 @@ public abstract class AbstractValueTest extends AbstractAttributeTest {
         for (Object l : valid) {
             AttributeMap map = (AttributeMap) singleton.invoke(null, l);
             assertEquals(1, map.size());
-            assertTrue(map.containsKey(a));
+            assertTrue(map.contains(a));
             assertEquals(l, map.get(a));
             if (l instanceof Long) {
-                assertEquals(l, map.getLong((LongAttribute) a));
-                assertEquals(l, map.getLong((LongAttribute) a, 0l));
+                assertEquals(l, map.get((LongAttribute) a));
+                assertEquals(l, map.get((LongAttribute) a, 0l));
             }
         }
         for (Object l : invalid) {
@@ -61,11 +58,11 @@ public abstract class AbstractValueTest extends AbstractAttributeTest {
         for (Object l : valid) {
             AttributeMap am = newMap();
             if (l instanceof Long) {
-                assertEquals(0l, am.getLong((LongAttribute) a, 0));
+                assertEquals(0l, am.get((LongAttribute) a, 0));
             }
             assertSame(am, setMethod.invoke(null, am, l));
             if (l instanceof Long) {
-                assertEquals(l, am.getLong((LongAttribute) a, 0));
+                assertEquals(l, am.get((LongAttribute) a, 0));
             }
         }
         for (Object l : invalid) {

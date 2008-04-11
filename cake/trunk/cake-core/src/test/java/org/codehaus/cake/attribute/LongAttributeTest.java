@@ -6,11 +6,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.codehaus.cake.attribute.AttributeMap;
-import org.codehaus.cake.attribute.Attributes;
-import org.codehaus.cake.attribute.DefaultAttributeMap;
-import org.codehaus.cake.attribute.LongAttribute;
-import org.codehaus.cake.attribute.WithAttributes;
 import org.junit.Test;
 
 public class LongAttributeTest extends AtrStubs {
@@ -45,11 +40,9 @@ public class LongAttributeTest extends AtrStubs {
 
     @Test
     public void fromString() {
-        assertEquals(-1L, LONG_A.fromString(Long.valueOf(-1).toString()).longValue());
-        assertEquals(Long.MIN_VALUE, LONG_A.fromString(new Long(Long.MIN_VALUE).toString())
-                .longValue());
-        assertEquals(Long.MAX_VALUE, LONG_A.fromString(new Long(Long.MAX_VALUE).toString())
-                .longValue());
+        assertEquals(-1L, LONG_A.fromString(Long.valueOf(-1).toString()));
+        assertEquals(Long.MIN_VALUE, LONG_A.fromString(new Long(Long.MIN_VALUE).toString()));
+        assertEquals(Long.MAX_VALUE, LONG_A.fromString(new Long(Long.MAX_VALUE).toString()));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -70,14 +63,14 @@ public class LongAttributeTest extends AtrStubs {
         assertEquals(Long.MAX_VALUE, LONG_A.getValue(ammax));
         assertEquals(10000l, LONG_A.getValue(withAtr(am10000)));
         assertEquals(Long.MAX_VALUE, LONG_A.getValue(withAtr(ammax)));
-        
+
         assertEquals(10L, LONG_A.getValue(am, 10L));
         assertEquals(-1l, LONG_A.getValue(am1, 10));
         assertEquals(10000l, LONG_A.getValue(am10000, 10));
         assertEquals(Long.MAX_VALUE, LONG_A.getValue(ammax, 10));
         assertEquals(10000l, LONG_A.getValue(withAtr(am10000), 10));
         assertEquals(Long.MAX_VALUE, LONG_A.getValue(withAtr(ammax), 10));
-        
+
         assertEquals(-1l, NON_NEGATIVE.getValue(am, -1));
     }
 

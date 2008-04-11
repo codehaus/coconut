@@ -19,6 +19,10 @@ public abstract class LongAttribute extends Attribute<Long> implements
     /** The default value of this attribute. */
     private final transient long defaultLongValue;
 
+    public LongAttribute(long defaultValue) {
+        this("", defaultValue);
+    }
+
     /**
      * Creates a new LongAttribute.
      * 
@@ -41,7 +45,13 @@ public abstract class LongAttribute extends Attribute<Long> implements
     public final void checkValid(Long o) {
         checkValid(o.longValue());
     }
+    public long getValue(AttributeMap attributes) {
+        return attributes.get(this);
+    }
 
+    public long getValue(AttributeMap attributes, long defaultValue) {
+        return attributes.get(this, defaultValue);
+    }
     /**
      * Analogous to {@link #checkValid(Long)} except taking a primitive long.
      * 
@@ -58,8 +68,7 @@ public abstract class LongAttribute extends Attribute<Long> implements
     }
 
     /** {@inheritDoc} */
-    @Override
-    public Long fromString(String str) {
+    public long fromString(String str) {
         try {
             return Long.parseLong(str);
         } catch (NumberFormatException e) {
@@ -77,27 +86,15 @@ public abstract class LongAttribute extends Attribute<Long> implements
         return defaultLongValue;
     }
 
-    /**
-     * Analogous to {@link #get(AttributeMap)} except returning a primitive <tt>long</tt>.
-     * 
-     * @param attributes
-     *            the attribute map to retrieve the value of this attribute from
-     * @return the value of this attribute
-     */
-    public long getValue(AttributeMap attributes) {
-        return attributes.getLong(this, defaultLongValue);
-    }
-
     public long getValue(WithAttributes withAttributes) {
-        return getValue(withAttributes.getAttributes());
+        return withAttributes.getAttributes().get(this);
     }
 
     public long getValue(WithAttributes attributes, long defaultValue) {
-        return getValue(attributes.getAttributes(), defaultValue);
+        return attributes.getAttributes().get(this, defaultValue);
     }
 
     /** {@inheritDoc} */
-    @Override
     public int compare(WithAttributes w1, WithAttributes w2) {
         long thisVal = getValue(w1);
         long anotherVal = getValue(w2);
@@ -105,30 +102,13 @@ public abstract class LongAttribute extends Attribute<Long> implements
     }
 
     /**
-     * Analogous to {@link #get(AttributeMap, Long)} except returning a primitive <tt>long</tt>.
-     * 
-     * @param attributes
-     *            the attribute map to check for this attribute in
-     * @param defaultValue
-     *            the value to return if this attribute is not set in the specified attribute map
-     * @return the value of this attribute
-     */
-    public long getValue(AttributeMap attributes, long defaultValue) {
-        return attributes.getLong(this, defaultValue);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isValid(Long value) {
-        return isValid(value.longValue());
-    }
-
-    /**
-     * Analogous to {@link Attribute#isValid(Object)} except taking a primitive long as parameter.
+     * Returns whether or not the specified value is valid for this attribute. This method can be
+     * overriden to only accept certain values.
      * 
      * @param value
-     *            the value to check
-     * @return whether or not the value is valid
+     *            the specified value to check
+     * @return <code>true</code> if the specified value is valid for this attribute, otherwise
+     *         <code>false</code>
      */
     public boolean isValid(long value) {
         return true;
@@ -136,7 +116,7 @@ public abstract class LongAttribute extends Attribute<Long> implements
 
     /** {@inheritDoc} */
     public long op(WithAttributes t) {
-        return getValue(t.getAttributes());
+        return t.getAttributes().get(this);
     }
 
     /**
@@ -155,7 +135,7 @@ public abstract class LongAttribute extends Attribute<Long> implements
             throw new NullPointerException("attributes is null");
         }
         checkValid(value);
-        attributes.putLong(this, value);
+        attributes.put(this, value);
         return attributes;
     }
 

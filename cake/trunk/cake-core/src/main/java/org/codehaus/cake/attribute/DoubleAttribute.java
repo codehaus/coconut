@@ -20,6 +20,10 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
     /** The default value of this attribute. */
     private final transient double defaultDoubleValue;
 
+    public DoubleAttribute(double defaultValue) {
+        this("", defaultValue);
+    }
+
     /**
      * Creates a new AbstractDoubleAttribute.
      * 
@@ -59,58 +63,34 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
     }
 
     /** {@inheritDoc} */
-    @Override
-    public Double fromString(String str) {
+    public double fromString(String str) {
         return Double.parseDouble(str);
     }
 
     /** {@inheritDoc} */
-    @Override
     public int compare(WithAttributes w1, WithAttributes w2) {
         double thisVal = getValue(w1);
         double anotherVal = getValue(w2);
         return Double.compare(thisVal, anotherVal);
     }
+    public double getValue(AttributeMap attributes) {
+        return attributes.get(this);
+    }
 
+    public double getValue(AttributeMap attributes, double defaultValue) {
+        return attributes.get(this, defaultValue);
+    }
     public double getValue(WithAttributes attributes) {
-        return getValue(attributes.getAttributes());
+        return attributes.getAttributes().get(this);
     }
 
     public double getValue(WithAttributes attributes, double defaultValue) {
-        return getValue(attributes.getAttributes(), defaultValue);
+        return attributes.getAttributes().get(this, defaultValue);
     }
 
-    /**
-     * Analogous to {@link #get(AttributeMap)} except returning a primitive <tt>double</tt>.
-     * 
-     * @param attributes
-     *            the attribute map to retrieve the value of this attribute from
-     * @return the value of this attribute
-     */
-    public double getValue(AttributeMap attributes) {
-        return attributes.getDouble(this, defaultDoubleValue);
-    }
     /** {@inheritDoc} */
     public double op(WithAttributes t) {
-        return getValue(t.getAttributes());
-    }
-    /**
-     * Analogous to {@link #get(AttributeMap, Double)} except returning a primitive <tt>double</tt>.
-     * 
-     * @param attributes
-     *            the attribute map to check for this attribute in
-     * @param defaultValue
-     *            the value to return if this attribute is not set in the specified attribute map
-     * @return the value of this attribute
-     */
-    public double getValue(AttributeMap attributes, double defaultValue) {
-        return attributes.getDouble(this, defaultValue);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isValid(Double value) {
-        return isValid(value.doubleValue());
+        return t.getAttributes().get(this);
     }
 
     /**
@@ -143,7 +123,7 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
             throw new NullPointerException("attributes is null");
         }
         checkValid(value);
-        attributes.putDouble(this, value);
+        attributes.put(this, value);
         return attributes;
     }
 
@@ -188,7 +168,8 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
      * @return an AttributeMap containing only this attribute mapping to the specified value
      */
     public AttributeMap singleton(double value) {
-        return super.singleton(value);
+        checkValid(value);
+        return Attributes.singleton(this, value);
     }
 
     /**
@@ -201,7 +182,7 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
 
         /** {@inheritDoc} */
         public double op(AttributeMap t) {
-            return getValue(t);
+            return t.get(DoubleAttribute.this);
         }
     }
 }

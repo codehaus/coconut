@@ -9,9 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
-import org.codehaus.cake.attribute.Attribute;
-import org.codehaus.cake.attribute.AttributeMap;
-import org.codehaus.cake.attribute.LongAttribute;
 import org.junit.Test;
 
 public abstract class AbstractDurationAttributeTest extends AbstractAttributeTest {
@@ -31,13 +28,13 @@ public abstract class AbstractDurationAttributeTest extends AbstractAttributeTes
         AttributeMap am = newMap();
 
         setMethod.invoke(null, am, 10, TimeUnit.NANOSECONDS);
-        assertEquals(10l, am.getLong(a(), 0l));
+        assertEquals(10l, am.get(a(), 0l));
 
         setMethod.invoke(null, am, 10, TimeUnit.MICROSECONDS);
-        assertEquals(10000l, am.getLong(a(), 0l));
+        assertEquals(10000l, am.get(a(), 0l));
 
         setMethod.invoke(null, am, Long.MAX_VALUE, TimeUnit.MICROSECONDS);
-        assertEquals(Long.MAX_VALUE, am.getLong(a(), 0l));
+        assertEquals(Long.MAX_VALUE, am.get(a(), 0l));
 
         try {
             setMethod.invoke(null, am, -1, TimeUnit.NANOSECONDS);
@@ -55,17 +52,17 @@ public abstract class AbstractDurationAttributeTest extends AbstractAttributeTes
 
         AttributeMap map = (AttributeMap) singleton.invoke(null, 10, TimeUnit.NANOSECONDS);
         assertEquals(1, map.size());
-        assertTrue(map.containsKey(a()));
+        assertTrue(map.contains(a));
         assertEquals(10L, map.get(a()));
 
         map = (AttributeMap) singleton.invoke(null, 10, TimeUnit.MICROSECONDS);
         assertEquals(1, map.size());
-        assertTrue(map.containsKey(a()));
+        assertTrue(map.contains(a()));
         assertEquals(10000L, map.get(a()));
 
         map = (AttributeMap) singleton.invoke(null, Long.MAX_VALUE, TimeUnit.MICROSECONDS);
         assertEquals(1, map.size());
-        assertTrue(map.containsKey(a()));
+        assertTrue(map.contains(a()));
         assertEquals(Long.MAX_VALUE, map.get(a()));
 
         try {

@@ -1,55 +1,35 @@
 package org.codehaus.cake.attribute;
 
-import org.codehaus.cake.attribute.Attribute;
-import org.codehaus.cake.attribute.AttributeMap;
-import org.codehaus.cake.attribute.DoubleAttribute;
-import org.codehaus.cake.attribute.IntAttribute;
-import org.codehaus.cake.attribute.LongAttribute;
-import org.codehaus.cake.attribute.WithAttributes;
-
 public class AtrStubs {
 
-    final static Attribute<Boolean> B_TRUE = new Attribute<Boolean>("B_TRUE", Boolean.class, true) {};
-    final static Attribute<Boolean> B_FALSE = new Attribute<Boolean>("B_FALSE", Boolean.class,
-            false) {};
-    final static Attribute<Boolean> B_TRUE1 = new Attribute<Boolean>("B_TRUE1", Boolean.class, true) {};
-    final static Attribute<Boolean> B_FALSE1 = new Attribute<Boolean>("B_FALSE1", Boolean.class,
-            false) {};
+    final static BooleanAttribute B_TRUE = new BooleanAttribute("B_TRUE", true) {};
+    final static BooleanAttribute B_FALSE = new BooleanAttribute("B_FALSE", false) {};
+    final static BooleanAttribute B_TRUE1 = new BooleanAttribute("B_TRUE1", true) {};
+    final static BooleanAttribute B_FALSE1 = new BooleanAttribute("B_FALSE1", false) {};
 
-    final static Attribute<Byte> B_1 = new Attribute<Byte>("B_1", Byte.class, (byte) 1) {};
-    final static Attribute<Byte> B_2 = new Attribute<Byte>("B_2", Byte.class, (byte) 2) {};
-    final static Attribute<Byte> B_3 = new Attribute<Byte>("B_3", Byte.class, (byte) 3) {};
-    final static Attribute<Byte> B_MIN_VALUE = new Attribute<Byte>("B_MIN_VALUE", Byte.class,
-            Byte.MIN_VALUE) {};
-    final static Attribute<Byte> B_MAX_VALUE = new Attribute<Byte>("B_MAX_VALUE", Byte.class,
-            Byte.MAX_VALUE) {};
+    final static ByteAttribute B_1 = new ByteAttribute("B_1", (byte) 1) {};
+    final static ByteAttribute B_2 = new ByteAttribute("B_2", (byte) 2) {};
+    final static ByteAttribute B_3 = new ByteAttribute("B_3", (byte) 3) {};
+    final static ByteAttribute B_MIN_VALUE = new ByteAttribute("B_MIN_VALUE", Byte.MIN_VALUE) {};
+    final static ByteAttribute B_MAX_VALUE = new ByteAttribute("B_MAX_VALUE", Byte.MAX_VALUE) {};
 
-    final static Attribute<Character> C_1 = new Attribute<Character>("C_1", Character.class,
-            (char) 1) {};
-    final static Attribute<Character> C_2 = new Attribute<Character>("C_2", Character.class,
-            (char) 2) {};
-    final static Attribute<Character> C_3 = new Attribute<Character>("C_3", Character.class,
-            (char) 3) {};
-    final static Attribute<Character> C_MIN_VALUE = new Attribute<Character>("C_MIN_VALUE",
-            Character.class, Character.MIN_VALUE) {};
-    final static Attribute<Character> C_MAX_VALUE = new Attribute<Character>("C_MAX_VALUE",
-            Character.class, Character.MAX_VALUE) {};
+    final static CharAttribute C_1 = new CharAttribute("C_1", (char) 1) {};
+    final static CharAttribute C_2 = new CharAttribute("C_2", (char) 2) {};
+    final static CharAttribute C_3 = new CharAttribute("C_3", (char) 3) {};
+    final static CharAttribute C_MIN_VALUE = new CharAttribute("C_MIN_VALUE", Character.MIN_VALUE) {};
+    final static CharAttribute C_MAX_VALUE = new CharAttribute("C_MAX_VALUE", Character.MAX_VALUE) {};
 
-    final static Attribute<Float> F_1 = new Attribute<Float>("F_1", Float.class, (float) 1.5) {};
-    final static Attribute<Float> F_2 = new Attribute<Float>("F_2", Float.class, (float) 2.5) {};
-    final static Attribute<Float> F_3 = new Attribute<Float>("F_3", Float.class, (float) 3.5) {};
-    final static Attribute<Float> F_MIN_VALUE = new Attribute<Float>("F_MIN_VALUE", Float.class,
-            Float.MIN_VALUE) {};
-    final static Attribute<Float> F_MAX_VALUE = new Attribute<Float>("F_MAX_VALUE", Float.class,
-            Float.MAX_VALUE) {};
+    final static FloatAttribute F_1 = new FloatAttribute("F_1", (float) 1.5) {};
+    final static FloatAttribute F_2 = new FloatAttribute("F_2", (float) 2.5) {};
+    final static FloatAttribute F_3 = new FloatAttribute("F_3", (float) 3.5) {};
+    final static FloatAttribute F_MIN_VALUE = new FloatAttribute("F_MIN_VALUE", Float.MIN_VALUE) {};
+    final static FloatAttribute F_MAX_VALUE = new FloatAttribute("F_MAX_VALUE", Float.MAX_VALUE) {};
 
-    final static Attribute<Short> S_1 = new Attribute<Short>("S_1", Short.class, (short) 1) {};
-    final static Attribute<Short> S_2 = new Attribute<Short>("S_2", Short.class, (short) 2) {};
-    final static Attribute<Short> S_3 = new Attribute<Short>("S_3", Short.class, (short) 3) {};
-    final static Attribute<Short> S_MIN_VALUE = new Attribute<Short>("S_MIN_VALUE", Short.class,
-            Short.MIN_VALUE) {};
-    final static Attribute<Short> S_MAX_VALUE = new Attribute<Short>("S_MAX_VALUE", Short.class,
-            Short.MAX_VALUE) {};
+    final static ShortAttribute S_1 = new ShortAttribute("S_1", (short) 1) {};
+    final static ShortAttribute S_2 = new ShortAttribute("S_2", (short) 2) {};
+    final static ShortAttribute S_3 = new ShortAttribute("S_3", (short) 3) {};
+    final static ShortAttribute S_MIN_VALUE = new ShortAttribute("S_MIN_VALUE", Short.MIN_VALUE) {};
+    final static ShortAttribute S_MAX_VALUE = new ShortAttribute("S_MAX_VALUE", Short.MAX_VALUE) {};
 
     final static IntAttribute I_1 = new IntAttribute("I_1", 1) {};
     final static IntAttribute I_2 = new IntAttribute("I_2", 2) {};
@@ -69,6 +49,8 @@ public class AtrStubs {
     final static DoubleAttribute D_MIN_VALUE = new DoubleAttribute("D_MIN_VALUE", Double.MIN_VALUE) {};
     final static DoubleAttribute D_MAX_VALUE = new DoubleAttribute("D_MAX_VALUE", Double.MAX_VALUE) {};
 
+    final static ObjectAttribute<String> O_1 = new ObjectAttribute<String>("O_1",String.class ,"1.5") {};
+    final static ObjectAttribute<String> O_2 = new ObjectAttribute<String>("O_2",String.class, "15") {};
     static WithAttributes withAtr(final AttributeMap map) {
         return new WithAttributes() {
             @Override

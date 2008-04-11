@@ -5,8 +5,6 @@ package org.codehaus.cake.attribute;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicLong;
 
-import jsr166y.forkjoin.Ops.ObjectToInt;
-
 /**
  * An abstract implementation of an {@link Attribute} mapping to a int. This implementation adds a
  * number of methods that works on primitive ints instead of their object counterpart.
@@ -14,12 +12,11 @@ import jsr166y.forkjoin.Ops.ObjectToInt;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class IntAttribute extends Attribute<Integer> implements
-        ObjectToInt<WithAttributes>, Comparator<WithAttributes> {
+public abstract class ShortAttribute extends Attribute<Short> implements Comparator<WithAttributes> {
 
     static final AtomicLong NAME = new AtomicLong();
     /** The default value of this attribute. */
-    private final transient int defaultIntValue;
+    private final transient short defaultIntValue;
 
     /**
      * Creates a new IntAttribute with a default value of <tt>0</tt>.
@@ -27,8 +24,8 @@ public abstract class IntAttribute extends Attribute<Integer> implements
      * @throws IllegalArgumentException
      *             if 0 is not a valid value
      */
-    public IntAttribute() {
-        this(0);
+    public ShortAttribute() {
+        this((short) 0);
     }
 
     /**
@@ -39,8 +36,8 @@ public abstract class IntAttribute extends Attribute<Integer> implements
      * @throws IllegalArgumentException
      *             if the specified default value is not a valid value
      */
-    public IntAttribute(int defaultValue) {
-        this("IntAttribute" + NAME.incrementAndGet(), defaultValue);
+    public ShortAttribute(short defaultValue) {
+        this("ShortAttribute" + NAME.incrementAndGet(),defaultValue);
     }
 
     /**
@@ -53,8 +50,8 @@ public abstract class IntAttribute extends Attribute<Integer> implements
      * @throws IllegalArgumentException
      *             if 0 is not a valid value
      */
-    public IntAttribute(String name) {
-        this(name, 0);
+    public ShortAttribute(String name) {
+        this(name,(short) 0);
     }
 
     /**
@@ -69,20 +66,20 @@ public abstract class IntAttribute extends Attribute<Integer> implements
      * @throws IllegalArgumentException
      *             if the specified default value is not a valid value
      */
-    public IntAttribute(String name, int defaultValue) {
-        super(name, Integer.TYPE, defaultValue);
+    public ShortAttribute(String name, short defaultValue) {
+        super(name, Short.TYPE, defaultValue);
         this.defaultIntValue = defaultValue;
     }
 
     /**
-     * Analogous to {@link #checkValid(Integer)} except taking a scalar int.
+     * Analogous to {@link #checkValid(Short)} except taking a scalar short.
      * 
      * @param value
      *            the value to check
      * @throws IllegalArgumentException
      *             if the specified value is not valid
      */
-    public void checkValid(int value) {
+    public void checkValid(short value) {
         if (!isValid(value)) {
             throw new IllegalArgumentException("Illegal value for attribute " + getName()
                     + ", value = " + value);
@@ -91,20 +88,20 @@ public abstract class IntAttribute extends Attribute<Integer> implements
 
     /** {@inheritDoc} */
     @Override
-    public final void checkValid(Integer o) {
-        checkValid(o.intValue());
+    public final void checkValid(Short o) {
+        checkValid(o.shortValue());
     }
 
     /** {@inheritDoc} */
     public int compare(WithAttributes w1, WithAttributes w2) {
-        int thisVal = getValue(w1);
-        int anotherVal = getValue(w2);
+        short thisVal = getValue(w1);
+        short anotherVal = getValue(w2);
         return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
     }
 
     /** {@inheritDoc} */
-    public int fromString(String str) {
-        return Integer.parseInt(str);
+    public short fromString(String str) {
+        return Short.parseShort(str);
     }
 
     /**
@@ -113,50 +110,44 @@ public abstract class IntAttribute extends Attribute<Integer> implements
      * 
      * @return the default value of this attribute
      */
-    public int getDefaultValue() {
+    public short getDefaultValue() {
         return defaultIntValue;
     }
 
     /**
-     * Analogous to {@link #get(WithAttributes)} except returning a scalar <tt>int</tt>.
+     * Analogous to {@link #get(WithAttributes)} except returning a scalar <tt>short</tt>.
      * 
      * @param attributes
      *            the attribute map to retrieve the value of this attribute from
      * @return the value of this attribute
      */
-    public int getValue(WithAttributes attributes) {
+    public short getValue(WithAttributes attributes) {
         return attributes.getAttributes().get(this);
     }
 
-    public int getValue(WithAttributes attributes, int defaultValue) {
+    public short getValue(WithAttributes attributes, short defaultValue) {
         return attributes.getAttributes().get(this, defaultValue);
     }
-    public int getValue(AttributeMap attributes) {
-        return attributes.get(this);
-    }
 
-    public int getValue(AttributeMap attributes, int defaultValue) {
-        return attributes.get(this, defaultValue);
-    }
     /**
-     * Analogous to {@link Attribute#isValid(Object)} except taking a primitive Integer as
+     * Analogous to {@link Attribute#isValid(Object)} except taking a primitive Short as
      * parameter.
      * 
      * @param value
      *            the value to check
      * @return whether or not the value is valid
      */
-    public boolean isValid(int value) {
+    public boolean isValid(short value) {
         return true;
     }
 
     /** {@inheritDoc} */
-    public int op(WithAttributes t) {
+    public short op(WithAttributes t) {
         return getValue(t);
     }
 
     /**
-     * Analogous to {@link #set(AttributeMap, Integer)} except taking a primitive Integer as
+     * Analogous to {@link #set(AttributeMap, Short)} except taking a primitive Short as
      * parameter.
      * 
      * @param attributes
@@ -165,9 +156,9 @@ public abstract class IntAttribute extends Attribute<Integer> implements
      *            the value that should be set
      * @return the specified attribute map
      * @throws IllegalArgumentException
-     *             if the specified value is not valid accordingly to {@link #checkValid(Integer)}
+     *             if the specified value is not valid accordingly to {@link #checkValid(Short)}
      */
-    public AttributeMap set(AttributeMap attributes, int value) {
+    public AttributeMap set(AttributeMap attributes, short value) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
@@ -176,18 +167,18 @@ public abstract class IntAttribute extends Attribute<Integer> implements
         return attributes;
     }
 
-    public AttributeMap set(WithAttributes attributes, int value) {
+    public AttributeMap set(WithAttributes attributes, short value) {
         return set(attributes.getAttributes(), value);
     }
 
     /**
-     * Analogous to {@link #singleton(Integer)} except taking a primitive Integer as parameter.
+     * Analogous to {@link #singleton(Short)} except taking a primitive Short as parameter.
      * 
      * @param value
      *            the value to create the singleton from
      * @return an AttributeMap containing only this attribute mapping to the specified value
      */
-    public AttributeMap singleton(int value) {
+    public AttributeMap singleton(short value) {
         checkValid(value);
         return Attributes.singleton(this, value);
     }

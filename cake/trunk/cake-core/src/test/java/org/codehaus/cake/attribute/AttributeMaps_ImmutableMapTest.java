@@ -6,18 +6,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.HashSet;
-
-import org.codehaus.cake.attribute.Attribute;
-import org.codehaus.cake.attribute.AttributeMap;
-import org.codehaus.cake.attribute.Attributes;
-import org.codehaus.cake.attribute.DefaultAttributeMap;
 import org.junit.Before;
 import org.junit.Test;
 
 public class AttributeMaps_ImmutableMapTest extends AbstractAttributeMapTest {
 
-    private final static Attribute KEY = new Attribute("key", Integer.class, 5) {};
+    private final static ObjectAttribute KEY = new ObjectAttribute("key", Integer.class, 5) {};
 
     private final static Object VALUE = "10";
 
@@ -41,43 +35,43 @@ public class AttributeMaps_ImmutableMapTest extends AbstractAttributeMapTest {
 
     @Test
     public void unmodifiableAttributeMap() {
-        for (Attribute a : map.keySet()) {
-            assertTrue(immutable.containsKey(a));
+        for (Attribute a : map.attributeSet()) {
+            assertTrue(immutable.contains(a));
         }
-        assertFalse(immutable.containsKey(new Attribute("no",Integer.class, 6){}));
-        for (Object a : map.values()) {
-            assertTrue(immutable.containsValue(a));
-        }
-        assertFalse(immutable.containsValue(new Object()));
-
-        assertEquals(immutable.entrySet(), map.entrySet());
-
-        try {
-            immutable.entrySet().clear();
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
+        assertFalse(immutable.contains(new ObjectAttribute("no",Integer.class, 6){}));
+//        for (Object a : map.values()) {
+//            assertTrue(immutable.containsValue(a));
+//        }
+//        assertFalse(immutable.containsValue(new Object()));
+//
+//        assertEquals(immutable.entrySet(), map.entrySet());
+//
+//        try {
+//            immutable.entrySet().clear();
+//            fail("should throw UnsupportedOperationException");
+//        } catch (UnsupportedOperationException ok) {/* ok */
+//        }
         assertEquals(immutable, map);
         assertEquals(map, immutable);
         assertEquals(immutable, immutable);
         assertEquals(immutable.hashCode(), map.hashCode());
         assertEquals(immutable.isEmpty(), map.isEmpty());
         assertTrue(new Attributes.ImmutableAttributeMap(new DefaultAttributeMap()).isEmpty());
-        assertEquals(immutable.keySet(), map.keySet());
+        assertEquals(immutable.attributeSet(), map.attributeSet());
         try {
-            immutable.keySet().clear();
+            immutable.attributeSet().clear();
             fail("should throw UnsupportedOperationException");
         } catch (UnsupportedOperationException ok) {/* ok */
         }
         assertEquals(immutable.size(), map.size());
         assertEquals(0, new Attributes.ImmutableAttributeMap(new DefaultAttributeMap()).size());
-        assertEquals(new HashSet(immutable.values()), new HashSet(map.values()));
-        assertEquals(immutable.toString(), map.toString());
-        try {
-            immutable.values().clear();
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
+//        assertEquals(new HashSet(immutable.values()), new HashSet(map.values()));
+//        assertEquals(immutable.toString(), map.toString());
+//        try {
+//            immutable.values().clear();
+//            fail("should throw UnsupportedOperationException");
+//        } catch (UnsupportedOperationException ok) {/* ok */
+//        }
     }
 
     @Test

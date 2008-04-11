@@ -6,11 +6,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.codehaus.cake.attribute.AttributeMap;
-import org.codehaus.cake.attribute.Attributes;
-import org.codehaus.cake.attribute.DefaultAttributeMap;
-import org.codehaus.cake.attribute.IntAttribute;
-import org.codehaus.cake.attribute.WithAttributes;
 import org.junit.Test;
 
 public class IntAttributeTest extends AtrStubs {
@@ -45,9 +40,9 @@ public class IntAttributeTest extends AtrStubs {
 
     @Test
     public void fromString() {
-        assertEquals(-1, LONG_A.fromString(Integer.valueOf(-1).toString()).intValue());
-        assertEquals(Integer.MIN_VALUE, LONG_A.fromString(new Integer(Integer.MIN_VALUE).toString()).intValue());
-        assertEquals(Integer.MAX_VALUE, LONG_A.fromString(new Integer(Integer.MAX_VALUE).toString()).intValue());
+        assertEquals(-1, LONG_A.fromString(Integer.valueOf(-1).toString()));
+        assertEquals(Integer.MIN_VALUE, LONG_A.fromString(new Integer(Integer.MIN_VALUE).toString()));
+        assertEquals(Integer.MAX_VALUE, LONG_A.fromString(new Integer(Integer.MAX_VALUE).toString()));
     }
 
     @Test
@@ -57,17 +52,17 @@ public class IntAttributeTest extends AtrStubs {
         AttributeMap am10000 = Attributes.singleton(LONG_A, 10000);
         AttributeMap ammax = Attributes.singleton(LONG_A, Integer.MAX_VALUE);
 
-        assertEquals(100, LONG_A.getValue(am));
-        assertEquals(-1, LONG_A.getValue(am1));
-        assertEquals(10000, LONG_A.getValue(am10000));
-        assertEquals(Integer.MAX_VALUE, LONG_A.getValue(ammax));
+        assertEquals(100, LONG_A.getValue(withAtr(am)));
+        assertEquals(-1, LONG_A.getValue(withAtr(am1)));
+        assertEquals(10000, LONG_A.getValue(withAtr(am10000)));
+        assertEquals(Integer.MAX_VALUE, LONG_A.getValue(withAtr(ammax)));
 
-        assertEquals(10, LONG_A.getValue(am, 10));
-        assertEquals(-1, LONG_A.getValue(am1, 10));
-        assertEquals(10000, LONG_A.getValue(am10000, 10));
-        assertEquals(Integer.MAX_VALUE, LONG_A.getValue(ammax, 10));
+        assertEquals(10, LONG_A.getValue(withAtr(am), 10));
+        assertEquals(-1, LONG_A.getValue(withAtr(am1), 10));
+        assertEquals(10000, LONG_A.getValue(withAtr(am10000), 10));
+        assertEquals(Integer.MAX_VALUE, LONG_A.getValue(withAtr(ammax), 10));
 
-        assertEquals(-1, NON_NEGATIVE.getValue(am, -1));
+        assertEquals(-1, NON_NEGATIVE.getValue(withAtr(am), -1));
 
         assertEquals(100, LONG_A.getValue(withAtr(am)));
         assertEquals(-1, LONG_A.getValue(withAtr(am1)));

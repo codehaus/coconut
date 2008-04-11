@@ -8,9 +8,6 @@ import static org.junit.Assert.assertNull;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.codehaus.cake.attribute.Attribute;
-import org.codehaus.cake.attribute.AttributeMap;
-import org.codehaus.cake.attribute.Attributes;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 
@@ -18,7 +15,7 @@ public class AttributeMapTest {
 
     @Test
     public void singleton() {
-        Attribute a = new Attribute("key",Integer.class, 5){};
+        Attribute a = new ObjectAttribute("key",Integer.class, 5){};
         AttributeMap am = Attributes.singleton(a, 1);
         assertEquals(1, am.size());
         assertEquals(1, am.get(a));

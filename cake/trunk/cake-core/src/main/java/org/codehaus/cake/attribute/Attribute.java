@@ -4,11 +4,6 @@ package org.codehaus.cake.attribute;
 
 import java.io.Serializable;
 
-import jsr166y.forkjoin.Ops.Op;
-import jsr166y.forkjoin.Ops.Predicate;
-
-import org.codehaus.cake.jsr166y.ops.Predicates;
-
 /**
  * Attribute-value pairs are a fundamental data representation in many computing systems and
  * applications. Designers often desire an open-ended data structure that allows for future
@@ -31,26 +26,10 @@ public abstract class Attribute<T> implements Serializable {
     /** The default value of this attribute. */
     private final transient T defaultValue;
 
-    /**
-     * A Mapper that takes an AttributeMap and returns the value of this attribute.
-     */
-    private final transient Op<WithAttributes, T> mapper = new AttributeMapToT();
-
     /** The name of this attribute. */
     private final transient String name;
 
-    /**
-     * Creates a new Attribute with <code>null</code> as default value.
-     * 
-     * @param name
-     *            the name of the attribute
-     * @param clazz
-     *            the type of this attribute
-     */
-    public Attribute(String name, Class<T> clazz) {
-        this(name, clazz, null);
-    }
-
+    private final transient int hashCode;
     /**
      * Creates a new AbstractAttribute.
      * 
@@ -61,7 +40,7 @@ public abstract class Attribute<T> implements Serializable {
      * @param defaultValue
      *            the default value of this attribute
      */
-    public Attribute(String name, Class<T> clazz, T defaultValue) {
+    Attribute(String name, Class<T> clazz, T defaultValue) {
         if (name == null) {
             throw new NullPointerException("name is null");
         } else if (clazz == null) {
@@ -71,94 +50,11 @@ public abstract class Attribute<T> implements Serializable {
         this.clazz = clazz;
         checkValid(defaultValue);
         this.defaultValue = defaultValue;
+        hashCode=name.hashCode() ^ clazz.hashCode();
     }
 
-    /**
-     * Checks if the specified value is valid for this attribute. If the specified value is not
-     * valid this method will throw an {@link IllegalArgumentException}.
-     * 
-     * @param value
-     *            the value to check
-     * @throws IllegalArgumentException
-     *             if the specified value is not valid
-     */
-    public void checkValid(T value) {
-        if (!isValid(value)) {
-            throw new IllegalArgumentException("Illegal value for attribute " + getName()
-                    + ", value = " + value);
-        }
-    }
-
-    protected Predicate<WithAttributes> filter(Predicate<? super T> p) {
-        return Predicates.mapAndEvaluate(mapper, p);
-    }
-
-    /**
-     * Creates a value instance of this attribute from the specified string.
-     * 
-     * @param str
-     *            the string to create the value from.
-     * @return a value instance from the specified string
-     * @throws UnsupportedOperationException
-     *             if this operation is not supported by this attribute
-     * @throws IllegalArgumentException
-     *             if a valid attribute value could not be created from the string.
-     */
-    public T fromString(String str) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Returns the value of this attribute from the specified attribute map. If this attribute is
-     * not set in the map, the value of {@link #getDefault()} will be returned instead.
-     * 
-     * @param attributes
-     *            the attribute map for which to retrieve the value of this attribute
-     * @return the value of this attribute
-     */
-    public final T get(AttributeMap attributes) {
-        return get(attributes, defaultValue);
-    }
-
-    /**
-     * Returns the value of this attribute from the specified attribute map. If this attribute is
-     * not set in the map, the specified defaultValue will be returned instead.
-     * 
-     * @param attributes
-     *            the attribute map for which to retrieve the value of this attribute
-     * @param defaultValue
-     *            the value to return if this attribute is not set in the specified attribute map
-     * @return the value of this attribute
-     */
-    public T get(AttributeMap attributes, T defaultValue) {
-        return (T) attributes.get(this, defaultValue);
-    }
-
-    /**
-     * Extracts the attribute map from the specified {@link WithAttributes} and returns the value of
-     * this attribute from the map. If this attribute is not set in the map, the value of
-     * {@link #getDefault()} will be returned instead.
-     * 
-     * @param attributes
-     *            the attribute map for which to retrieve the value of this attribute
-     * @return the value of this attribute
-     */
-    public final T get(WithAttributes withAttributes) {
-        return get(withAttributes.getAttributes());
-    }
-
-    /**
-     * Extracts the attribute map from the specified {@link WithAttributes} and returns the value of
-     * this attribute from the map. If this attribute is not set in the map, the specified default
-     * value will be returned.
-     * 
-     * @param attributes
-     *            the attribute map for which to retrieve the value of this attribute
-     * @return the value of this attribute
-     */
-
-    public final T get(WithAttributes withAttributes, T defaultValue) {
-        return get(withAttributes.getAttributes(), defaultValue);
+    public final boolean equals(Object obj) {
+        return obj == this;
     }
 
     /**
@@ -188,6 +84,10 @@ public abstract class Attribute<T> implements Serializable {
         return clazz;
     }
 
+    public final int hashCode() {
+        return hashCode;
+    }
+
     /**
      * Returns whether or not this attribute is set in the specified attribute map. This method is
      * useful for distinguishing those case where an attribute maps to the default value of the
@@ -198,8 +98,30 @@ public abstract class Attribute<T> implements Serializable {
      * @return <code>true</code> if this attribute is set in the specified attribute map,
      *         otherwise false
      */
-    public boolean isSet(AttributeMap attributes) {
-        return attributes.containsKey(this);
+    public boolean isSet(WithAttributes attributes) {
+        return attributes.getAttributes().contains(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "Attribute [name='" + name + "', type='" + getType()  + "', defaultValue='" + getDefault() + "'";
+    }
+
+    /**
+     * Checks if the specified value is valid for this attribute. If the specified value is not
+     * valid this method will throw an {@link IllegalArgumentException}.
+     * 
+     * @param value
+     *            the value to check
+     * @throws IllegalArgumentException
+     *             if the specified value is not valid
+     */
+    public void checkValid(T value) {
+        if (!isValid(value)) {
+            throw new IllegalArgumentException("Illegal value for attribute " + getName()
+                    + ", value = " + value);
+        }
     }
 
     /**
@@ -216,50 +138,6 @@ public abstract class Attribute<T> implements Serializable {
     }
 
     /**
-     * Returns an {@link Op} that extracts the value of this attribute from an {@link AttributeMap},
-     * or returns {@link #getDefault()} if this attribute is not present.
-     * 
-     * @return an Op from a {@link WithAttributes} to the value of this attribute
-     */
-    public Op<WithAttributes, T> map() {
-        return mapper;
-    }
-
-    /**
-     * Removes this attribute from the specified attribute map if it is present.
-     * 
-     * @param attributes
-     *            the attribute map to remove this attribute from
-     */
-    public void remove(AttributeMap attributes) {
-        attributes.remove(this);
-    }
-
-    /**
-     * Sets the specified value in the specified attribute map.
-     * 
-     * @param attributes
-     *            the attribute map to set the value in.
-     * @param value
-     *            the value that should be set
-     * @return the specified attribute map
-     * @throws IllegalArgumentException
-     *             if the specified value is not valid accordingly to {@link #checkValid(Object)}
-     */
-    public AttributeMap set(AttributeMap attributes, T value) {
-        if (attributes == null) {
-            throw new NullPointerException("attributes is null");
-        }
-        checkValid(value);
-        attributes.put(this, value);
-        return attributes;
-    }
-
-    public AttributeMap set(WithAttributes attributes, T value) {
-        return set(attributes.getAttributes(), value);
-    }
-
-    /**
      * Returns an AttributeMap containing only this attribute mapping to the specified value. The
      * returned map is immutable.
      * 
@@ -270,25 +148,5 @@ public abstract class Attribute<T> implements Serializable {
     public AttributeMap singleton(T value) {
         checkValid(value);
         return Attributes.singleton(this, value);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    /**
-     * A MapperToLong that maps from an attribute map to the value of this attribute.
-     */
-    class AttributeMapToT implements Op<WithAttributes, T>, Serializable {
-
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -953844729549732090L;
-
-        /** {@inheritDoc} */
-        public T op(WithAttributes t) {
-            return get(t);
-        }
     }
 }
