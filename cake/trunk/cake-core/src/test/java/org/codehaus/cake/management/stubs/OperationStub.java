@@ -4,7 +4,7 @@ package org.codehaus.cake.management.stubs;
 
 import java.io.IOException;
 
-import org.codehaus.cake.util.management.annotation.ManagedOperation;
+import org.codehaus.cake.management.annotation.ManagedOperation;
 
 public class OperationStub {
     public int invokeCount;

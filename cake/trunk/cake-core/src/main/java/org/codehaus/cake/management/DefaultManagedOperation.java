@@ -15,7 +15,7 @@ import javax.management.MBeanException;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
-import org.codehaus.cake.util.management.annotation.ManagedOperation;
+import org.codehaus.cake.management.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

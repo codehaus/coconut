@@ -18,9 +18,9 @@ import javax.management.ReflectionException;
 
 import org.codehaus.cake.management.AbstractManagedAttribute;
 import org.codehaus.cake.management.DefaultManagedAttribute;
+import org.codehaus.cake.management.annotation.ManagedAttribute;
 import org.codehaus.cake.management.stubs.PrivateMethods;
 import org.codehaus.cake.management.stubs.VariousAttributes;
-import org.codehaus.cake.util.management.annotation.ManagedAttribute;
 import org.junit.Before;
 import org.junit.Test;
 

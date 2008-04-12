@@ -4,7 +4,7 @@ package org.codehaus.cake.management.stubs;
 
 import java.io.IOException;
 
-import org.codehaus.cake.util.management.annotation.ManagedAttribute;
+import org.codehaus.cake.management.annotation.ManagedAttribute;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

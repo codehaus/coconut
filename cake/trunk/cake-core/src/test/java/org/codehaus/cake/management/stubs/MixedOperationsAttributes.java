@@ -2,8 +2,8 @@
  * Licensed under the Apache 2.0 License. */
 package org.codehaus.cake.management.stubs;
 
-import org.codehaus.cake.util.management.annotation.ManagedAttribute;
-import org.codehaus.cake.util.management.annotation.ManagedOperation;
+import org.codehaus.cake.management.annotation.ManagedAttribute;
+import org.codehaus.cake.management.annotation.ManagedOperation;
 
 public class MixedOperationsAttributes {
     private String string;

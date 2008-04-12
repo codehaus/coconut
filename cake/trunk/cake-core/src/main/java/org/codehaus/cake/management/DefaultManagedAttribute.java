@@ -13,7 +13,7 @@ import javax.management.MBeanAttributeInfo;
 import javax.management.ReflectionException;
 
 import org.codehaus.cake.internal.util.StringUtil;
-import org.codehaus.cake.util.management.annotation.ManagedAttribute;
+import org.codehaus.cake.management.annotation.ManagedAttribute;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

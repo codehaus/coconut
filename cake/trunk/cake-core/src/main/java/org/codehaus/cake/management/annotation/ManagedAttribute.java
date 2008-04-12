@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org> 
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.management.annotation;
+package org.codehaus.cake.management.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
