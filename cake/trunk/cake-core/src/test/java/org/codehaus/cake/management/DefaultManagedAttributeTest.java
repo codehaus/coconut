@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.management;
+package org.codehaus.cake.management;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -16,9 +16,11 @@ import java.util.Map;
 import javax.management.MBeanAttributeInfo;
 import javax.management.ReflectionException;
 
+import org.codehaus.cake.management.AbstractManagedAttribute;
+import org.codehaus.cake.management.DefaultManagedAttribute;
+import org.codehaus.cake.management.stubs.PrivateMethods;
+import org.codehaus.cake.management.stubs.VariousAttributes;
 import org.codehaus.cake.util.management.annotation.ManagedAttribute;
-import org.codehaus.cake.util.management.stubs.PrivateMethods;
-import org.codehaus.cake.util.management.stubs.VariousAttributes;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.management;
+package org.codehaus.cake.management;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -15,9 +15,13 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
+import org.codehaus.cake.management.DefaultManagedGroup;
+import org.codehaus.cake.management.ManagedGroup;
+import org.codehaus.cake.management.ManagedVisitor;
+import org.codehaus.cake.management.Managements;
+import org.codehaus.cake.management.stubs.SingleOperation;
 import org.codehaus.cake.test.util.TestUtil;
 import org.codehaus.cake.test.util.throwables.RuntimeException1;
-import org.codehaus.cake.util.management.stubs.SingleOperation;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;

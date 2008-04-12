@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.management;
+package org.codehaus.cake.management;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -23,11 +23,13 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
 
-import org.codehaus.cake.util.management.stubs.MixedOperationsAttributes;
-import org.codehaus.cake.util.management.stubs.SingleAttribute;
-import org.codehaus.cake.util.management.stubs.SingleOperation;
-import org.codehaus.cake.util.management.stubs.VariousAttributes;
-import org.codehaus.cake.util.management.stubs.VariousOperations;
+import org.codehaus.cake.management.DefaultManagedGroup;
+import org.codehaus.cake.management.ManagedGroup;
+import org.codehaus.cake.management.stubs.MixedOperationsAttributes;
+import org.codehaus.cake.management.stubs.SingleAttribute;
+import org.codehaus.cake.management.stubs.SingleOperation;
+import org.codehaus.cake.management.stubs.VariousAttributes;
+import org.codehaus.cake.management.stubs.VariousOperations;
 import org.junit.Before;
 import org.junit.Test;
 

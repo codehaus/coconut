@@ -1,6 +1,6 @@
 /* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
  * Licensed under the Apache 2.0 License. */
-package org.codehaus.cake.util.management;
+package org.codehaus.cake.management;
 
 import static org.junit.Assert.assertEquals;
 
@@ -13,8 +13,11 @@ import java.util.Map;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
-import org.codehaus.cake.util.management.stubs.OperationStub;
-import org.codehaus.cake.util.management.stubs.PrivateMethods;
+import org.codehaus.cake.management.AbstractManagedOperation;
+import org.codehaus.cake.management.DefaultManagedOperation;
+import org.codehaus.cake.management.OperationKey;
+import org.codehaus.cake.management.stubs.OperationStub;
+import org.codehaus.cake.management.stubs.PrivateMethods;
 import org.junit.Before;
 import org.junit.Test;
 
