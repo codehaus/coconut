@@ -7,15 +7,16 @@
     <version>0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>cake-core</artifactId>
-  <name>Cake Core Pom</name>
-  <packaging>pom</packaging>
+  <artifactId>cake-attributes</artifactId>
+  <name>Cake Attributes</name>
   <description>
     This library contains class that are used across all Cake projects
   </description>
-  <modules>
-     <module>cake-attribute</module>
-    <module>cake-management</module>
-    <module>cake-util</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.codehaus.cake.test</groupId>
+      <artifactId>cake-test-util</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
