@@ -13,6 +13,11 @@
     This library contains class that are used across all Cake projects
   </description>
   <dependencies>
+      <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>3.1</version>
+    </dependency>
     <dependency>
       <groupId>org.codehaus.cake.test</groupId>
       <artifactId>cake-test-util</artifactId>
