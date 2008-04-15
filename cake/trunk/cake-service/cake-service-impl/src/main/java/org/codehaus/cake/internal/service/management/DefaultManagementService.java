@@ -15,12 +15,12 @@ import org.codehaus.cake.internal.container.Composer;
 import org.codehaus.cake.internal.service.debug.InternalDebugService;
 import org.codehaus.cake.internal.service.spi.CompositeService;
 import org.codehaus.cake.internal.service.spi.ContainerInfo;
+import org.codehaus.cake.management.DefaultManagedGroup;
+import org.codehaus.cake.management.Manageable;
+import org.codehaus.cake.management.ManagedGroup;
+import org.codehaus.cake.management.ManagedVisitor;
+import org.codehaus.cake.management.Managements;
 import org.codehaus.cake.service.management.ManagementConfiguration;
-import org.codehaus.cake.util.management.DefaultManagedGroup;
-import org.codehaus.cake.util.management.Manageable;
-import org.codehaus.cake.util.management.ManagedGroup;
-import org.codehaus.cake.util.management.ManagedVisitor;
-import org.codehaus.cake.util.management.Managements;
 
 /**
  * The default implementation of the {@link MapManagementService} interface. All methods exposed

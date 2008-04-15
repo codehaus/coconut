@@ -6,7 +6,7 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.codehaus.cake.util.management.ManagedVisitor;
+import org.codehaus.cake.management.ManagedVisitor;
 
 /**
  * This class is used to configure how a container can be remotely monitored and managed

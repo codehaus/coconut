@@ -12,7 +12,7 @@ import static org.codehaus.cake.test.util.TestUtil.dummy;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 
-import org.codehaus.cake.util.management.ManagedVisitor;
+import org.codehaus.cake.management.ManagedVisitor;
 import org.junit.Before;
 import org.junit.Test;
 
