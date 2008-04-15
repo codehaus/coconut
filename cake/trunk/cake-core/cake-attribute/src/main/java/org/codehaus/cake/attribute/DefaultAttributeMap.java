@@ -4,6 +4,7 @@ package org.codehaus.cake.attribute;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -30,8 +31,9 @@ public class DefaultAttributeMap implements AttributeMap {
      *            the attributemap to copy existing attributes from
      */
     public DefaultAttributeMap(AttributeMap copyFrom) {
-    // for Attribute
-    // super(copyFrom);
+        for (Map.Entry<Attribute, Object> e : copyFrom.entrySet()) {
+            put(e.getKey(), e.getValue());
+        }
     }
 
     @Override
@@ -158,7 +160,7 @@ public class DefaultAttributeMap implements AttributeMap {
         }
     }
 
-     @Override
+    @Override
     public <T> T get(Attribute<T> key) {
         if (map.containsKey(key)) {
             return (T) map.get(key);
@@ -241,8 +243,12 @@ public class DefaultAttributeMap implements AttributeMap {
 
     @Override
     public <T> T put(Attribute<T> key, T value) {
-        T prev = (T) map.put(key, value);
-        return prev == null ? key.getDefault() : prev;
+        if (map.containsKey(key)) {
+            return (T) map.put(key, value);
+        } else {
+            map.put(key, value);
+            return key.getDefault();
+        }
     }
 
     /** {@inheritDoc} */
@@ -297,8 +303,11 @@ public class DefaultAttributeMap implements AttributeMap {
 
     @Override
     public <T> T remove(Attribute<T> key) {
-        T prev = (T) map.remove(key);
-        return prev == null ? map.containsKey(key) ? key.getDefault() : null : prev;
+        if (map.containsKey(key)) {
+            return (T) map.remove(key);
+        } else {
+            return key.getDefault();
+        }
     }
 
     @Override
@@ -309,7 +318,7 @@ public class DefaultAttributeMap implements AttributeMap {
 
     @Override
     public void clear() {
-       map.clear();
+        map.clear();
     }
 
     @Override
@@ -330,5 +339,22 @@ public class DefaultAttributeMap implements AttributeMap {
     @Override
     public Collection<Object> values() {
         return map.values();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof AttributeMap))
+            return false;
+        AttributeMap m = (AttributeMap) o;
+        if (m.size() != size())
+            return false;
+        return m.entrySet().equals(entrySet());
+    }
+
+    @Override
+    public int hashCode() {
+        return map.hashCode();
     }
 }

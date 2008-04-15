@@ -128,8 +128,9 @@ public abstract class Attribute<T> implements Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Attribute [name='" + name + "', type='" + getType() + "', defaultValue='"
-                + getDefault() + "'";
+        return name;
+//        "Attribute [name='" + name + "', type='" + getType() + "', defaultValue='"
+//                + getDefault() + "'";
     }
 
     /**

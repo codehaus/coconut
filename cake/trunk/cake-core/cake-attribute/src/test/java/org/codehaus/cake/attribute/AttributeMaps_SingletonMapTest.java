@@ -7,43 +7,31 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class AttributeMaps_SingletonMapTest extends AtrStubs {
+public class AttributeMaps_SingletonMapTest extends AbstractAttributeMapTest {
 
     private final static Attribute KEY = new ObjectAttribute("key", Integer.class, 5) {};
-    private final static IntAttribute KEY_INT = new IntAttribute("key", 5) {};
-    private final static IntAttribute OTHER_KEY_INT = new IntAttribute("key", 6) {};
 
     private final static Object VALUE = "10";
 
     private final static Attribute OTHER_KEY = new ObjectAttribute("key", Integer.class, 6) {};
 
     private final static Object OTHER_VALUE = 10;
-
-    private final AttributeMap singleton = Attributes.singleton(KEY, VALUE);
-
-    private final AttributeMap singleton_byte = Attributes.singleton(KEY, (byte) 10);
-
-    private final AttributeMap singleton_char = Attributes.singleton(KEY, (char) 11);
-
-    private final AttributeMap singleton_double = Attributes.singleton(KEY, (double) 12);
-
-    private final AttributeMap singleton_float = Attributes.singleton(KEY, (float) 13);
-
-    private final AttributeMap singleton_integer = Attributes.singleton(KEY, 14);
-
-    private final AttributeMap singleton_long = Attributes.singleton(L_1, 15L);
-
-    private final AttributeMap singleton_short = Attributes.singleton(KEY, (short) 16);
-
     private final AttributeMap singleton_null = Attributes.singleton(KEY, null);
+
+    @Before
+    public void setup() {
+        map = Attributes.singleton(KEY, VALUE);
+
+    }
 
     @Test(expected = NullPointerException.class)
     public void singletonNPE() {
@@ -51,23 +39,28 @@ public class AttributeMaps_SingletonMapTest extends AtrStubs {
     }
 
     @Test
+    public void various() {
+        super.assertImmutable();
+    }
+
+    @Test
     public void contains() {
-        assertTrue(singleton.contains(KEY));
-        //assertTrue(singleton.containsValue(VALUE));
+        assertTrue(map.contains(KEY));
+        // assertTrue(singleton.containsValue(VALUE));
 
-        assertFalse(singleton.contains(OTHER_KEY));
-        //assertFalse(singleton.containsValue(OTHER_VALUE));
+        assertFalse(map.contains(OTHER_KEY));
+        // assertFalse(singleton.containsValue(OTHER_VALUE));
 
-        //assertEquals(1, singleton.entrySet().size());
-        assertEquals(1, singleton.attributeSet().size());
-        //assertEquals(1, singleton.values().size());
-        assertEquals(1, singleton.size());
-        assertFalse(singleton.isEmpty());
+        // assertEquals(1, singleton.entrySet().size());
+        assertEquals(1, map.attributeSet().size());
+        // assertEquals(1, singleton.values().size());
+        assertEquals(1, map.size());
+        assertFalse(map.isEmpty());
     }
 
     @Test
     public void hashcode() {
-        assertEquals(singleton.hashCode(), singleton.hashCode());
+        assertEquals(map.hashCode(), map.hashCode());
         assertEquals(singleton_null.hashCode(), singleton_null.hashCode());
     }
 
@@ -210,7 +203,7 @@ public class AttributeMaps_SingletonMapTest extends AtrStubs {
         assertEquals((int) 1, b2.get(I_1, (int) 1));
         assertEquals((int) 2, b2.get(I_2, (int) 2));
     }
-    
+
     @Test
     public void longs() {
         AttributeMap b1 = Attributes.singleton(L_1, (long) 5);
@@ -233,7 +226,7 @@ public class AttributeMaps_SingletonMapTest extends AtrStubs {
         assertEquals((long) 1, b2.get(L_1, (long) 1));
         assertEquals((long) 2, b2.get(L_2, (long) 2));
     }
-    
+
     @Test
     public void shorts() {
         AttributeMap b1 = Attributes.singleton(S_1, (short) 5);
@@ -256,14 +249,15 @@ public class AttributeMaps_SingletonMapTest extends AtrStubs {
         assertEquals((short) 1, b2.get(S_1, (short) 1));
         assertEquals((short) 2, b2.get(S_2, (short) 2));
     }
-    //TODO long, short
+
+    // TODO long, short
     @Test
     @Ignore
     public void getNull() {
-        assertEquals(VALUE, singleton.get(KEY));
-        assertEquals(VALUE, singleton.get(KEY, OTHER_VALUE));
-        assertNull(singleton.get(OTHER_KEY));
-        assertEquals(OTHER_VALUE, singleton.get(OTHER_KEY, OTHER_VALUE));
+        assertEquals(VALUE, map.get(KEY));
+        assertEquals(VALUE, map.get(KEY, OTHER_VALUE));
+        assertNull(map.get(OTHER_KEY));
+        assertEquals(OTHER_VALUE, map.get(OTHER_KEY, OTHER_VALUE));
 
         assertNull(singleton_null.get(KEY));
         assertNull(singleton_null.get(OTHER_KEY));
@@ -272,15 +266,21 @@ public class AttributeMaps_SingletonMapTest extends AtrStubs {
     }
 
     @Test
-    @Ignore
+    public void entrySet() {
+        assertEquals(1, map.entrySet().size());
+        assertEquals(Collections.singletonMap(KEY, VALUE).entrySet(),map.entrySet());
+        assertEquals(Collections.singletonMap(KEY, VALUE).values(),map.values());
+    }
+
+    @Test
     public void equals() {
-        assertFalse(singleton.equals(null));
-        assertFalse(singleton.equals(new Object()));
-        assertFalse(singleton.equals(Attributes.singleton(OTHER_KEY, VALUE)));
-        assertFalse(singleton.equals(Attributes.singleton(KEY, OTHER_VALUE)));
-        assertFalse(singleton.equals(Attributes.singleton(OTHER_KEY, null)));
-        assertFalse(singleton.equals(Attributes.singleton(KEY, null)));
-        assertFalse(singleton.equals(Attributes.singleton(OTHER_KEY, OTHER_VALUE)));
+        assertFalse(map.equals(null));
+        assertFalse(map.equals(new Object()));
+        assertFalse(map.equals(Attributes.singleton(OTHER_KEY, VALUE)));
+        assertFalse(map.equals(Attributes.singleton(KEY, OTHER_VALUE)));
+        assertFalse(map.equals(Attributes.singleton(OTHER_KEY, null)));
+        assertFalse(map.equals(Attributes.singleton(KEY, null)));
+        assertFalse(map.equals(Attributes.singleton(OTHER_KEY, OTHER_VALUE)));
         assertFalse(singleton_null.equals(Attributes.singleton(KEY, VALUE)));
         assertFalse(singleton_null.equals(Attributes.singleton(OTHER_KEY, VALUE)));
 
@@ -293,38 +293,22 @@ public class AttributeMaps_SingletonMapTest extends AtrStubs {
             }
         };
         m.put(KEY, VALUE);
-        assertFalse(singleton.equals(m));
+        assertFalse(map.equals(m));
 
         // differen sizes
         AttributeMap am = new DefaultAttributeMap();
         am.put(KEY, VALUE);
         am.put(OTHER_KEY, VALUE);
-        assertFalse(singleton.equals(am));
+        assertFalse(map.equals(am));
 
-        assertTrue(singleton.equals(singleton));
-        assertTrue(singleton.equals(Attributes.singleton(KEY, VALUE)));
+        assertTrue(map.equals(map));
+        assertTrue(map.equals(Attributes.singleton(KEY, VALUE)));
         assertTrue(singleton_null.equals(Attributes.singleton(KEY, null)));
     }
 
     @Test
-    @Ignore
     public void toString_() {
-        assertEquals("{key=10}", singleton.toString());
-    }
-
-    @Test
-    public void unsupportedOperations() {
-        try {
-            singleton.clear();
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            singleton.remove(KEY);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        AbstractAttributeMapTest.noPut(singleton, KEY);
+        assertEquals("{key=10}", map.toString());
     }
 
     /**

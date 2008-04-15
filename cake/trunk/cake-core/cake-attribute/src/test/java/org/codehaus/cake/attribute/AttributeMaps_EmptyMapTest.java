@@ -9,12 +9,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -23,77 +20,39 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class AttributeMaps_EmptyMapTest extends AtrStubs {
-    private final static ObjectAttribute KEY = new ObjectAttribute("key", Integer.class, 5) {};
+public class AttributeMaps_EmptyMapTest extends AbstractAttributeMapTest {
 
     @Test
-    @Ignore
     public void various() {
-        assertFalse(EMPTY_ATTRIBUTE_MAP.contains(KEY));
-       // assertFalse(EMPTY_ATTRIBUTE_MAP.containsValue(KEY));
-       // assertEquals(0, EMPTY_ATTRIBUTE_MAP.entrySet().size());
-        assertEquals(new HashMap(), EMPTY_ATTRIBUTE_MAP);
-        assertEquals(new HashMap().hashCode(), EMPTY_ATTRIBUTE_MAP.hashCode());
+        assertFalse(EMPTY_ATTRIBUTE_MAP.contains(O_2));
+        // assertFalse(EMPTY_ATTRIBUTE_MAP.containsValue(KEY));
+        assertEquals(0, EMPTY_ATTRIBUTE_MAP.entrySet().size());
+        assertEquals(new DefaultAttributeMap(), EMPTY_ATTRIBUTE_MAP);
+        assertEquals(new DefaultAttributeMap().hashCode(), EMPTY_ATTRIBUTE_MAP.hashCode());
         assertEquals(0, EMPTY_ATTRIBUTE_MAP.size());
         assertTrue(EMPTY_ATTRIBUTE_MAP.isEmpty());
         assertEquals(0, EMPTY_ATTRIBUTE_MAP.attributeSet().size());
-       // assertEquals(0, EMPTY_ATTRIBUTE_MAP.values().size());
+        assertEquals(0, EMPTY_ATTRIBUTE_MAP.values().size());
         assertFalse(EMPTY_ATTRIBUTE_MAP.equals(new HashSet()));
-    }
-
-    @Test
-    public void putters() {
-        try {
-            EMPTY_ATTRIBUTE_MAP.put(KEY, 123);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            EMPTY_ATTRIBUTE_MAP.put(KEY, true);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            EMPTY_ATTRIBUTE_MAP.put(KEY, (byte) 123);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            EMPTY_ATTRIBUTE_MAP.put(KEY, 'd');
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            EMPTY_ATTRIBUTE_MAP.put(D_1, 3.4d);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            EMPTY_ATTRIBUTE_MAP.put(KEY, 123.3f);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            EMPTY_ATTRIBUTE_MAP.put(I_1, 123);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            EMPTY_ATTRIBUTE_MAP.put(L_1, 34l);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            EMPTY_ATTRIBUTE_MAP.put(KEY, (short) 123);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
+        map = EMPTY_ATTRIBUTE_MAP;
+        super.noPut();
+        assertEquals(B_TRUE.getDefaultValue(), map.remove(B_TRUE));
+        assertEquals(B_2.getDefaultValue(), map.remove(B_2));
+        assertEquals(C_2.getDefaultValue(), map.remove(C_2));
+        assertEquals(D_2.getDefaultValue(), map.remove(D_2),0);
+        assertEquals(F_2.getDefaultValue(), map.remove(F_2),0);
+        assertEquals(I_2.getDefaultValue(), map.remove(I_2));
+        assertEquals(O_2.getDefaultValue(), map.remove(O_2));
+        assertEquals(L_2.getDefaultValue(), map.remove(L_2));
+        assertEquals(S_2.getDefaultValue(), map.remove(S_2));
+        assertEquals("{}",map.toString());
+        map.clear();//no exceptions
     }
 
     @Test
     public void getters() {
-        assertEquals(5, EMPTY_ATTRIBUTE_MAP.get(KEY));
-        assertEquals("goo", EMPTY_ATTRIBUTE_MAP.get(KEY, "goo"));
+        assertEquals("15", EMPTY_ATTRIBUTE_MAP.get(O_2));
+        assertEquals("goo", EMPTY_ATTRIBUTE_MAP.get(O_2, "goo"));
         assertFalse(EMPTY_ATTRIBUTE_MAP.get(B_FALSE));
         assertTrue(EMPTY_ATTRIBUTE_MAP.get(B_FALSE, true));
         assertEquals((byte) 1, EMPTY_ATTRIBUTE_MAP.get(B_1));

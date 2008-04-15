@@ -51,6 +51,7 @@ public class AtrStubs {
 
     final static ObjectAttribute<String> O_1 = new ObjectAttribute<String>("O_1",String.class ,"1.5") {};
     final static ObjectAttribute<String> O_2 = new ObjectAttribute<String>("O_2",String.class, "15") {};
+    final static ObjectAttribute<String> O_3 = new ObjectAttribute<String>("O_3",String.class, null) {};
     static WithAttributes withAtr(final AttributeMap map) {
         return new WithAttributes() {
             @Override

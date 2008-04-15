@@ -5,7 +5,6 @@ package org.codehaus.cake.attribute;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -48,38 +47,38 @@ public final class Attributes {
         return new SingletonAttributeMap(attribute, value);
     }
 
-    /**
-     * Creates a new {@link Map} where all the specified keys maps to {@link #EMPTY_ATTRIBUTE_MAP}.
-     * 
-     * @param <K>
-     *            the type of keys
-     * @param keys
-     *            the collection of keys that should map to the empty AttributeMap
-     * @return a new Map where all the specified keys maps to an empty AttributeMap
-     */
-    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys) {
-        return toMap(keys, EMPTY_ATTRIBUTE_MAP);
-    }
-
-    /**
-     * Creates a new {@link Map} where all the specified keys maps to the specified AttributeMap.
-     * 
-     * @param <K>
-     *            the type of keys
-     * @param keys
-     *            the collection of keys that should map to the specified AttributeMap
-     * @param attributeMap
-     *            the AttributeMap that all the specified keys must map to
-     * @return a new Map where all the specified keys maps to the specified AttributeMap
-     */
-    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys,
-            AttributeMap attributeMap) {
-        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
-        for (K key : keys) {
-            map.put(key, attributeMap);
-        }
-        return map;
-    }
+//    /**
+//     * Creates a new {@link Map} where all the specified keys maps to {@link #EMPTY_ATTRIBUTE_MAP}.
+//     * 
+//     * @param <K>
+//     *            the type of keys
+//     * @param keys
+//     *            the collection of keys that should map to the empty AttributeMap
+//     * @return a new Map where all the specified keys maps to an empty AttributeMap
+//     */
+//    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys) {
+//        return toMap(keys, EMPTY_ATTRIBUTE_MAP);
+//    }
+//
+//    /**
+//     * Creates a new {@link Map} where all the specified keys maps to the specified AttributeMap.
+//     * 
+//     * @param <K>
+//     *            the type of keys
+//     * @param keys
+//     *            the collection of keys that should map to the specified AttributeMap
+//     * @param attributeMap
+//     *            the AttributeMap that all the specified keys must map to
+//     * @return a new Map where all the specified keys maps to the specified AttributeMap
+//     */
+//    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys,
+//            AttributeMap attributeMap) {
+//        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
+//        for (K key : keys) {
+//            map.put(key, attributeMap);
+//        }
+//        return map;
+//    }
 
     /**
      * Returns an unmodifiable view of the specified attribute map. This method allows modules to
@@ -110,9 +109,7 @@ public final class Attributes {
             return Collections.EMPTY_SET;
         }
 
-        public void clear() {
-            throw new UnsupportedOperationException("map is immutable");
-        }
+        public void clear() {}
 
         /** {@inheritDoc} */
         public boolean contains(Attribute<?> attribute) {
@@ -127,7 +124,7 @@ public final class Attributes {
         /** {@inheritDoc} */
         @Override
         public boolean equals(Object o) {
-            return o instanceof Map && ((Map) o).size() == 0;
+            return o instanceof AttributeMap && ((AttributeMap) o).size() == 0;
         }
 
         public <T> T get(Attribute<T> key) {
@@ -283,39 +280,39 @@ public final class Attributes {
         }
 
         public <T> T remove(Attribute<T> key) {
-            throw new UnsupportedOperationException("map is immutable");
+            return key.getDefault();
         }
 
         public boolean remove(BooleanAttribute key) {
-            throw new UnsupportedOperationException("map is immutable");
+            return key.getDefaultValue();
         }
 
         public byte remove(ByteAttribute key) {
-            throw new UnsupportedOperationException("map is immutable");
+            return key.getDefaultValue();
         }
 
         public char remove(CharAttribute key) {
-            throw new UnsupportedOperationException("map is immutable");
+            return key.getDefaultValue();
         }
 
         public double remove(DoubleAttribute key) {
-            throw new UnsupportedOperationException("map is immutable");
+            return key.getDefaultValue();
         }
 
         public float remove(FloatAttribute key) {
-            throw new UnsupportedOperationException("map is immutable");
+            return key.getDefaultValue();
         }
 
         public int remove(IntAttribute key) {
-            throw new UnsupportedOperationException("map is immutable");
+            return key.getDefaultValue();
         }
 
         public long remove(LongAttribute key) {
-            throw new UnsupportedOperationException("map is immutable");
+            return key.getDefaultValue();
         }
 
         public short remove(ShortAttribute key) {
-            throw new UnsupportedOperationException("map is immutable");
+            return key.getDefaultValue();
         }
 
         /** {@inheritDoc} */
@@ -326,6 +323,10 @@ public final class Attributes {
         @Override
         public Collection<Object> values() {
             return Collections.EMPTY_SET;
+        }
+
+        public String toString() {
+            return "{}";
         }
     }
 
@@ -517,9 +518,11 @@ public final class Attributes {
         public int remove(IntAttribute key) {
             throw new UnsupportedOperationException("map is immutable");
         }
+
         public long remove(LongAttribute key) {
             throw new UnsupportedOperationException("map is immutable");
         }
+
         public short remove(ShortAttribute key) {
             throw new UnsupportedOperationException("map is immutable");
         }
@@ -581,16 +584,11 @@ public final class Attributes {
             return this.attribute == attribute;
         }
 
-        /** {@inheritDoc} */
-        public boolean containsAttribute(Object key) {
-            return attribute == key;
-        }
-
         @Override
         public Set<Entry<Attribute, Object>> entrySet() {
             return Collections
-          .<Map.Entry<Attribute, Object>> singleton(new SimpleImmutableEntry<Attribute, Object>(
-                  attribute, value));
+                    .<Map.Entry<Attribute, Object>> singleton(new SimpleImmutableEntry<Attribute, Object>(
+                            attribute, value));
         }
 
         /** {@inheritDoc} */
@@ -599,27 +597,16 @@ public final class Attributes {
             if (o == this) {
                 return true;
             }
-            if (!(o instanceof Map)) {
+            if (!(o instanceof AttributeMap)) {
                 return false;
             }
-            Map<Attribute, Object> map = (Map<Attribute, Object>) o;
+            AttributeMap map = (AttributeMap) o;
             if (map.size() != size()) {
                 return false;
             }
-            try {
-                if (value == null) {
-                    if (!(map.get(attribute) == null && map.containsKey(attribute))) {
-                        return false;
-                    }
-                } else {
-                    if (!value.equals(map.get(attribute))) {
-                        return false;
-                    }
-                }
-            } catch (ClassCastException unused) {
-                return false;
-            }
-            return true;
+            Object other = map.get(attribute);
+            return eq(value, other)
+                    && (!eq(value, attribute.getDefault()) || map.contains(attribute));
         }
 
         public <T> T get(Attribute<T> key) {
@@ -784,9 +771,11 @@ public final class Attributes {
         public int remove(IntAttribute key) {
             throw new UnsupportedOperationException("map is immutable");
         }
+
         public long remove(LongAttribute key) {
             throw new UnsupportedOperationException("map is immutable");
         }
+
         public short remove(ShortAttribute key) {
             throw new UnsupportedOperationException("map is immutable");
         }
@@ -813,11 +802,11 @@ public final class Attributes {
             return Collections.singleton(value);
         }
     }
-    
+
     /**
      * An Entry maintaining an immutable key and value. This class does not support method
-     * <tt>setValue</tt>. This class may be convenient in methods that return
-     * thread-safe snapshots of key-value mappings.
+     * <tt>setValue</tt>. This class may be convenient in methods that return thread-safe
+     * snapshots of key-value mappings.
      */
     static class SimpleImmutableEntry<K, V> implements Entry<K, V>, Serializable {
 
@@ -832,7 +821,7 @@ public final class Attributes {
 
         /**
          * Creates an entry representing the same mapping as the specified entry.
-         *
+         * 
          * @param entry
          *            the entry to copy
          */
@@ -842,9 +831,8 @@ public final class Attributes {
         }
 
         /**
-         * Creates an entry representing a mapping from the specified key to the specified
-         * value.
-         *
+         * Creates an entry representing a mapping from the specified key to the specified value.
+         * 
          * @param key
          *            the key represented by this entry
          * @param value
@@ -892,7 +880,7 @@ public final class Attributes {
             return key + "=" + value;
         }
     }
-    
+
     /**
      * Returns true if the specified arguments are equal, or both null.
      */
