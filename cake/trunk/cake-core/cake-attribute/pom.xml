@@ -7,7 +7,7 @@
     <version>0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>cake-attributes</artifactId>
+  <artifactId>cake-attribute</artifactId>
   <name>Cake Attributes</name>
   <description>
     This library contains class that are used across all Cake projects

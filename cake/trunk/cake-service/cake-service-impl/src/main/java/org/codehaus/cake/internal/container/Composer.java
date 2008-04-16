@@ -51,7 +51,9 @@ public class Composer {
     public void registerImplementation(Class<?> clazz) {
         container.registerComponentImplementation(clazz);
     }
-
+    public void registerImplementation(Object key,Class<?> clazz) {
+        container.registerComponentImplementation(key,clazz);
+    }
     public void registerInstance(Object value) {
         container.registerComponentInstance(value, value);
     }
@@ -76,7 +78,9 @@ public class Composer {
         T service = (T) container.getComponentInstanceOfType(serviceType);
         return service;
     }
-
+    public Object getFromKeyIfAvailable(Object key) {
+        return  container.getComponentInstance(key);
+    }
     public List<?> prepareStart(ContainerConfiguration conf) {
         List result = new LinkedList(container.getComponentInstances());
         for (Object object : new ArrayList(result)) {

@@ -35,20 +35,20 @@ public class DefaultMapGeneratorTest {
             String.class, "1.5f") {};
     private final static ObjectAttribute<Map> O_2 = new ObjectAttribute<Map>("O_1", Map.class,
             new HashMap()) {};
-    private final static AttributeInfo LI1 = new AttributeInfo(L_1, false, false);
-    private final static AttributeInfo LI2 = new AttributeInfo(L_2, false, false);
-    private final static AttributeInfo LI3 = new AttributeInfo(L_3, false, true);
-    private final static AttributeInfo LI4 = new AttributeInfo(L_4, true, false);
-    private final static AttributeInfo LI5 = new AttributeInfo(L_5, true, true);
-    private final static AttributeInfo DI1 = new AttributeInfo(D_1, false, false);
-    private final static AttributeInfo II1 = new AttributeInfo(I_1, false, false);
-    private final static AttributeInfo II5 = new AttributeInfo(I_5, true, true);
-    private final static AttributeInfo SI4 = new AttributeInfo(S_4, true, false);
-    private final static AttributeInfo BI4 = new AttributeInfo(B_4, true, false);
-    private final static AttributeInfo FI1 = new AttributeInfo(F_1, false, false);
-    private final static AttributeInfo OI1 = new AttributeInfo(O_1, false, false);
-    private final static AttributeInfo OI4 = new AttributeInfo(O_1, true, false);
-    private final static AttributeInfo OI5 = new AttributeInfo(O_1, false, true);
+    private final static DefaultAttributeConfiguration LI1 = new DefaultAttributeConfiguration(L_1, false, false);
+    private final static DefaultAttributeConfiguration LI2 = new DefaultAttributeConfiguration(L_2, false, false);
+    private final static DefaultAttributeConfiguration LI3 = new DefaultAttributeConfiguration(L_3, false, true);
+    private final static DefaultAttributeConfiguration LI4 = new DefaultAttributeConfiguration(L_4, true, false);
+    private final static DefaultAttributeConfiguration LI5 = new DefaultAttributeConfiguration(L_5, true, true);
+    private final static DefaultAttributeConfiguration DI1 = new DefaultAttributeConfiguration(D_1, false, false);
+    private final static DefaultAttributeConfiguration II1 = new DefaultAttributeConfiguration(I_1, false, false);
+    private final static DefaultAttributeConfiguration II5 = new DefaultAttributeConfiguration(I_5, true, true);
+    private final static DefaultAttributeConfiguration SI4 = new DefaultAttributeConfiguration(S_4, true, false);
+    private final static DefaultAttributeConfiguration BI4 = new DefaultAttributeConfiguration(B_4, true, false);
+    private final static DefaultAttributeConfiguration FI1 = new DefaultAttributeConfiguration(F_1, false, false);
+    private final static DefaultAttributeConfiguration OI1 = new DefaultAttributeConfiguration(O_1, false, false);
+    private final static DefaultAttributeConfiguration OI4 = new DefaultAttributeConfiguration(O_1, true, false);
+    private final static DefaultAttributeConfiguration OI5 = new DefaultAttributeConfiguration(O_1, false, true);
     private final static Random r = new Random(3);
 
     @Test
@@ -56,9 +56,9 @@ public class DefaultMapGeneratorTest {
         Checker.run(OI1, "ddf");
         Checker.run(OI4, "ddf");
         Checker.run(OI5, "ddf");
-        Checker.run(new AttributeInfo(O_2, false, false), new HashMap());
-        Checker.run(new AttributeInfo(O_2, false, true), new HashMap());
-        Checker.run(new AttributeInfo(O_2, true, false), new HashMap());
+        Checker.run(new DefaultAttributeConfiguration(O_2, false, false), new HashMap());
+        Checker.run(new DefaultAttributeConfiguration(O_2, false, true), new HashMap());
+        Checker.run(new DefaultAttributeConfiguration(O_2, true, false), new HashMap());
     }
 
     @Test
@@ -96,10 +96,10 @@ public class DefaultMapGeneratorTest {
     @Test
     @Ignore
     public void check5() {
-        LinkedHashMap<AttributeInfo, Object> map = new LinkedHashMap<AttributeInfo, Object>();
+        LinkedHashMap<DefaultAttributeConfiguration, Object> map = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         // AttributeInfo info = newInfo(new ObjectAttribute(Map.class, new HashMap()) {});
         // map.put(info, null);
-        AttributeInfo info = newInfo(new ObjectAttribute(String.class, "B") {});
+        DefaultAttributeConfiguration info = newInfo(new ObjectAttribute(String.class, "B") {});
         map.put(info, "");
         // info = newInfo(new ObjectAttribute(Long.class, null) {});
         // map.put(info, Long.MIN_VALUE);
@@ -108,7 +108,7 @@ public class DefaultMapGeneratorTest {
 
     void run(int count) {
         int same = r.nextInt(30);
-        LinkedHashMap<AttributeInfo, Object> map = new LinkedHashMap<AttributeInfo, Object>();
+        LinkedHashMap<DefaultAttributeConfiguration, Object> map = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         for (int i = 0; i < count; i++) {
             int next = same <= 8 ? same : r.nextInt(8);
             switch (next) {
@@ -147,46 +147,46 @@ public class DefaultMapGeneratorTest {
         Checker.run(map);
     }
 
-    public void addBoolean(Map<AttributeInfo, Object> map) {
+    public void addBoolean(Map<DefaultAttributeConfiguration, Object> map) {
         map.put(newInfo(new BooleanAttribute(r.nextBoolean()) {}), r.nextBoolean());
     }
 
-    public void addByte(Map<AttributeInfo, Object> map) {
+    public void addByte(Map<DefaultAttributeConfiguration, Object> map) {
         byte b = (byte) r.nextInt();
         map.put(newInfo(new ByteAttribute(b) {}), r.nextBoolean() ? b : (byte) r.nextInt());
     }
 
-    public void addChar(Map<AttributeInfo, Object> map) {
+    public void addChar(Map<DefaultAttributeConfiguration, Object> map) {
         char b = (char) r.nextInt();
         map.put(newInfo(new CharAttribute(b) {}), r.nextBoolean() ? b : (char) r.nextInt());
     }
 
-    public void addDouble(Map<AttributeInfo, Object> map) {
+    public void addDouble(Map<DefaultAttributeConfiguration, Object> map) {
         double b = r.nextDouble();
         map.put(newInfo(new DoubleAttribute(b) {}), r.nextBoolean() ? b : r.nextDouble());
     }
 
-    public void addFloat(Map<AttributeInfo, Object> map) {
+    public void addFloat(Map<DefaultAttributeConfiguration, Object> map) {
         float b = r.nextFloat();
         map.put(newInfo(new FloatAttribute(b) {}), r.nextBoolean() ? b : r.nextFloat());
     }
 
-    public void addInt(Map<AttributeInfo, Object> map) {
+    public void addInt(Map<DefaultAttributeConfiguration, Object> map) {
         int b = r.nextInt();
         map.put(newInfo(new IntAttribute(b) {}), r.nextBoolean() ? b : r.nextInt());
     }
 
-    public void addLong(Map<AttributeInfo, Object> map) {
+    public void addLong(Map<DefaultAttributeConfiguration, Object> map) {
         long b = r.nextLong();
         map.put(newInfo(new LongAttribute(b) {}), r.nextBoolean() ? b : r.nextLong());
     }
 
-    public void addShort(Map<AttributeInfo, Object> map) {
+    public void addShort(Map<DefaultAttributeConfiguration, Object> map) {
         short b = (short) r.nextInt();
         map.put(newInfo(new ShortAttribute(b) {}), r.nextBoolean() ? b : (short) r.nextInt());
     }
 
-    public void addObject(Map<AttributeInfo, Object> map) {
+    public void addObject(Map<DefaultAttributeConfiguration, Object> map) {
         Class type = null;
         Object defaultValue = null;
         Object value = null;
@@ -210,7 +210,7 @@ public class DefaultMapGeneratorTest {
         default:
             throw new AssertionError();
         }
-        AttributeInfo info = newInfo(new ObjectAttribute(type, defaultValue) {});
+        DefaultAttributeConfiguration info = newInfo(new ObjectAttribute(type, defaultValue) {});
         // System.err.println(info + ", " + value);
         map.put(info, r.nextBoolean() ? defaultValue : value);
         // System.out.println(info + "|||'" + map.get(info) + "'");
@@ -221,8 +221,8 @@ public class DefaultMapGeneratorTest {
         return objects[n];
     }
 
-    AttributeInfo newInfo(Attribute<?> a) {
-        return new AttributeInfo(a, r.nextBoolean(), r.nextBoolean());
+    DefaultAttributeConfiguration newInfo(Attribute<?> a) {
+        return new DefaultAttributeConfiguration(a, r.nextBoolean(), r.nextBoolean());
     }
 
 }

@@ -28,14 +28,14 @@ import org.codehaus.cake.attribute.ShortAttribute;
 
 public class Checker {
     private AttributeMap map;
-    private final LinkedHashMap<AttributeInfo, Object> params;
-    private final Map<AttributeInfo, Object> visible;
+    private final LinkedHashMap<DefaultAttributeConfiguration, Object> params;
+    private final Map<DefaultAttributeConfiguration, Object> visible;
     private final Set<Attribute<?>> visibleAttributes = new HashSet<Attribute<?>>();
 
-    Checker(AttributeMap map, LinkedHashMap<AttributeInfo, Object> m) {
+    Checker(AttributeMap map, LinkedHashMap<DefaultAttributeConfiguration, Object> m) {
         this.map = map;
-        visible = new HashMap<AttributeInfo, Object>();
-        for (Map.Entry<AttributeInfo, Object> i : m.entrySet()) {
+        visible = new HashMap<DefaultAttributeConfiguration, Object>();
+        for (Map.Entry<DefaultAttributeConfiguration, Object> i : m.entrySet()) {
             if (!i.getKey().isHidden()) {
                 visible.put(i.getKey(), i.getValue());
                 visibleAttributes.add(i.getKey().getAttribute());
@@ -44,7 +44,7 @@ public class Checker {
         this.params = m;
     }
 
-    void check(AttributeInfo i, Object value) {
+    void check(DefaultAttributeConfiguration i, Object value) {
         // System.out.println(map);
         Attribute<?> a = i.getAttribute();
         assertEquals(!i.isHidden(), map.contains(a));
@@ -79,7 +79,7 @@ public class Checker {
         }
     }
 
-    void check(AttributeInfo i, ObjectAttribute la, Object l) {
+    void check(DefaultAttributeConfiguration i, ObjectAttribute la, Object l) {
         assertEquals(l, map.get(la, new Object()));
         assertEquals(l, map.get(la, l));
         assertEquals("34", map.get(new ObjectAttribute(String.class, "44") {}, "34"));
@@ -122,7 +122,7 @@ public class Checker {
         initMap();
     }
 
-    void check(AttributeInfo i, LongAttribute la, long l) {
+    void check(DefaultAttributeConfiguration i, LongAttribute la, long l) {
         assertEquals(l, map.get(la, -565656));
         assertEquals(l, map.get(la, l));
         assertEquals(34L, map.get(new LongAttribute("ff", 44) {}, 34));
@@ -151,7 +151,7 @@ public class Checker {
         initMap();
     }
 
-    void check(AttributeInfo i, IntAttribute la, int l) {
+    void check(DefaultAttributeConfiguration i, IntAttribute la, int l) {
         assertEquals(l, map.get(la, -565656));
         assertEquals(l, map.get(la, l));
         assertEquals(34, map.get(new IntAttribute("ff", 44) {}, 34));
@@ -180,7 +180,7 @@ public class Checker {
         initMap();
     }
 
-    void check(AttributeInfo i, BooleanAttribute la, boolean l) {
+    void check(DefaultAttributeConfiguration i, BooleanAttribute la, boolean l) {
         assertEquals(l, map.get(la, false));
         assertEquals(l, map.get(la, true));
         assertEquals(l, map.get(la));
@@ -192,7 +192,7 @@ public class Checker {
         assertEquals(true, map.get(new BooleanAttribute("ff", true) {}));
     }
 
-    void check(AttributeInfo i, ByteAttribute la, byte l) {
+    void check(DefaultAttributeConfiguration i, ByteAttribute la, byte l) {
         assertEquals(l, map.get(la, (byte) -56));
         assertEquals(l, map.get(la, l));
         assertEquals((byte) 34, map.get(new ByteAttribute("ff", (byte) 44) {}, (byte) 34));
@@ -221,7 +221,7 @@ public class Checker {
         initMap();
     }
 
-    void check(AttributeInfo i, CharAttribute la, char l) {
+    void check(DefaultAttributeConfiguration i, CharAttribute la, char l) {
         assertEquals(l, map.get(la, (char) -56));
         assertEquals(l, map.get(la, l));
         assertEquals((char) 34, map.get(new CharAttribute("ff", (char) 44) {}, (char) 34));
@@ -251,7 +251,7 @@ public class Checker {
         initMap();
     }
 
-    void check(AttributeInfo i, ShortAttribute la, short l) {
+    void check(DefaultAttributeConfiguration i, ShortAttribute la, short l) {
         assertEquals(l, map.get(la, (short) -56));
         assertEquals(l, map.get(la, l));
         assertEquals((short) 34, map.get(new ShortAttribute("ff", (short) 44) {}, (short) 34));
@@ -281,7 +281,7 @@ public class Checker {
         initMap();
     }
 
-    void check(AttributeInfo i, DoubleAttribute la, double l) {
+    void check(DefaultAttributeConfiguration i, DoubleAttribute la, double l) {
         assertEquals(l, map.get(la, -565656), 0);
         assertEquals(l, map.get(la, l), 0);
         assertEquals(34d, map.get(new DoubleAttribute("ff", 44) {}, 34), 0);
@@ -311,7 +311,7 @@ public class Checker {
         initMap();
     }
 
-    void check(AttributeInfo i, FloatAttribute la, float l) {
+    void check(DefaultAttributeConfiguration i, FloatAttribute la, float l) {
         assertEquals(l, map.get(la, -565656), 0);
         assertEquals(l, map.get(la, l), 0);
         assertEquals(34f, map.get(new FloatAttribute("ff", 44) {}, 34), 0);
@@ -345,8 +345,8 @@ public class Checker {
     }
 
     void initMap(String className) {
-        List<AttributeInfo> list = new ArrayList<AttributeInfo>();
-        for (Map.Entry<AttributeInfo, Object> i : params.entrySet()) {
+        List<DefaultAttributeConfiguration> list = new ArrayList<DefaultAttributeConfiguration>();
+        for (Map.Entry<DefaultAttributeConfiguration, Object> i : params.entrySet()) {
             list.add(i.getKey());
         }
         try {
@@ -358,12 +358,12 @@ public class Checker {
         }
     }
 
-    static AttributeMap newInstance(LinkedHashMap<AttributeInfo, Object> params, Class c,
+    static AttributeMap newInstance(LinkedHashMap<DefaultAttributeConfiguration, Object> params, Class c,
             boolean tryClone) {
         Class<?>[] types = new Class[params.size()];
         Object[] args = new Object[params.size()];
         int count = 0;
-        for (Map.Entry<AttributeInfo, Object> i : params.entrySet()) {
+        for (Map.Entry<DefaultAttributeConfiguration, Object> i : params.entrySet()) {
             if (tryClone) {
                 Object v = i.getValue();
                 if (v instanceof String) {
@@ -439,7 +439,7 @@ public class Checker {
         assertEquals(visible.keySet().size(), map.attributeSet().size());
 
         Map tmp = new HashMap();
-        for (Map.Entry<AttributeInfo, Object> i : visible.entrySet()) {
+        for (Map.Entry<DefaultAttributeConfiguration, Object> i : visible.entrySet()) {
             tmp.put(i.getKey().getAttribute(), i.getValue());
         }
         assertEquals(tmp.entrySet(), map.entrySet());
@@ -449,7 +449,7 @@ public class Checker {
         assertTrue(map.values().containsAll(visible.values()));
         assertEquals(visibleAttributes, map.attributeSet());
         Map<Attribute, Object> hashCode = new HashMap<Attribute, Object>();
-        for (Map.Entry<AttributeInfo, Object> i : params.entrySet()) {
+        for (Map.Entry<DefaultAttributeConfiguration, Object> i : params.entrySet()) {
             check(i.getKey(), i.getValue());
             if (!i.getKey().isHidden()) {
                 hashCode.put(i.getKey().getAttribute(), i.getValue());
@@ -485,31 +485,31 @@ public class Checker {
         assertFalse(map.contains(new ObjectAttribute("dd", Object.class) {}));
     }
 
-    public static void run(AttributeInfo ai, Object value) {
-        LinkedHashMap<AttributeInfo, Object> m = new LinkedHashMap<AttributeInfo, Object>();
+    public static void run(DefaultAttributeConfiguration ai, Object value) {
+        LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(ai, value);
         run(m);
     }
 
-    public static void run(AttributeInfo a1, Object v1, AttributeInfo a2, Object v2) {
-        LinkedHashMap<AttributeInfo, Object> m = new LinkedHashMap<AttributeInfo, Object>();
+    public static void run(DefaultAttributeConfiguration a1, Object v1, DefaultAttributeConfiguration a2, Object v2) {
+        LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(a1, v1);
         m.put(a2, v2);
         run(m);
     }
 
-    public static void run(AttributeInfo a1, Object v1, AttributeInfo a2, Object v2,
-            AttributeInfo a3, Object v3) {
-        LinkedHashMap<AttributeInfo, Object> m = new LinkedHashMap<AttributeInfo, Object>();
+    public static void run(DefaultAttributeConfiguration a1, Object v1, DefaultAttributeConfiguration a2, Object v2,
+            DefaultAttributeConfiguration a3, Object v3) {
+        LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(a1, v1);
         m.put(a2, v2);
         m.put(a3, v3);
         run(m);
     }
 
-    public static void run(AttributeInfo a1, Object v1, AttributeInfo a2, Object v2,
-            AttributeInfo a3, Object v3, AttributeInfo a4, Object v4) {
-        LinkedHashMap<AttributeInfo, Object> m = new LinkedHashMap<AttributeInfo, Object>();
+    public static void run(DefaultAttributeConfiguration a1, Object v1, DefaultAttributeConfiguration a2, Object v2,
+            DefaultAttributeConfiguration a3, Object v3, DefaultAttributeConfiguration a4, Object v4) {
+        LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(a1, v1);
         m.put(a2, v2);
         m.put(a3, v3);
@@ -517,9 +517,9 @@ public class Checker {
         run(m);
     }
 
-    public static void run(AttributeInfo a1, Object v1, AttributeInfo a2, Object v2,
-            AttributeInfo a3, Object v3, AttributeInfo a4, Object v4, AttributeInfo a5, Object v5) {
-        LinkedHashMap<AttributeInfo, Object> m = new LinkedHashMap<AttributeInfo, Object>();
+    public static void run(DefaultAttributeConfiguration a1, Object v1, DefaultAttributeConfiguration a2, Object v2,
+            DefaultAttributeConfiguration a3, Object v3, DefaultAttributeConfiguration a4, Object v4, DefaultAttributeConfiguration a5, Object v5) {
+        LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(a1, v1);
         m.put(a2, v2);
         m.put(a3, v3);
@@ -528,9 +528,9 @@ public class Checker {
         run(m);
     }
 
-    static void run(LinkedHashMap<AttributeInfo, Object> m) {
-        List<AttributeInfo> list = new ArrayList<AttributeInfo>();
-        for (Map.Entry<AttributeInfo, Object> i : m.entrySet()) {
+    static void run(LinkedHashMap<DefaultAttributeConfiguration, Object> m) {
+        List<DefaultAttributeConfiguration> list = new ArrayList<DefaultAttributeConfiguration>();
+        for (Map.Entry<DefaultAttributeConfiguration, Object> i : m.entrySet()) {
             list.add(i.getKey());
         }
         AttributeMap map = null;

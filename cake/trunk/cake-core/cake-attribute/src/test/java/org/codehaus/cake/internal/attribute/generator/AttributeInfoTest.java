@@ -7,11 +7,11 @@ public class AttributeInfoTest extends AtrStubs {
 
     @Test(expected = NullPointerException.class)
     public void testConstructor() {
-        new AttributeInfo(null, false, false);
+        new DefaultAttributeConfiguration(null, false, false);
     }
 
     @Test
     public void testToString() {
-        new AttributeInfo(I_1,false,false).toString();
+        new DefaultAttributeConfiguration(I_1,false,false).toString();
     }
 }

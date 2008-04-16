@@ -14,6 +14,9 @@ public final class MemoryCounter {
 
     private final Stack stack = new Stack();
 
+    public static long calc(Object obj) {
+        return new MemoryCounter().op(obj);
+    }
     public synchronized long op(Object obj) {
         assert visited.isEmpty();
         assert stack.isEmpty();

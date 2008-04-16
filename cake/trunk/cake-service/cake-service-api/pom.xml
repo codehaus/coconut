@@ -15,5 +15,21 @@
       <artifactId>cake-test-util</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.cake.jsr166y</groupId>
+      <artifactId>jsr166yops</artifactId>
+    </dependency>
+        <dependency>
+      <groupId>org.codehaus.cake</groupId>
+      <artifactId>cake-attribute</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cake</groupId>
+      <artifactId>cake-management</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cake</groupId>
+      <artifactId>cake-util</artifactId>
+    </dependency>
   </dependencies>
 </project>

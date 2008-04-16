@@ -13,10 +13,6 @@
   <description>Root Pom for Cake Service</description>
   <packaging>pom</packaging>
   <dependencies>
-    <dependency>
-      <groupId>org.codehaus.cake</groupId>
-      <artifactId>cake-core</artifactId>
-    </dependency>
   </dependencies>
   <profiles>
     <profile>

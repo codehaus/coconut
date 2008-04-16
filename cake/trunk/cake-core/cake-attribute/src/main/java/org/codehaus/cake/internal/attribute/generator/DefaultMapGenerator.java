@@ -29,7 +29,7 @@ public class DefaultMapGenerator implements Opcodes {
     private final Info[] info;
     private final int sizeNonHidden;
 
-    DefaultMapGenerator(String classDescriptor, List<AttributeInfo> infos) {
+    DefaultMapGenerator(String classDescriptor, List<? extends AttributeConfiguration> infos) {
         this.classDescriptor = classDescriptor;
         info = new Info[infos.size()];
         for (int i = 0; i < info.length; i++) {
@@ -862,7 +862,7 @@ public class DefaultMapGenerator implements Opcodes {
         cw.visitEnd();
     }
 
-    public static Class<AttributeMap> generate(String className, List<AttributeInfo> infos)
+    public static Class<AttributeMap> generate(String className, List<? extends AttributeConfiguration> infos)
             throws Exception {
         String descriptor = className.replace('.', '/');
 
@@ -919,7 +919,7 @@ public class DefaultMapGenerator implements Opcodes {
 
         final PrimType vType;
 
-        Info(int index, AttributeInfo info) {
+        Info(int index, AttributeConfiguration info) {
             this.index = index;
             this.isHidden = info.isHidden();
             this.isMutable = info.isMutable();
