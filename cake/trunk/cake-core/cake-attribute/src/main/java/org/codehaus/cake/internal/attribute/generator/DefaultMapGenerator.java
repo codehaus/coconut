@@ -1,7 +1,7 @@
 package org.codehaus.cake.internal.attribute.generator;
 
-import static org.objectweb.asm.Type.getMethodDescriptor;
-import static org.objectweb.asm.Type.getType;
+import static org.codehaus.cake.internal.asm.Type.getMethodDescriptor;
+import static org.codehaus.cake.internal.asm.Type.getType;
 
 import java.util.List;
 import java.util.Set;
@@ -10,12 +10,12 @@ import java.util.WeakHashMap;
 import org.codehaus.cake.attribute.Attribute;
 import org.codehaus.cake.attribute.AttributeMap;
 import org.codehaus.cake.attribute.ObjectAttribute;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.codehaus.cake.internal.asm.ClassVisitor;
+import org.codehaus.cake.internal.asm.ClassWriter;
+import org.codehaus.cake.internal.asm.Label;
+import org.codehaus.cake.internal.asm.MethodVisitor;
+import org.codehaus.cake.internal.asm.Opcodes;
+import org.codehaus.cake.internal.asm.Type;
 
 public class DefaultMapGenerator implements Opcodes {
     private final static String ATTRIBUTE_MAP_INTERFACE_DESCRIPTOR = "org/codehaus/cake/attribute/AttributeMap";
@@ -629,9 +629,9 @@ public class DefaultMapGenerator implements Opcodes {
                 mv.visitVarInsn(type.storeCode(), 2 + type.indexInc());
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitVarInsn(type.loadCode(), 2);
-//                if (i.vType == PrimType.OBJECT) {
-//                    mv.visitTypeInsn(CHECKCAST, i.type.getInternalName());
-//                }
+                // if (i.vType == PrimType.OBJECT) {
+                // mv.visitTypeInsn(CHECKCAST, i.type.getInternalName());
+                // }
                 mv.visitFieldInsn(PUTFIELD, classDescriptor, i.getFieldName(), i
                         .getPrimTypeDescriptor());
 
@@ -715,8 +715,9 @@ public class DefaultMapGenerator implements Opcodes {
         for (Info i : info) {
             if (!i.isHidden) {
                 mv.visitVarInsn(ALOAD, 1);
-                mv.visitTypeInsn(NEW,
-                        "org/codehaus/cake/internal/attribute/AttributeHelper$SimpleImmutableEntry");
+                mv
+                        .visitTypeInsn(NEW,
+                                "org/codehaus/cake/internal/attribute/AttributeHelper$SimpleImmutableEntry");
                 mv.visitInsn(DUP);
                 i.visitStaticGet(mv);
                 mv.visitVarInsn(ALOAD, 0);
@@ -726,10 +727,13 @@ public class DefaultMapGenerator implements Opcodes {
                             "valueOf", Type.getMethodDescriptor(i.vType.getObjectType(),
                                     new Type[] { i.vType.getPrimType() }));
                 }
-                mv.visitMethodInsn(INVOKESPECIAL,
-                        "org/codehaus/cake/internal/attribute/AttributeHelper$SimpleImmutableEntry",
-                        "<init>", "(Ljava/lang/Object;Ljava/lang/Object;)V");
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/HashSet", "add", "(Ljava/lang/Object;)Z");
+                mv
+                        .visitMethodInsn(
+                                INVOKESPECIAL,
+                                "org/codehaus/cake/internal/attribute/AttributeHelper$SimpleImmutableEntry",
+                                "<init>", "(Ljava/lang/Object;Ljava/lang/Object;)V");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/HashSet", "add",
+                        "(Ljava/lang/Object;)Z");
                 mv.visitInsn(POP);
 
             }
@@ -862,8 +866,8 @@ public class DefaultMapGenerator implements Opcodes {
         cw.visitEnd();
     }
 
-    public static Class<AttributeMap> generate(String className, List<? extends AttributeConfiguration> infos)
-            throws Exception {
+    public static Class<AttributeMap> generate(String className,
+            List<? extends AttributeConfiguration> infos) throws Exception {
         String descriptor = className.replace('.', '/');
 
         DefaultMapGenerator g = new DefaultMapGenerator(descriptor, infos);
@@ -899,9 +903,9 @@ public class DefaultMapGenerator implements Opcodes {
             mv.visitInsn(FCMPL);
             mv.visitJumpInsn(IFNE, l);
         }
-//        else if (type == PrimType.OBJECT) {
-//            mv.visitJumpInsn(IF_ACMPNE, l);
-//        } 
+        // else if (type == PrimType.OBJECT) {
+        // mv.visitJumpInsn(IF_ACMPNE, l);
+        // }
         else {
             mv.visitJumpInsn(IF_ICMPNE, l);
         }

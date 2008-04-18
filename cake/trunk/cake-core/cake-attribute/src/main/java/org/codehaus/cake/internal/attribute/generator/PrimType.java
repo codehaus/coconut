@@ -10,8 +10,8 @@ import org.codehaus.cake.attribute.IntAttribute;
 import org.codehaus.cake.attribute.LongAttribute;
 import org.codehaus.cake.attribute.ObjectAttribute;
 import org.codehaus.cake.attribute.ShortAttribute;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.codehaus.cake.internal.asm.Opcodes;
+import org.codehaus.cake.internal.asm.Type;
 
 public enum PrimType {
     LONG(Long.class, LongAttribute.class, Type.LONG_TYPE, Opcodes.LLOAD, Opcodes.LSTORE,
