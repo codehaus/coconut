@@ -23,8 +23,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
 
-import org.codehaus.cake.management.DefaultManagedGroup;
-import org.codehaus.cake.management.ManagedGroup;
 import org.codehaus.cake.management.stubs.MixedOperationsAttributes;
 import org.codehaus.cake.management.stubs.SingleAttribute;
 import org.codehaus.cake.management.stubs.SingleOperation;

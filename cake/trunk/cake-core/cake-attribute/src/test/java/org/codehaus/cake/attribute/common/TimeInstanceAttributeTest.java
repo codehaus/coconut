@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.codehaus.cake.attribute.AttributeMap;
 import org.codehaus.cake.attribute.DefaultAttributeMap;
-import org.codehaus.cake.attribute.common.TimeInstanceAttribute;
 import org.junit.Test;
 
 public class TimeInstanceAttributeTest {

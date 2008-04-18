@@ -13,9 +13,6 @@ import java.util.Map;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
-import org.codehaus.cake.management.AbstractManagedOperation;
-import org.codehaus.cake.management.DefaultManagedOperation;
-import org.codehaus.cake.management.OperationKey;
 import org.codehaus.cake.management.stubs.OperationStub;
 import org.codehaus.cake.management.stubs.PrivateMethods;
 import org.junit.Before;
