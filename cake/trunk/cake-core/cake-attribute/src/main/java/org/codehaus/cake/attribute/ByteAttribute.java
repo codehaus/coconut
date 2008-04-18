@@ -1,9 +1,21 @@
-/* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
- * Licensed under the Apache 2.0 License. */
+/*
+ * Copyright 2008 Kasper Nielsen.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://cake.codehaus.org/LICENSE
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.codehaus.cake.attribute;
 
 import java.util.Comparator;
-
 /**
  * An implementation of an {@link Attribute} mapping to a byte. This implementation adds a number of
  * methods that works on primitive bytes instead of their object counterpart.
@@ -11,7 +23,6 @@ import java.util.Comparator;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: ByteAttribute.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-
 public abstract class ByteAttribute extends Attribute<Byte> implements
          Comparator<WithAttributes> {
          
@@ -19,10 +30,10 @@ public abstract class ByteAttribute extends Attribute<Byte> implements
     private final transient byte defaultValue;
 
     /**
-     * Creates a new ByteAttribute with a generated name and a default value of <tt>0</tt>.
+     * Creates a new ByteAttribute with a generated name and a default value of <tt>$defaultValueNoCast</tt>.
      * 
      * @throws IllegalArgumentException
-     *             if 0 is not a valid value according to {@link #checkValid(int)}
+     *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(int)}
      */
     public ByteAttribute() {
         this((byte) 0);
@@ -43,14 +54,14 @@ public abstract class ByteAttribute extends Attribute<Byte> implements
     }
 
     /**
-     * Creates a new ByteAttribute with a default value of <tt>0</tt>.
+     * Creates a new ByteAttribute with a default value of <tt>$defaultValueNoCast</tt>.
      * 
      * @param name
      *            the name of the attribute
      * @throws NullPointerException
      *             if the specified name is <code>null</code>
      * @throws IllegalArgumentException
-     *             if 0 is not a valid value according to {@link #checkValid(byte)}
+     *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(byte)}
      */
     public ByteAttribute(String name) {
         this(name, (byte) 0);

@@ -33,8 +33,10 @@ public final class IntPredicates {
     /** A IntPredicate that always evaluates to <code>true</code>. */
     public static final IntPredicate TRUE = new TrueIntPredicate();
 
+    ///CLOVER:OFF
     /** Cannot instantiate. */
     private IntPredicates() {}
+    ///CLOVER:ON
     
     /**
      * Creates a IntPredicate that performs a logical AND on two supplied predicates. The

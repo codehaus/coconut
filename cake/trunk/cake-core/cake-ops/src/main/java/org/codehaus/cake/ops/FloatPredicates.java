@@ -33,8 +33,10 @@ public final class FloatPredicates {
     /** A FloatPredicate that always evaluates to <code>true</code>. */
     public static final FloatPredicate TRUE = new TrueFloatPredicate();
 
+    ///CLOVER:OFF
     /** Cannot instantiate. */
     private FloatPredicates() {}
+    ///CLOVER:ON
     
     /**
      * Creates a FloatPredicate that performs a logical AND on two supplied predicates. The

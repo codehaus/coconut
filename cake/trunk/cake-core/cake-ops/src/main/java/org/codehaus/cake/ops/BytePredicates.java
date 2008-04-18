@@ -33,8 +33,10 @@ public final class BytePredicates {
     /** A BytePredicate that always evaluates to <code>true</code>. */
     public static final BytePredicate TRUE = new TrueBytePredicate();
 
+    ///CLOVER:OFF
     /** Cannot instantiate. */
     private BytePredicates() {}
+    ///CLOVER:ON
     
     /**
      * Creates a BytePredicate that performs a logical AND on two supplied predicates. The

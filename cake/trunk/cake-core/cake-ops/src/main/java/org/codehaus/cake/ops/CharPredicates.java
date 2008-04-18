@@ -33,8 +33,10 @@ public final class CharPredicates {
     /** A CharPredicate that always evaluates to <code>true</code>. */
     public static final CharPredicate TRUE = new TrueCharPredicate();
 
+    ///CLOVER:OFF
     /** Cannot instantiate. */
     private CharPredicates() {}
+    ///CLOVER:ON
     
     /**
      * Creates a CharPredicate that performs a logical AND on two supplied predicates. The

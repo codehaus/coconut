@@ -1,9 +1,21 @@
-/* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
- * Licensed under the Apache 2.0 License. */
+/*
+ * Copyright 2008 Kasper Nielsen.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://cake.codehaus.org/LICENSE
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.codehaus.cake.attribute;
 
 import java.util.Comparator;
-
 /**
  * An implementation of an {@link Attribute} mapping to a float. This implementation adds a number of
  * methods that works on primitive floats instead of their object counterpart.
@@ -11,7 +23,6 @@ import java.util.Comparator;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: FloatAttribute.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-
 public abstract class FloatAttribute extends Attribute<Float> implements
          Comparator<WithAttributes> {
          
@@ -19,13 +30,13 @@ public abstract class FloatAttribute extends Attribute<Float> implements
     private final transient float defaultValue;
 
     /**
-     * Creates a new FloatAttribute with a generated name and a default value of <tt>0</tt>.
+     * Creates a new FloatAttribute with a generated name and a default value of <tt>$defaultValueNoCast</tt>.
      * 
      * @throws IllegalArgumentException
-     *             if 0 is not a valid value according to {@link #checkValid(int)}
+     *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(int)}
      */
     public FloatAttribute() {
-        this(0f);
+        this(0F);
     }
 
     /**
@@ -43,17 +54,17 @@ public abstract class FloatAttribute extends Attribute<Float> implements
     }
 
     /**
-     * Creates a new FloatAttribute with a default value of <tt>0</tt>.
+     * Creates a new FloatAttribute with a default value of <tt>$defaultValueNoCast</tt>.
      * 
      * @param name
      *            the name of the attribute
      * @throws NullPointerException
      *             if the specified name is <code>null</code>
      * @throws IllegalArgumentException
-     *             if 0 is not a valid value according to {@link #checkValid(float)}
+     *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(float)}
      */
     public FloatAttribute(String name) {
-        this(name, 0f);
+        this(name, 0F);
     }
 
     /**
@@ -92,7 +103,10 @@ public abstract class FloatAttribute extends Attribute<Float> implements
      *             if the specified value is not valid
      */
     public void checkValid(float value) {
-        checkNotNaNInfinity(value);
+        if (!isValid(value)) {
+            throw new IllegalArgumentException("Illegal value for attribute [name=" + getName()
+                    + ", type = " + getClass() + ", value = " + value + "]");
+        }
     }
     
     /** {@inheritDoc} */
@@ -204,24 +218,7 @@ public abstract class FloatAttribute extends Attribute<Float> implements
     public AttributeMap singleton(float value) {
         return super.singleton(value);
     }
-
-    /**
-     * Check if the specified value is either {@link Float#NEGATIVE_INFINITY},
-     * {@link Float#POSITIVE_INFINITY} or {@link Float#NaN}. If it is, this method will throw an
-     * {@link IllegalArgumentException}.
-     * 
-     * @param value
-     *            the value to check
-     * @throws IllegalArgumentException
-     *             if the specified value is Infinity or NaN
-     */
-    protected void checkNotNaNInfinity(float value) {
-        if (isNaNInfinity(value)) {
-            throw new IllegalArgumentException("invalid " + getName() + " (" + getName() + " = "
-                    + Float.toString(value) + ")");
-        }
-    }
-    
+  
     /**
      * Returns <code>true</code> if the specified value is either {@link Float#NEGATIVE_INFINITY},
      * {@link Float#POSITIVE_INFINITY} or {@link Float#NaN}. Otherwise, false

@@ -33,8 +33,10 @@ public final class ShortPredicates {
     /** A ShortPredicate that always evaluates to <code>true</code>. */
     public static final ShortPredicate TRUE = new TrueShortPredicate();
 
+    ///CLOVER:OFF
     /** Cannot instantiate. */
     private ShortPredicates() {}
+    ///CLOVER:ON
     
     /**
      * Creates a ShortPredicate that performs a logical AND on two supplied predicates. The

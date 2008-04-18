@@ -1,9 +1,21 @@
-/* Copyright 2004 - 2008 Kasper Nielsen <kasper@codehaus.org>
- * Licensed under the Apache 2.0 License. */
+/*
+ * Copyright 2008 Kasper Nielsen.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://cake.codehaus.org/LICENSE
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.codehaus.cake.attribute;
 
 import java.util.Comparator;
-
 /**
  * An implementation of an {@link Attribute} mapping to a double. This implementation adds a number of
  * methods that works on primitive doubles instead of their object counterpart.
@@ -11,7 +23,6 @@ import java.util.Comparator;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: DoubleAttribute.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-
 public abstract class DoubleAttribute extends Attribute<Double> implements
          Comparator<WithAttributes> {
          
@@ -19,13 +30,13 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
     private final transient double defaultValue;
 
     /**
-     * Creates a new DoubleAttribute with a generated name and a default value of <tt>0</tt>.
+     * Creates a new DoubleAttribute with a generated name and a default value of <tt>$defaultValueNoCast</tt>.
      * 
      * @throws IllegalArgumentException
-     *             if 0 is not a valid value according to {@link #checkValid(int)}
+     *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(int)}
      */
     public DoubleAttribute() {
-        this(0d);
+        this(0D);
     }
 
     /**
@@ -43,17 +54,17 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
     }
 
     /**
-     * Creates a new DoubleAttribute with a default value of <tt>0</tt>.
+     * Creates a new DoubleAttribute with a default value of <tt>$defaultValueNoCast</tt>.
      * 
      * @param name
      *            the name of the attribute
      * @throws NullPointerException
      *             if the specified name is <code>null</code>
      * @throws IllegalArgumentException
-     *             if 0 is not a valid value according to {@link #checkValid(double)}
+     *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(double)}
      */
     public DoubleAttribute(String name) {
-        this(name, 0d);
+        this(name, 0D);
     }
 
     /**
@@ -92,7 +103,10 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
      *             if the specified value is not valid
      */
     public void checkValid(double value) {
-        checkNotNaNInfinity(value);
+        if (!isValid(value)) {
+            throw new IllegalArgumentException("Illegal value for attribute [name=" + getName()
+                    + ", type = " + getClass() + ", value = " + value + "]");
+        }
     }
     
     /** {@inheritDoc} */
@@ -204,24 +218,7 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
     public AttributeMap singleton(double value) {
         return super.singleton(value);
     }
-
-    /**
-     * Check if the specified value is either {@link Double#NEGATIVE_INFINITY},
-     * {@link Double#POSITIVE_INFINITY} or {@link Double#NaN}. If it is, this method will throw an
-     * {@link IllegalArgumentException}.
-     * 
-     * @param value
-     *            the value to check
-     * @throws IllegalArgumentException
-     *             if the specified value is Infinity or NaN
-     */
-    protected void checkNotNaNInfinity(double value) {
-        if (isNaNInfinity(value)) {
-            throw new IllegalArgumentException("invalid " + getName() + " (" + getName() + " = "
-                    + Double.toString(value) + ")");
-        }
-    }
-    
+  
     /**
      * Returns <code>true</code> if the specified value is either {@link Double#NEGATIVE_INFINITY},
      * {@link Double#POSITIVE_INFINITY} or {@link Double#NaN}. Otherwise, false

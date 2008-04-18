@@ -33,8 +33,10 @@ public final class DoublePredicates {
     /** A DoublePredicate that always evaluates to <code>true</code>. */
     public static final DoublePredicate TRUE = new TrueDoublePredicate();
 
+    ///CLOVER:OFF
     /** Cannot instantiate. */
     private DoublePredicates() {}
+    ///CLOVER:ON
     
     /**
      * Creates a DoublePredicate that performs a logical AND on two supplied predicates. The
