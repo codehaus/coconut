@@ -472,4 +472,9 @@ public class Ops {
     public static interface ObjectAndObjectToInt<A,B>    { int     op(A a, B b);}
     public static interface ObjectAndObjectToLong<A,B>   { long    op(A a, B b);}
     public static interface ObjectAndObjectToDouble<A,B> { double  op(A a, B b);}
+    
+    public static interface BytePredicate              { boolean op(byte a);}
+    public static interface CharPredicate              { boolean op(char a);}
+    public static interface FloatPredicate              { boolean op(float a);}
+    public static interface ShortPredicate              { boolean op(short a);}
 }

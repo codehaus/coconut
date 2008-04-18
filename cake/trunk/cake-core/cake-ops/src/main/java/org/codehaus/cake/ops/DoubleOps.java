@@ -33,14 +33,16 @@ public class DoubleOps {
         return new DoubleAddOp(add);
     }
 
-    public static BinaryDoubleOp add() {
+    public static DoubleReducer add() {
         return BINARY_DOUBLE_ADD_OP;
     }
 
     public static BinaryDoubleOp subtract() {
         return BINART_DOUBLE_SUBTRACT_OP;
     }
-
+    public static DoubleOp subtract(double substract) {
+        return null;
+    }
     public static DoubleOp divide(double add) {
         return new DoubleDivideOp(add);
     }

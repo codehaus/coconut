@@ -18,26 +18,26 @@ package org.codehaus.cake.ops;
 import java.io.Serializable;
 import static org.codehaus.cake.ops.Ops.*;
 /**
- * Various implementations of {@link DoublePredicate}.
+ * Various implementations of {@link ShortPredicate}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: DoublePredicates.java 590 2008-03-14 08:16:12Z kasper $
+ * @version $Id: ShortPredicates.java 590 2008-03-14 08:16:12Z kasper $
  */
-public final class DoublePredicates {
+public final class ShortPredicates {
 
-    /** A DoublePredicate that always evaluates to <code>false</code>. */
-    public static final DoublePredicate FALSE = new FalseDoublePredicate();
+    /** A ShortPredicate that always evaluates to <code>false</code>. */
+    public static final ShortPredicate FALSE = new FalseShortPredicate();
 
-    /** A DoublePredicate that always evaluates to <code>true</code>. */
-    public static final DoublePredicate TRUE = new TrueDoublePredicate();
+    /** A ShortPredicate that always evaluates to <code>true</code>. */
+    public static final ShortPredicate TRUE = new TrueShortPredicate();
 
     /** Cannot instantiate. */
-    private DoublePredicates() {}
+    private ShortPredicates() {}
     
     /**
-     * Creates a DoublePredicate that performs a logical AND on two supplied predicates. The
+     * Creates a ShortPredicate that performs a logical AND on two supplied predicates. The
      * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
      * if the specified left side predicate evaluates to <code>false</code> the right
      * side predicate will not be evaluated. More formally
@@ -51,15 +51,15 @@ public final class DoublePredicates {
      * also be serializable.
      *
      * @param left
-     *            the left side DoublePredicate
+     *            the left side ShortPredicate
      * @param right
-     *            the right side DoublePredicate
-     * @return the newly created DoublePredicate
+     *            the right side ShortPredicate
+     * @return the newly created ShortPredicate
      * @throws NullPointerException
      *             if any of the specified predicates are <code>null</code>
      */
-    public static DoublePredicate and(DoublePredicate left, DoublePredicate right) {
-        return new AndDoublePredicate(left, right);
+    public static ShortPredicate and(ShortPredicate left, ShortPredicate right) {
+        return new AndShortPredicate(left, right);
     }
     
     /**
@@ -71,26 +71,26 @@ public final class DoublePredicates {
      *            the value of the equals predicate
      * @return a predicate that accepts any value that is equal to the value specified
      */
-    public static DoublePredicate equalsTo(double element) {
-        return new EqualsToDoublePredicate(element);
+    public static ShortPredicate equalsTo(short element) {
+        return new EqualsToShortPredicate(element);
     }
     
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
+     * Creates a ShortPredicate that evaluates to <code>true</code> if the element being
      * tested is greater then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
      *
      * @param element
      *            the element to compare with
-     * @return the newly created DoublePredicate
+     * @return the newly created ShortPredicate
      */
-    public static DoublePredicate greaterThen(double element) {
-        return new GreaterThenDoublePredicate(element);
+    public static ShortPredicate greaterThen(short element) {
+        return new GreaterThenShortPredicate(element);
     }
 
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
+     * Creates a ShortPredicate that evaluates to <code>true</code> if the element being
      * tested is greater then or equals to the element being used to construct the
      * predicate.
      * <p>
@@ -98,43 +98,43 @@ public final class DoublePredicates {
      *
      * @param element
      *            the element to compare with
-     * @return the newly created DoublePredicate
+     * @return the newly created ShortPredicate
      */
-    public static DoublePredicate greaterThenOrEquals(double element) {
-        return new GreaterThenOrEqualsDoublePredicate(element);
+    public static ShortPredicate greaterThenOrEquals(short element) {
+        return new GreaterThenOrEqualsShortPredicate(element);
     }
 
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
+     * Creates a ShortPredicate that evaluates to <code>true</code> if the element being
      * tested is less then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
      *
      * @param element
      *            the element to compare with
-     * @return the newly created DoublePredicate
+     * @return the newly created ShortPredicate
      */
-    public static DoublePredicate lessThen(double element) {
-        return new LessThenDoublePredicate(element);
+    public static ShortPredicate lessThen(short element) {
+        return new LessThenShortPredicate(element);
     }
 
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
+     * Creates a ShortPredicate that evaluates to <code>true</code> if the element being
      * tested is less then or equals to the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
      *
      * @param element
      *            the element to compare with
-     * @return the newly created DoublePredicate
+     * @return the newly created ShortPredicate
      */
-    public static DoublePredicate lessThenOrEquals(double element) {
-        return new LessThenOrEqualsDoublePredicate(element);
+    public static ShortPredicate lessThenOrEquals(short element) {
+        return new LessThenOrEqualsShortPredicate(element);
     }
     
     /**
-     * Creates a DoublePredicate that performs a logical logical NOT on the supplied
-     * DoublePredicate. More formally
+     * Creates a ShortPredicate that performs a logical logical NOT on the supplied
+     * ShortPredicate. More formally
      *
      * <pre>
      * !predicate.evaluate(value);
@@ -146,16 +146,16 @@ public final class DoublePredicates {
      *
      * @param predicate
      *            the predicate to negate
-     * @return the newly created DoublePredicate
+     * @return the newly created ShortPredicate
      * @throws NullPointerException
      *             if the specified predicate is <code>null</code>
      */
-    public static DoublePredicate not(DoublePredicate predicate) {
-        return new NotDoublePredicate(predicate);
+    public static ShortPredicate not(ShortPredicate predicate) {
+        return new NotShortPredicate(predicate);
     }
 
     /**
-     * Creates a DoublePredicate that performs a logical OR on two supplied predicates. The
+     * Creates a ShortPredicate that performs a logical OR on two supplied predicates. The
      * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
      * if the specified left side predicate evaluates to <code>true</code> the right
      * side predicate will not be evaluated. More formally
@@ -169,42 +169,42 @@ public final class DoublePredicates {
      * also be serializable.
      *
      * @param left
-     *            the left side DoublePredicate
+     *            the left side ShortPredicate
      * @param right
-     *            the right side DoublePredicate
-     * @return the newly created DoublePredicate
+     *            the right side ShortPredicate
+     * @return the newly created ShortPredicate
      * @throws NullPointerException
      *             if any of the specified predicates are <code>null</code>
      */
-    public static DoublePredicate or(DoublePredicate left, DoublePredicate right) {
-        return new OrDoublePredicate(left, right);
+    public static ShortPredicate or(ShortPredicate left, ShortPredicate right) {
+        return new OrShortPredicate(left, right);
     }
     
     /**
-     * A DoublePredicate that performs a logical exclusive AND on two supplied predicates.
+     * A ShortPredicate that performs a logical exclusive AND on two supplied predicates.
      */
-    static final class AndDoublePredicate implements DoublePredicate, Serializable {
+    static final class AndShortPredicate implements ShortPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 6981902451700512606L;
 
         /** The left side operand. */
-        private final DoublePredicate left;
+        private final ShortPredicate left;
 
         /** The right side operand. */
-        private final DoublePredicate right;
+        private final ShortPredicate right;
 
         /**
-         * Creates a new <code>AndDoublePredicate</code>.
+         * Creates a new <code>AndShortPredicate</code>.
          *
          * @param left
-         *            the left side DoublePredicate
+         *            the left side ShortPredicate
          * @param right
-         *            the right side DoublePredicate
+         *            the right side ShortPredicate
          * @throws NullPointerException
          *             if any of the supplied predicates are <code>null</code>
          */
-        AndDoublePredicate(DoublePredicate left, DoublePredicate right) {
+        AndShortPredicate(ShortPredicate left, ShortPredicate right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             } else if (right == null) {
@@ -215,25 +215,25 @@ public final class DoublePredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean op(double element) {
+        public boolean op(short element) {
             return left.op(element) && right.op(element);
         }
 
         /**
-         * Returns the left side DoublePredicate.
+         * Returns the left side ShortPredicate.
          *
-         * @return the left side DoublePredicate.
+         * @return the left side ShortPredicate.
          */
-        public DoublePredicate getLeft() {
+        public ShortPredicate getLeft() {
             return left;
         }
 
         /**
-         * Returns the right side DoublePredicate.
+         * Returns the right side ShortPredicate.
          *
-         * @return the right side DoublePredicate.
+         * @return the right side ShortPredicate.
          */
-        public DoublePredicate getRight() {
+        public ShortPredicate getRight() {
             return right;
         }
 
@@ -244,15 +244,15 @@ public final class DoublePredicates {
         }
     }
     
-    static class EqualsToDoublePredicate implements DoublePredicate, Serializable {
+    static class EqualsToShortPredicate implements ShortPredicate, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = 8220487572042162409L;
 
         /** The value to compare with. */
-        private final double equalsTo;
+        private final short equalsTo;
 
-        EqualsToDoublePredicate(double equalsTo) {
+        EqualsToShortPredicate(short equalsTo) {
             this.equalsTo = equalsTo;
         }
 
@@ -265,34 +265,34 @@ public final class DoublePredicates {
          * @return <code>true</code> if the specified value is equal to the value that
          *         was used when constructing this predicate, otherwise <code>false</code>.
          */
-        public boolean op(double t) {
+        public boolean op(short t) {
             return equalsTo == t;
         }
 
         /**
          * @return the value we are comparing with
          */
-        public double getEqualsTo() {
+        public short getEqualsTo() {
             return equalsTo;
         }
     }
     
      /**
-     * a DoublePredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
-     * get an instance of this DoublePredicate.
+     * a ShortPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
+     * get an instance of this ShortPredicate.
      *
-     * @see TrueDoublePredicate
+     * @see TrueShortPredicate
      */
-    static final class FalseDoublePredicate implements DoublePredicate, Serializable {
+    static final class FalseShortPredicate implements ShortPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -3048464662394104180L;
 
-        /** Creates a new FalseDoublePredicate. */
-        FalseDoublePredicate() {}
+        /** Creates a new FalseShortPredicate. */
+        FalseShortPredicate() {}
 
         /** {@inheritDoc} */
-        public boolean op(double value) {
+        public boolean op(short value) {
             return false;
         }
 
@@ -308,110 +308,110 @@ public final class DoublePredicates {
         }
     }
     
-    static class GreaterThenDoublePredicate implements DoublePredicate, Serializable {
+    static class GreaterThenShortPredicate implements ShortPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 7198592614364500859L;
 
         /** The value to compare with. */
-        private final double greaterThen;
+        private final short greaterThen;
 
-        GreaterThenDoublePredicate(double greaterThen) {
+        GreaterThenShortPredicate(short greaterThen) {
             this.greaterThen = greaterThen;
         }
 
         /** {@inheritDoc} */
-        public boolean op(double t) {
+        public boolean op(short t) {
             return greaterThen < t;
         }
 
-        public double getGreaterThen() {
+        public short getGreaterThen() {
             return greaterThen;
         }
     }
     
-    static class GreaterThenOrEqualsDoublePredicate implements DoublePredicate, Serializable {
+    static class GreaterThenOrEqualsShortPredicate implements ShortPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -4681995097900012563L;
 
         /** The value to compare with. */
-        private final double greaterThenOrEquals;
+        private final short greaterThenOrEquals;
 
-        GreaterThenOrEqualsDoublePredicate(double greaterThenOrEquals) {
+        GreaterThenOrEqualsShortPredicate(short greaterThenOrEquals) {
             this.greaterThenOrEquals = greaterThenOrEquals;
         }
 
         /** {@inheritDoc} */
-        public boolean op(double t) {
+        public boolean op(short t) {
             return greaterThenOrEquals <= t;
         }
 
-        public double getGreaterThenOrEquals() {
+        public short getGreaterThenOrEquals() {
             return greaterThenOrEquals;
         }
     }
     
-    static class LessThenDoublePredicate implements DoublePredicate, Serializable {
+    static class LessThenShortPredicate implements ShortPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -9180606923416408020L;
 
         /** The value to compare with. */
-        private final double lessThen;
+        private final short lessThen;
 
-        LessThenDoublePredicate(double lessThen) {
+        LessThenShortPredicate(short lessThen) {
             this.lessThen = lessThen;
         }
 
         /** {@inheritDoc} */
-        public boolean op(double t) {
+        public boolean op(short t) {
             return lessThen > t;
         }
 
-        public double getLessThen() {
+        public short getLessThen() {
             return lessThen;
         }
     }
 
-    static class LessThenOrEqualsDoublePredicate implements DoublePredicate, Serializable {
+    static class LessThenOrEqualsShortPredicate implements ShortPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 8711220473905545122L;
 
         /** The value to compare with. */
-        private final double lessThenOrEquals;
+        private final short lessThenOrEquals;
 
-        LessThenOrEqualsDoublePredicate(double lessThenOrEquals) {
+        LessThenOrEqualsShortPredicate(short lessThenOrEquals) {
             this.lessThenOrEquals = lessThenOrEquals;
         }
 
         /** {@inheritDoc} */
-        public boolean op(double t) {
+        public boolean op(short t) {
             return lessThenOrEquals >= t;
         }
 
-        public double getLessThenOrEquals() {
+        public short getLessThenOrEquals() {
             return lessThenOrEquals;
         }
     }
     /**
-     * A DoublePredicate that evaluates to true iff the Predicate used for constructing
+     * A ShortPredicate that evaluates to true iff the Predicate used for constructing
      * evaluates to <code>false</code>.
      */
-    static final class NotDoublePredicate implements DoublePredicate, Serializable {
+    static final class NotShortPredicate implements ShortPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -5117781730584740429L;
 
-        /** The DoublePredicate to negate. */
-        private final DoublePredicate predicate;
+        /** The ShortPredicate to negate. */
+        private final ShortPredicate predicate;
 
         /**
-         * Creates a new NotDoublePredicate.
+         * Creates a new NotShortPredicate.
          *
          * @param predicate
          *            the predicate to negate.
          * @throws NullPointerException
          *             if the specified predicate is <code>null</code>
          */
-        NotDoublePredicate(DoublePredicate predicate) {
+        NotShortPredicate(ShortPredicate predicate) {
             if (predicate == null) {
                 throw new NullPointerException("predicate is null");
             }
@@ -420,13 +420,13 @@ public final class DoublePredicates {
 
         /**
          * Returns a boolean representing the logical NOT value of the supplied
-         * DoublePredicate.
+         * ShortPredicate.
          *
          * @param element
          *            the element to test
-         * @return the logical NOT of the supplied DoublePredicate
+         * @return the logical NOT of the supplied ShortPredicate
          */
-        public boolean op(double element) {
+        public boolean op(short element) {
             return !predicate.op(element);
         }
 
@@ -435,7 +435,7 @@ public final class DoublePredicates {
          *
          * @return the predicate that is being negated.
          */
-        public DoublePredicate getPredicate() {
+        public ShortPredicate getPredicate() {
             return predicate;
         }
 
@@ -447,30 +447,30 @@ public final class DoublePredicates {
     }
 
     /**
-     * A DoublePredicate that performs a logical exclusive OR on two supplied predicates.
+     * A ShortPredicate that performs a logical exclusive OR on two supplied predicates.
      */
-    static final class OrDoublePredicate implements DoublePredicate, Serializable {
+    static final class OrShortPredicate implements ShortPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 747277162607915666L;
 
         /** The left side operand. */
-        private final DoublePredicate left;
+        private final ShortPredicate left;
 
         /** The right side operand. */
-        private final DoublePredicate right;
+        private final ShortPredicate right;
 
         /**
-         * Creates a new <code>OrDoublePredicate</code>.
+         * Creates a new <code>OrShortPredicate</code>.
          *
          * @param left
-         *            the left side DoublePredicate
+         *            the left side ShortPredicate
          * @param right
-         *            the right side DoublePredicate
+         *            the right side ShortPredicate
          * @throws NullPointerException
          *             if any of the supplied predicates are <code>null</code>
          */
-        OrDoublePredicate(DoublePredicate left, DoublePredicate right) {
+        OrShortPredicate(ShortPredicate left, ShortPredicate right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             } else if (right == null) {
@@ -481,25 +481,25 @@ public final class DoublePredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean op(double element) {
+        public boolean op(short element) {
             return left.op(element) || right.op(element);
         }
 
         /**
-         * Returns the left side DoublePredicate.
+         * Returns the left side ShortPredicate.
          *
-         * @return the left side DoublePredicate.
+         * @return the left side ShortPredicate.
          */
-        public DoublePredicate getLeft() {
+        public ShortPredicate getLeft() {
             return left;
         }
 
         /**
-         * Returns the right side DoublePredicate.
+         * Returns the right side ShortPredicate.
          *
-         * @return the right side DoublePredicate.
+         * @return the right side ShortPredicate.
          */
-        public DoublePredicate getRight() {
+        public ShortPredicate getRight() {
             return right;
         }
 
@@ -511,21 +511,21 @@ public final class DoublePredicates {
     }
     
     /**
-     * A DoublePredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get
-     * an instance of this DoublePredicate.
+     * A ShortPredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get
+     * an instance of this ShortPredicate.
      *
-     * @see FalseDoublePredicate
+     * @see FalseShortPredicate
      */
-    static final class TrueDoublePredicate implements DoublePredicate, Serializable {
+    static final class TrueShortPredicate implements ShortPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258129137502925875L;
 
-        /** Creates a new TrueDoublePredicate. */
-        TrueDoublePredicate() {}
+        /** Creates a new TrueShortPredicate. */
+        TrueShortPredicate() {}
 
         /** {@inheritDoc} */
-        public boolean op(double value) {
+        public boolean op(short value) {
             return true;
         }
 

@@ -15,70 +15,70 @@
  */
 package org.codehaus.cake.ops;
 
-import static org.codehaus.cake.ops.LongPredicates.*;
+import static org.codehaus.cake.ops.CharPredicates.*;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.junit.Assert.*;
 
-import org.codehaus.cake.ops.LongPredicates.*;
+import org.codehaus.cake.ops.CharPredicates.*;
 import org.codehaus.cake.ops.Ops.*;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 /**
- * Various tests for {@link LongPredicates}.
+ * Various tests for {@link CharPredicates}.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: LongPredicatesTest.java 590 2008-03-14 08:16:12Z kasper $
+ * @version $Id: CharPredicatesTest.java 590 2008-03-14 08:16:12Z kasper $
  */
-public final class LongPredicatesTest {
+public final class CharPredicatesTest {
 
     /**
      * Tests {@link LongPredicates#and(LongPredicate, LongPredicate)}.
      */
     @Test
     public void and() {
-        assertTrue(LongPredicates.and(TRUE, TRUE).op(1L));
-        assertFalse(LongPredicates.and(TRUE, FALSE).op(1L));
-        assertFalse(LongPredicates.and(FALSE, TRUE).op(1L));
-        assertFalse(LongPredicates.and(FALSE, FALSE).op(1L));
+        assertTrue(CharPredicates.and(TRUE, TRUE).op((char) 1));
+        assertFalse(CharPredicates.and(TRUE, FALSE).op((char) 1));
+        assertFalse(CharPredicates.and(FALSE, TRUE).op((char) 1));
+        assertFalse(CharPredicates.and(FALSE, FALSE).op((char) 1));
 
-        LongPredicates.AndLongPredicate p = new LongPredicates.AndLongPredicate(FALSE, TRUE);
+        CharPredicates.AndCharPredicate p = new CharPredicates.AndCharPredicate(FALSE, TRUE);
         assertSame(p.getLeft(), FALSE);
         assertSame(p.getRight(), TRUE);
         p.toString(); // no exception
         assertIsSerializable(p);
 
         // shortcircuted evaluation
-        LongPredicates.and(FALSE, TestUtil.dummy(LongPredicate.class)).op(1L);
+        CharPredicates.and(FALSE, TestUtil.dummy(CharPredicate.class)).op((char) 1);
     }
 
     /**
-     * Tests that {@link LongPredicates#and(LongPredicate, LongPredicate)} throws a
+     * Tests that {@link CharPredicates#and(CharPredicate, CharPredicate)} throws a
      * {@link NullPointerException} when invoked with a left side <code>null</code>
      * argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE() {
-        LongPredicates.and(null, TRUE);
+        CharPredicates.and(null, TRUE);
     }
 
     /**
-     * Tests that {@link LongPredicates#and(LongPredicate, LongPredicate)} throws a
+     * Tests that {@link CharPredicates#and(CharPredicate, CharPredicate)} throws a
      * {@link NullPointerException} when invoked with a right side <code>null</code>
      * argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE1() {
-        LongPredicates.and(TRUE, null);
+        CharPredicates.and(TRUE, null);
     }
     
     /* Test greater then */
     @Test
     public void equalsTo() {
-        LongPredicate f = LongPredicates.equalsTo(5L);
-        assertEquals(5L, new EqualsToLongPredicate(5L).getEqualsTo());
-        assertFalse(f.op(4L));
-        assertTrue(f.op(5L));
-        assertFalse(f.op(6L));
+        CharPredicate f = CharPredicates.equalsTo((char) 5);
+        assertEquals((char) 5, new EqualsToCharPredicate((char) 5).getEqualsTo());
+        assertFalse(f.op((char) 4));
+        assertTrue(f.op((char) 5));
+        assertFalse(f.op((char) 6));
 
         f.toString(); // no exceptions
 
@@ -86,12 +86,12 @@ public final class LongPredicatesTest {
     }
     
     /**
-     * Tests {@link LongPredicates#FALSE}.
+     * Tests {@link CharPredicates#FALSE}.
      */
     @Test
     public void falsePredicate() {
-        assertFalse(FALSE.op(2L));
-        assertFalse(FALSE.op(Long.MIN_VALUE));
+        assertFalse(FALSE.op((char) 2));
+        assertFalse(FALSE.op(Character.MIN_VALUE));
         FALSE.toString(); // does not fail
         assertIsSerializable(FALSE);
         assertSame(FALSE, TestUtil.serializeAndUnserialize(FALSE));
@@ -100,11 +100,11 @@ public final class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void greaterThen() {
-        LongPredicate f = LongPredicates.greaterThen(5L);
-        assertEquals(5L, new GreaterThenLongPredicate(5L).getGreaterThen());
-        assertFalse(f.op(4L));
-        assertFalse(f.op(5L));
-        assertTrue(f.op(6L));
+        CharPredicate f = CharPredicates.greaterThen((char) 5);
+        assertEquals((char) 5, new GreaterThenCharPredicate((char) 5).getGreaterThen());
+        assertFalse(f.op((char) 4));
+        assertFalse(f.op((char) 5));
+        assertTrue(f.op((char) 6));
 
         f.toString(); // no exceptions
 
@@ -113,11 +113,11 @@ public final class LongPredicatesTest {
 
     @Test
     public void greaterThenOrEquals() {
-        LongPredicate f = LongPredicates.greaterThenOrEquals(5L);
-        assertEquals(5L, new GreaterThenOrEqualsLongPredicate(5L).getGreaterThenOrEquals());
-        assertFalse(f.op(4L));
-        assertTrue(f.op(5L));
-        assertTrue(f.op(6L));
+        CharPredicate f = CharPredicates.greaterThenOrEquals((char) 5);
+        assertEquals((char) 5, new GreaterThenOrEqualsCharPredicate((char) 5).getGreaterThenOrEquals());
+        assertFalse(f.op((char) 4));
+        assertTrue(f.op((char) 5));
+        assertTrue(f.op((char) 6));
 
         f.toString(); // no exceptions
 
@@ -127,11 +127,11 @@ public final class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void lessThen() {
-        LongPredicate f = LongPredicates.lessThen(5L);
-        assertEquals(5L, new LessThenLongPredicate(5L).getLessThen());
-        assertTrue(f.op(4L));
-        assertFalse(f.op(5L));
-        assertFalse(f.op(6L));
+        CharPredicate f = CharPredicates.lessThen((char) 5);
+        assertEquals((char) 5, new LessThenCharPredicate((char) 5).getLessThen());
+        assertTrue(f.op((char) 4));
+        assertFalse(f.op((char) 5));
+        assertFalse(f.op((char) 6));
 
         f.toString(); // no exceptions
 
@@ -141,11 +141,11 @@ public final class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void lessThenOrEquals() {
-        LongPredicate f = LongPredicates.lessThenOrEquals(5L);
-        assertEquals(5L, new LessThenOrEqualsLongPredicate(5L).getLessThenOrEquals());
-        assertTrue(f.op(4L));
-        assertTrue(f.op(5L));
-        assertFalse(f.op(6L));
+        CharPredicate f = CharPredicates.lessThenOrEquals((char) 5);
+        assertEquals((char) 5, new LessThenOrEqualsCharPredicate((char) 5).getLessThenOrEquals());
+        assertTrue(f.op((char) 4));
+        assertTrue(f.op((char) 5));
+        assertFalse(f.op((char) 6));
 
         f.toString(); // no exceptions
 
@@ -154,74 +154,74 @@ public final class LongPredicatesTest {
    
    
      /**
-     * Tests that {@link LongPredicates#not(LongPredicate)} throws a
+     * Tests that {@link CharPredicates#not(CharPredicate)} throws a
      * {@link NullPointerException} when invoked with a <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void notNPE() {
-        LongPredicates.not(null);
+        CharPredicates.not(null);
     }
 
     /**
-     * Tests {@link LongPredicates#TRUE}.
+     * Tests {@link CharPredicates#TRUE}.
      */
     @Test
     public void notPredicate() {
-        assertFalse(LongPredicates.not(TRUE).op(2L));
-        assertTrue(LongPredicates.not(FALSE).op(2L));
-        LongPredicates.not(TRUE).toString(); // does not fail
-        assertIsSerializable(LongPredicates.not(TRUE));
-        assertSame(TRUE, ((NotLongPredicate) LongPredicates.not(TRUE)).getPredicate());
+        assertFalse(CharPredicates.not(TRUE).op((char) 2));
+        assertTrue(CharPredicates.not(FALSE).op((char) 2));
+        CharPredicates.not(TRUE).toString(); // does not fail
+        assertIsSerializable(CharPredicates.not(TRUE));
+        assertSame(TRUE, ((NotCharPredicate) CharPredicates.not(TRUE)).getPredicate());
     }
 
     /**
-     * Tests {@link LongPredicates#or(LongPredicate, LongPredicate)}.
+     * Tests {@link CharPredicates#or(CharPredicate, CharPredicate)}.
      */
     @Test
     public void or() {
-        assertTrue(LongPredicates.or(TRUE, TRUE).op(1L));
-        assertTrue(LongPredicates.or(TRUE, FALSE).op(1L));
-        assertTrue(LongPredicates.or(FALSE, TRUE).op(1L));
-        assertFalse(LongPredicates.or(FALSE, FALSE).op(1L));
+        assertTrue(CharPredicates.or(TRUE, TRUE).op((char) 1));
+        assertTrue(CharPredicates.or(TRUE, FALSE).op((char) 1));
+        assertTrue(CharPredicates.or(FALSE, TRUE).op((char) 1));
+        assertFalse(CharPredicates.or(FALSE, FALSE).op((char) 1));
 
-        LongPredicates.OrLongPredicate p = new LongPredicates.OrLongPredicate(FALSE, TRUE);
+        CharPredicates.OrCharPredicate p = new CharPredicates.OrCharPredicate(FALSE, TRUE);
         assertSame(p.getLeft(), FALSE);
         assertSame(p.getRight(), TRUE);
         p.toString(); // no exception
         assertIsSerializable(p);
 
         // shortcircuted evaluation
-        LongPredicates.or(TRUE, TestUtil.dummy(LongPredicate.class)).op(1L);
+        CharPredicates.or(TRUE, TestUtil.dummy(CharPredicate.class)).op((char) 1);
     }
 
     /**
-     * Tests that {@link LongPredicates#or(LongPredicate, LongPredicate)} throws a
+     * Tests that {@link CharPredicates#or(CharPredicate, CharPredicate)} throws a
      * {@link NullPointerException} when invoked with a left side <code>null</code>
      * argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE() {
-        LongPredicates.or(null, TRUE);
+        CharPredicates.or(null, TRUE);
     }
 
     /**
-     * Tests that {@link LongPredicates#or(LongPredicate, LongPredicate)} throws a
+     * Tests that {@link CharPredicates#or(CharPredicate, CharPredicate)} throws a
      * {@link NullPointerException} when invoked with a right side <code>null</code>
      * argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE1() {
-        LongPredicates.or(TRUE, null);
+        CharPredicates.or(TRUE, null);
     }
    
     
    /**
-     * Tests {@link LongPredicates#TRUE}.
+     * Tests {@link CharPredicates#TRUE}.
      */
     @Test
     public void truePredicate() {
-        assertTrue(TRUE.op(2L));
-        assertTrue(TRUE.op(Long.MIN_VALUE));
+        assertTrue(TRUE.op((char) 2));
+        assertTrue(TRUE.op(Character.MIN_VALUE));
         TRUE.toString(); // does not fail
         assertIsSerializable(TRUE);
         assertSame(TRUE, TestUtil.serializeAndUnserialize(TRUE));

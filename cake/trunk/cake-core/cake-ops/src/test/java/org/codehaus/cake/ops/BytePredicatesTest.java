@@ -15,70 +15,70 @@
  */
 package org.codehaus.cake.ops;
 
-import static org.codehaus.cake.ops.LongPredicates.*;
+import static org.codehaus.cake.ops.BytePredicates.*;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
 import static org.junit.Assert.*;
 
-import org.codehaus.cake.ops.LongPredicates.*;
+import org.codehaus.cake.ops.BytePredicates.*;
 import org.codehaus.cake.ops.Ops.*;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 /**
- * Various tests for {@link LongPredicates}.
+ * Various tests for {@link BytePredicates}.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: LongPredicatesTest.java 590 2008-03-14 08:16:12Z kasper $
+ * @version $Id: BytePredicatesTest.java 590 2008-03-14 08:16:12Z kasper $
  */
-public final class LongPredicatesTest {
+public final class BytePredicatesTest {
 
     /**
      * Tests {@link LongPredicates#and(LongPredicate, LongPredicate)}.
      */
     @Test
     public void and() {
-        assertTrue(LongPredicates.and(TRUE, TRUE).op(1L));
-        assertFalse(LongPredicates.and(TRUE, FALSE).op(1L));
-        assertFalse(LongPredicates.and(FALSE, TRUE).op(1L));
-        assertFalse(LongPredicates.and(FALSE, FALSE).op(1L));
+        assertTrue(BytePredicates.and(TRUE, TRUE).op((byte) 1));
+        assertFalse(BytePredicates.and(TRUE, FALSE).op((byte) 1));
+        assertFalse(BytePredicates.and(FALSE, TRUE).op((byte) 1));
+        assertFalse(BytePredicates.and(FALSE, FALSE).op((byte) 1));
 
-        LongPredicates.AndLongPredicate p = new LongPredicates.AndLongPredicate(FALSE, TRUE);
+        BytePredicates.AndBytePredicate p = new BytePredicates.AndBytePredicate(FALSE, TRUE);
         assertSame(p.getLeft(), FALSE);
         assertSame(p.getRight(), TRUE);
         p.toString(); // no exception
         assertIsSerializable(p);
 
         // shortcircuted evaluation
-        LongPredicates.and(FALSE, TestUtil.dummy(LongPredicate.class)).op(1L);
+        BytePredicates.and(FALSE, TestUtil.dummy(BytePredicate.class)).op((byte) 1);
     }
 
     /**
-     * Tests that {@link LongPredicates#and(LongPredicate, LongPredicate)} throws a
+     * Tests that {@link BytePredicates#and(BytePredicate, BytePredicate)} throws a
      * {@link NullPointerException} when invoked with a left side <code>null</code>
      * argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE() {
-        LongPredicates.and(null, TRUE);
+        BytePredicates.and(null, TRUE);
     }
 
     /**
-     * Tests that {@link LongPredicates#and(LongPredicate, LongPredicate)} throws a
+     * Tests that {@link BytePredicates#and(BytePredicate, BytePredicate)} throws a
      * {@link NullPointerException} when invoked with a right side <code>null</code>
      * argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE1() {
-        LongPredicates.and(TRUE, null);
+        BytePredicates.and(TRUE, null);
     }
     
     /* Test greater then */
     @Test
     public void equalsTo() {
-        LongPredicate f = LongPredicates.equalsTo(5L);
-        assertEquals(5L, new EqualsToLongPredicate(5L).getEqualsTo());
-        assertFalse(f.op(4L));
-        assertTrue(f.op(5L));
-        assertFalse(f.op(6L));
+        BytePredicate f = BytePredicates.equalsTo((byte) 5);
+        assertEquals((byte) 5, new EqualsToBytePredicate((byte) 5).getEqualsTo());
+        assertFalse(f.op((byte) 4));
+        assertTrue(f.op((byte) 5));
+        assertFalse(f.op((byte) 6));
 
         f.toString(); // no exceptions
 
@@ -86,12 +86,12 @@ public final class LongPredicatesTest {
     }
     
     /**
-     * Tests {@link LongPredicates#FALSE}.
+     * Tests {@link BytePredicates#FALSE}.
      */
     @Test
     public void falsePredicate() {
-        assertFalse(FALSE.op(2L));
-        assertFalse(FALSE.op(Long.MIN_VALUE));
+        assertFalse(FALSE.op((byte) 2));
+        assertFalse(FALSE.op(Byte.MIN_VALUE));
         FALSE.toString(); // does not fail
         assertIsSerializable(FALSE);
         assertSame(FALSE, TestUtil.serializeAndUnserialize(FALSE));
@@ -100,11 +100,11 @@ public final class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void greaterThen() {
-        LongPredicate f = LongPredicates.greaterThen(5L);
-        assertEquals(5L, new GreaterThenLongPredicate(5L).getGreaterThen());
-        assertFalse(f.op(4L));
-        assertFalse(f.op(5L));
-        assertTrue(f.op(6L));
+        BytePredicate f = BytePredicates.greaterThen((byte) 5);
+        assertEquals((byte) 5, new GreaterThenBytePredicate((byte) 5).getGreaterThen());
+        assertFalse(f.op((byte) 4));
+        assertFalse(f.op((byte) 5));
+        assertTrue(f.op((byte) 6));
 
         f.toString(); // no exceptions
 
@@ -113,11 +113,11 @@ public final class LongPredicatesTest {
 
     @Test
     public void greaterThenOrEquals() {
-        LongPredicate f = LongPredicates.greaterThenOrEquals(5L);
-        assertEquals(5L, new GreaterThenOrEqualsLongPredicate(5L).getGreaterThenOrEquals());
-        assertFalse(f.op(4L));
-        assertTrue(f.op(5L));
-        assertTrue(f.op(6L));
+        BytePredicate f = BytePredicates.greaterThenOrEquals((byte) 5);
+        assertEquals((byte) 5, new GreaterThenOrEqualsBytePredicate((byte) 5).getGreaterThenOrEquals());
+        assertFalse(f.op((byte) 4));
+        assertTrue(f.op((byte) 5));
+        assertTrue(f.op((byte) 6));
 
         f.toString(); // no exceptions
 
@@ -127,11 +127,11 @@ public final class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void lessThen() {
-        LongPredicate f = LongPredicates.lessThen(5L);
-        assertEquals(5L, new LessThenLongPredicate(5L).getLessThen());
-        assertTrue(f.op(4L));
-        assertFalse(f.op(5L));
-        assertFalse(f.op(6L));
+        BytePredicate f = BytePredicates.lessThen((byte) 5);
+        assertEquals((byte) 5, new LessThenBytePredicate((byte) 5).getLessThen());
+        assertTrue(f.op((byte) 4));
+        assertFalse(f.op((byte) 5));
+        assertFalse(f.op((byte) 6));
 
         f.toString(); // no exceptions
 
@@ -141,11 +141,11 @@ public final class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void lessThenOrEquals() {
-        LongPredicate f = LongPredicates.lessThenOrEquals(5L);
-        assertEquals(5L, new LessThenOrEqualsLongPredicate(5L).getLessThenOrEquals());
-        assertTrue(f.op(4L));
-        assertTrue(f.op(5L));
-        assertFalse(f.op(6L));
+        BytePredicate f = BytePredicates.lessThenOrEquals((byte) 5);
+        assertEquals((byte) 5, new LessThenOrEqualsBytePredicate((byte) 5).getLessThenOrEquals());
+        assertTrue(f.op((byte) 4));
+        assertTrue(f.op((byte) 5));
+        assertFalse(f.op((byte) 6));
 
         f.toString(); // no exceptions
 
@@ -154,74 +154,74 @@ public final class LongPredicatesTest {
    
    
      /**
-     * Tests that {@link LongPredicates#not(LongPredicate)} throws a
+     * Tests that {@link BytePredicates#not(BytePredicate)} throws a
      * {@link NullPointerException} when invoked with a <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void notNPE() {
-        LongPredicates.not(null);
+        BytePredicates.not(null);
     }
 
     /**
-     * Tests {@link LongPredicates#TRUE}.
+     * Tests {@link BytePredicates#TRUE}.
      */
     @Test
     public void notPredicate() {
-        assertFalse(LongPredicates.not(TRUE).op(2L));
-        assertTrue(LongPredicates.not(FALSE).op(2L));
-        LongPredicates.not(TRUE).toString(); // does not fail
-        assertIsSerializable(LongPredicates.not(TRUE));
-        assertSame(TRUE, ((NotLongPredicate) LongPredicates.not(TRUE)).getPredicate());
+        assertFalse(BytePredicates.not(TRUE).op((byte) 2));
+        assertTrue(BytePredicates.not(FALSE).op((byte) 2));
+        BytePredicates.not(TRUE).toString(); // does not fail
+        assertIsSerializable(BytePredicates.not(TRUE));
+        assertSame(TRUE, ((NotBytePredicate) BytePredicates.not(TRUE)).getPredicate());
     }
 
     /**
-     * Tests {@link LongPredicates#or(LongPredicate, LongPredicate)}.
+     * Tests {@link BytePredicates#or(BytePredicate, BytePredicate)}.
      */
     @Test
     public void or() {
-        assertTrue(LongPredicates.or(TRUE, TRUE).op(1L));
-        assertTrue(LongPredicates.or(TRUE, FALSE).op(1L));
-        assertTrue(LongPredicates.or(FALSE, TRUE).op(1L));
-        assertFalse(LongPredicates.or(FALSE, FALSE).op(1L));
+        assertTrue(BytePredicates.or(TRUE, TRUE).op((byte) 1));
+        assertTrue(BytePredicates.or(TRUE, FALSE).op((byte) 1));
+        assertTrue(BytePredicates.or(FALSE, TRUE).op((byte) 1));
+        assertFalse(BytePredicates.or(FALSE, FALSE).op((byte) 1));
 
-        LongPredicates.OrLongPredicate p = new LongPredicates.OrLongPredicate(FALSE, TRUE);
+        BytePredicates.OrBytePredicate p = new BytePredicates.OrBytePredicate(FALSE, TRUE);
         assertSame(p.getLeft(), FALSE);
         assertSame(p.getRight(), TRUE);
         p.toString(); // no exception
         assertIsSerializable(p);
 
         // shortcircuted evaluation
-        LongPredicates.or(TRUE, TestUtil.dummy(LongPredicate.class)).op(1L);
+        BytePredicates.or(TRUE, TestUtil.dummy(BytePredicate.class)).op((byte) 1);
     }
 
     /**
-     * Tests that {@link LongPredicates#or(LongPredicate, LongPredicate)} throws a
+     * Tests that {@link BytePredicates#or(BytePredicate, BytePredicate)} throws a
      * {@link NullPointerException} when invoked with a left side <code>null</code>
      * argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE() {
-        LongPredicates.or(null, TRUE);
+        BytePredicates.or(null, TRUE);
     }
 
     /**
-     * Tests that {@link LongPredicates#or(LongPredicate, LongPredicate)} throws a
+     * Tests that {@link BytePredicates#or(BytePredicate, BytePredicate)} throws a
      * {@link NullPointerException} when invoked with a right side <code>null</code>
      * argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE1() {
-        LongPredicates.or(TRUE, null);
+        BytePredicates.or(TRUE, null);
     }
    
     
    /**
-     * Tests {@link LongPredicates#TRUE}.
+     * Tests {@link BytePredicates#TRUE}.
      */
     @Test
     public void truePredicate() {
-        assertTrue(TRUE.op(2L));
-        assertTrue(TRUE.op(Long.MIN_VALUE));
+        assertTrue(TRUE.op((byte) 2));
+        assertTrue(TRUE.op(Byte.MIN_VALUE));
         TRUE.toString(); // does not fail
         assertIsSerializable(TRUE);
         assertSame(TRUE, TestUtil.serializeAndUnserialize(TRUE));

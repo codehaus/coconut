@@ -5,7 +5,7 @@
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * http://cake.codehaus.org/LICENSE
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -16,11 +16,7 @@
 package org.codehaus.cake.ops;
 
 import java.io.Serializable;
-
-import org.codehaus.cake.ops.Ops.LongPredicate;
-import org.codehaus.cake.ops.Ops.ObjectToLong;
-import org.codehaus.cake.ops.Ops.Predicate;
-
+import static org.codehaus.cake.ops.Ops.*;
 /**
  * Various implementations of {@link LongPredicate}.
  * <p>
@@ -39,7 +35,7 @@ public final class LongPredicates {
 
     /** Cannot instantiate. */
     private LongPredicates() {}
-
+    
     /**
      * Creates a LongPredicate that performs a logical AND on two supplied predicates. The
      * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
@@ -65,24 +61,20 @@ public final class LongPredicates {
     public static LongPredicate and(LongPredicate left, LongPredicate right) {
         return new AndLongPredicate(left, right);
     }
-
-    public static LongPredicate between(long left, long right) {
-        return and(greaterThenOrEquals(left), lessThenOrEquals(right));
-    }
-
+    
     /**
-     * Returns a predicate that accepts any long that is equal to the value specified.
+     * Creates a predicate that accepts any value that is equal to the value specified.
      * <p>
-     * The predicate is serializable.
+     * The returned predicate is serializable.
      *
      * @param element
      *            the value of the equals predicate
-     * @return a predicate that accepts any long that is equal to the value specified
+     * @return a predicate that accepts any value that is equal to the value specified
      */
-    public static LongPredicate equalsToPredicate(long element) {
+    public static LongPredicate equalsTo(long element) {
         return new EqualsToLongPredicate(element);
     }
-
+    
     /**
      * Creates a LongPredicate that evaluates to <code>true</code> if the element being
      * tested is greater then the element being used to construct the predicate.
@@ -139,22 +131,7 @@ public final class LongPredicates {
     public static LongPredicate lessThenOrEquals(long element) {
         return new LessThenOrEqualsLongPredicate(element);
     }
-
-    /**
-     * Creates a Predicate that first applies the specified mapper to the argument before
-     * evaluating the specified LongPredicate.
-     * <p>
-     * If the specified mapper and predicate are serializable the returni.
-     *
-     * @param <T>
-     * @param mapper
-     * @param predicate
-     * @return the
-     */
-    public static <T> Predicate<T> mapAndEvaluate(ObjectToLong<T> mapper, LongPredicate predicate) {
-        return new MapToLongAndEvaluatePredicate<T>(mapper, predicate);
-    }
-
+    
     /**
      * Creates a LongPredicate that performs a logical logical NOT on the supplied
      * LongPredicate. More formally
@@ -202,7 +179,7 @@ public final class LongPredicates {
     public static LongPredicate or(LongPredicate left, LongPredicate right) {
         return new OrLongPredicate(left, right);
     }
-
+    
     /**
      * A LongPredicate that performs a logical exclusive AND on two supplied predicates.
      */
@@ -266,7 +243,7 @@ public final class LongPredicates {
             return "(" + left + ") && (" + right + ")";
         }
     }
-
+    
     static class EqualsToLongPredicate implements LongPredicate, Serializable {
 
         /** serialVersionUID. */
@@ -299,9 +276,9 @@ public final class LongPredicates {
             return equalsTo;
         }
     }
-
-    /**
-     * A LongPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
+    
+     /**
+     * a LongPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
      * get an instance of this LongPredicate.
      *
      * @see TrueLongPredicate
@@ -330,7 +307,7 @@ public final class LongPredicates {
             return FALSE;
         }
     }
-
+    
     static class GreaterThenLongPredicate implements LongPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 7198592614364500859L;
@@ -343,7 +320,6 @@ public final class LongPredicates {
         }
 
         /** {@inheritDoc} */
-        /** {@inheritDoc} */
         public boolean op(long t) {
             return greaterThen < t;
         }
@@ -352,7 +328,7 @@ public final class LongPredicates {
             return greaterThen;
         }
     }
-
+    
     static class GreaterThenOrEqualsLongPredicate implements LongPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -4681995097900012563L;
@@ -373,7 +349,7 @@ public final class LongPredicates {
             return greaterThenOrEquals;
         }
     }
-
+    
     static class LessThenLongPredicate implements LongPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -9180606923416408020L;
@@ -415,72 +391,6 @@ public final class LongPredicates {
             return lessThenOrEquals;
         }
     }
-
-    /**
-     * A Predicate that first applies the specified mapper to the argument before
-     * evaluating the specified LongPredicate.
-     */
-    static final class MapToLongAndEvaluatePredicate<T> implements Predicate<T>, Serializable {
-
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -6292758840373110577L;
-
-        /** The mapper that maps the element being tested to a long. */
-        private final ObjectToLong<T> mapper;
-
-        /** The predicate to test against. */
-        private final LongPredicate predicate;
-
-        /**
-         * Creates a new MapToLongAndEvaluatePredicate.
-         *
-         * @param mapper
-         *            the mapper used to first map the argument
-         * @param predicate
-         *            the predicate used to evaluate the mapped argument
-         */
-        MapToLongAndEvaluatePredicate(final ObjectToLong<T> mapper, LongPredicate predicate) {
-            if (mapper == null) {
-                throw new NullPointerException("mapper is null");
-            } else if (predicate == null) {
-                throw new NullPointerException("predicate is null");
-            }
-            this.predicate = predicate;
-            this.mapper = mapper;
-        }
-
-        /** {@inheritDoc} */
-        public boolean op(T element) {
-            return predicate.op(mapper.op(element));
-        }
-
-        /**
-         * Returns the mapper that will map the object to a long before applying the
-         * predicate on it.
-         *
-         * @return the mapper that will map the object to a long before applying the
-         *         predicate on it
-         */
-        public ObjectToLong<T> getMapper() {
-            return mapper;
-        }
-
-        /**
-         * Returns the Predicate we are testing against.
-         *
-         * @return the Predicate we are testing against.
-         */
-        public LongPredicate getPredicate() {
-            return predicate;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return "convert " + mapper;
-        }
-    }
-
     /**
      * A LongPredicate that evaluates to true iff the Predicate used for constructing
      * evaluates to <code>false</code>.
@@ -599,7 +509,7 @@ public final class LongPredicates {
             return "(" + left + ") && (" + right + ")";
         }
     }
-
+    
     /**
      * A LongPredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get
      * an instance of this LongPredicate.

@@ -18,26 +18,26 @@ package org.codehaus.cake.ops;
 import java.io.Serializable;
 import static org.codehaus.cake.ops.Ops.*;
 /**
- * Various implementations of {@link DoublePredicate}.
+ * Various implementations of {@link CharPredicate}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: DoublePredicates.java 590 2008-03-14 08:16:12Z kasper $
+ * @version $Id: CharPredicates.java 590 2008-03-14 08:16:12Z kasper $
  */
-public final class DoublePredicates {
+public final class CharPredicates {
 
-    /** A DoublePredicate that always evaluates to <code>false</code>. */
-    public static final DoublePredicate FALSE = new FalseDoublePredicate();
+    /** A CharPredicate that always evaluates to <code>false</code>. */
+    public static final CharPredicate FALSE = new FalseCharPredicate();
 
-    /** A DoublePredicate that always evaluates to <code>true</code>. */
-    public static final DoublePredicate TRUE = new TrueDoublePredicate();
+    /** A CharPredicate that always evaluates to <code>true</code>. */
+    public static final CharPredicate TRUE = new TrueCharPredicate();
 
     /** Cannot instantiate. */
-    private DoublePredicates() {}
+    private CharPredicates() {}
     
     /**
-     * Creates a DoublePredicate that performs a logical AND on two supplied predicates. The
+     * Creates a CharPredicate that performs a logical AND on two supplied predicates. The
      * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
      * if the specified left side predicate evaluates to <code>false</code> the right
      * side predicate will not be evaluated. More formally
@@ -51,15 +51,15 @@ public final class DoublePredicates {
      * also be serializable.
      *
      * @param left
-     *            the left side DoublePredicate
+     *            the left side CharPredicate
      * @param right
-     *            the right side DoublePredicate
-     * @return the newly created DoublePredicate
+     *            the right side CharPredicate
+     * @return the newly created CharPredicate
      * @throws NullPointerException
      *             if any of the specified predicates are <code>null</code>
      */
-    public static DoublePredicate and(DoublePredicate left, DoublePredicate right) {
-        return new AndDoublePredicate(left, right);
+    public static CharPredicate and(CharPredicate left, CharPredicate right) {
+        return new AndCharPredicate(left, right);
     }
     
     /**
@@ -71,26 +71,26 @@ public final class DoublePredicates {
      *            the value of the equals predicate
      * @return a predicate that accepts any value that is equal to the value specified
      */
-    public static DoublePredicate equalsTo(double element) {
-        return new EqualsToDoublePredicate(element);
+    public static CharPredicate equalsTo(char element) {
+        return new EqualsToCharPredicate(element);
     }
     
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
+     * Creates a CharPredicate that evaluates to <code>true</code> if the element being
      * tested is greater then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
      *
      * @param element
      *            the element to compare with
-     * @return the newly created DoublePredicate
+     * @return the newly created CharPredicate
      */
-    public static DoublePredicate greaterThen(double element) {
-        return new GreaterThenDoublePredicate(element);
+    public static CharPredicate greaterThen(char element) {
+        return new GreaterThenCharPredicate(element);
     }
 
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
+     * Creates a CharPredicate that evaluates to <code>true</code> if the element being
      * tested is greater then or equals to the element being used to construct the
      * predicate.
      * <p>
@@ -98,43 +98,43 @@ public final class DoublePredicates {
      *
      * @param element
      *            the element to compare with
-     * @return the newly created DoublePredicate
+     * @return the newly created CharPredicate
      */
-    public static DoublePredicate greaterThenOrEquals(double element) {
-        return new GreaterThenOrEqualsDoublePredicate(element);
+    public static CharPredicate greaterThenOrEquals(char element) {
+        return new GreaterThenOrEqualsCharPredicate(element);
     }
 
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
+     * Creates a CharPredicate that evaluates to <code>true</code> if the element being
      * tested is less then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
      *
      * @param element
      *            the element to compare with
-     * @return the newly created DoublePredicate
+     * @return the newly created CharPredicate
      */
-    public static DoublePredicate lessThen(double element) {
-        return new LessThenDoublePredicate(element);
+    public static CharPredicate lessThen(char element) {
+        return new LessThenCharPredicate(element);
     }
 
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
+     * Creates a CharPredicate that evaluates to <code>true</code> if the element being
      * tested is less then or equals to the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
      *
      * @param element
      *            the element to compare with
-     * @return the newly created DoublePredicate
+     * @return the newly created CharPredicate
      */
-    public static DoublePredicate lessThenOrEquals(double element) {
-        return new LessThenOrEqualsDoublePredicate(element);
+    public static CharPredicate lessThenOrEquals(char element) {
+        return new LessThenOrEqualsCharPredicate(element);
     }
     
     /**
-     * Creates a DoublePredicate that performs a logical logical NOT on the supplied
-     * DoublePredicate. More formally
+     * Creates a CharPredicate that performs a logical logical NOT on the supplied
+     * CharPredicate. More formally
      *
      * <pre>
      * !predicate.evaluate(value);
@@ -146,16 +146,16 @@ public final class DoublePredicates {
      *
      * @param predicate
      *            the predicate to negate
-     * @return the newly created DoublePredicate
+     * @return the newly created CharPredicate
      * @throws NullPointerException
      *             if the specified predicate is <code>null</code>
      */
-    public static DoublePredicate not(DoublePredicate predicate) {
-        return new NotDoublePredicate(predicate);
+    public static CharPredicate not(CharPredicate predicate) {
+        return new NotCharPredicate(predicate);
     }
 
     /**
-     * Creates a DoublePredicate that performs a logical OR on two supplied predicates. The
+     * Creates a CharPredicate that performs a logical OR on two supplied predicates. The
      * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
      * if the specified left side predicate evaluates to <code>true</code> the right
      * side predicate will not be evaluated. More formally
@@ -169,42 +169,42 @@ public final class DoublePredicates {
      * also be serializable.
      *
      * @param left
-     *            the left side DoublePredicate
+     *            the left side CharPredicate
      * @param right
-     *            the right side DoublePredicate
-     * @return the newly created DoublePredicate
+     *            the right side CharPredicate
+     * @return the newly created CharPredicate
      * @throws NullPointerException
      *             if any of the specified predicates are <code>null</code>
      */
-    public static DoublePredicate or(DoublePredicate left, DoublePredicate right) {
-        return new OrDoublePredicate(left, right);
+    public static CharPredicate or(CharPredicate left, CharPredicate right) {
+        return new OrCharPredicate(left, right);
     }
     
     /**
-     * A DoublePredicate that performs a logical exclusive AND on two supplied predicates.
+     * A CharPredicate that performs a logical exclusive AND on two supplied predicates.
      */
-    static final class AndDoublePredicate implements DoublePredicate, Serializable {
+    static final class AndCharPredicate implements CharPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 6981902451700512606L;
 
         /** The left side operand. */
-        private final DoublePredicate left;
+        private final CharPredicate left;
 
         /** The right side operand. */
-        private final DoublePredicate right;
+        private final CharPredicate right;
 
         /**
-         * Creates a new <code>AndDoublePredicate</code>.
+         * Creates a new <code>AndCharPredicate</code>.
          *
          * @param left
-         *            the left side DoublePredicate
+         *            the left side CharPredicate
          * @param right
-         *            the right side DoublePredicate
+         *            the right side CharPredicate
          * @throws NullPointerException
          *             if any of the supplied predicates are <code>null</code>
          */
-        AndDoublePredicate(DoublePredicate left, DoublePredicate right) {
+        AndCharPredicate(CharPredicate left, CharPredicate right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             } else if (right == null) {
@@ -215,25 +215,25 @@ public final class DoublePredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean op(double element) {
+        public boolean op(char element) {
             return left.op(element) && right.op(element);
         }
 
         /**
-         * Returns the left side DoublePredicate.
+         * Returns the left side CharPredicate.
          *
-         * @return the left side DoublePredicate.
+         * @return the left side CharPredicate.
          */
-        public DoublePredicate getLeft() {
+        public CharPredicate getLeft() {
             return left;
         }
 
         /**
-         * Returns the right side DoublePredicate.
+         * Returns the right side CharPredicate.
          *
-         * @return the right side DoublePredicate.
+         * @return the right side CharPredicate.
          */
-        public DoublePredicate getRight() {
+        public CharPredicate getRight() {
             return right;
         }
 
@@ -244,15 +244,15 @@ public final class DoublePredicates {
         }
     }
     
-    static class EqualsToDoublePredicate implements DoublePredicate, Serializable {
+    static class EqualsToCharPredicate implements CharPredicate, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = 8220487572042162409L;
 
         /** The value to compare with. */
-        private final double equalsTo;
+        private final char equalsTo;
 
-        EqualsToDoublePredicate(double equalsTo) {
+        EqualsToCharPredicate(char equalsTo) {
             this.equalsTo = equalsTo;
         }
 
@@ -265,34 +265,34 @@ public final class DoublePredicates {
          * @return <code>true</code> if the specified value is equal to the value that
          *         was used when constructing this predicate, otherwise <code>false</code>.
          */
-        public boolean op(double t) {
+        public boolean op(char t) {
             return equalsTo == t;
         }
 
         /**
          * @return the value we are comparing with
          */
-        public double getEqualsTo() {
+        public char getEqualsTo() {
             return equalsTo;
         }
     }
     
      /**
-     * a DoublePredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
-     * get an instance of this DoublePredicate.
+     * a CharPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
+     * get an instance of this CharPredicate.
      *
-     * @see TrueDoublePredicate
+     * @see TrueCharPredicate
      */
-    static final class FalseDoublePredicate implements DoublePredicate, Serializable {
+    static final class FalseCharPredicate implements CharPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -3048464662394104180L;
 
-        /** Creates a new FalseDoublePredicate. */
-        FalseDoublePredicate() {}
+        /** Creates a new FalseCharPredicate. */
+        FalseCharPredicate() {}
 
         /** {@inheritDoc} */
-        public boolean op(double value) {
+        public boolean op(char value) {
             return false;
         }
 
@@ -308,110 +308,110 @@ public final class DoublePredicates {
         }
     }
     
-    static class GreaterThenDoublePredicate implements DoublePredicate, Serializable {
+    static class GreaterThenCharPredicate implements CharPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 7198592614364500859L;
 
         /** The value to compare with. */
-        private final double greaterThen;
+        private final char greaterThen;
 
-        GreaterThenDoublePredicate(double greaterThen) {
+        GreaterThenCharPredicate(char greaterThen) {
             this.greaterThen = greaterThen;
         }
 
         /** {@inheritDoc} */
-        public boolean op(double t) {
+        public boolean op(char t) {
             return greaterThen < t;
         }
 
-        public double getGreaterThen() {
+        public char getGreaterThen() {
             return greaterThen;
         }
     }
     
-    static class GreaterThenOrEqualsDoublePredicate implements DoublePredicate, Serializable {
+    static class GreaterThenOrEqualsCharPredicate implements CharPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -4681995097900012563L;
 
         /** The value to compare with. */
-        private final double greaterThenOrEquals;
+        private final char greaterThenOrEquals;
 
-        GreaterThenOrEqualsDoublePredicate(double greaterThenOrEquals) {
+        GreaterThenOrEqualsCharPredicate(char greaterThenOrEquals) {
             this.greaterThenOrEquals = greaterThenOrEquals;
         }
 
         /** {@inheritDoc} */
-        public boolean op(double t) {
+        public boolean op(char t) {
             return greaterThenOrEquals <= t;
         }
 
-        public double getGreaterThenOrEquals() {
+        public char getGreaterThenOrEquals() {
             return greaterThenOrEquals;
         }
     }
     
-    static class LessThenDoublePredicate implements DoublePredicate, Serializable {
+    static class LessThenCharPredicate implements CharPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -9180606923416408020L;
 
         /** The value to compare with. */
-        private final double lessThen;
+        private final char lessThen;
 
-        LessThenDoublePredicate(double lessThen) {
+        LessThenCharPredicate(char lessThen) {
             this.lessThen = lessThen;
         }
 
         /** {@inheritDoc} */
-        public boolean op(double t) {
+        public boolean op(char t) {
             return lessThen > t;
         }
 
-        public double getLessThen() {
+        public char getLessThen() {
             return lessThen;
         }
     }
 
-    static class LessThenOrEqualsDoublePredicate implements DoublePredicate, Serializable {
+    static class LessThenOrEqualsCharPredicate implements CharPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 8711220473905545122L;
 
         /** The value to compare with. */
-        private final double lessThenOrEquals;
+        private final char lessThenOrEquals;
 
-        LessThenOrEqualsDoublePredicate(double lessThenOrEquals) {
+        LessThenOrEqualsCharPredicate(char lessThenOrEquals) {
             this.lessThenOrEquals = lessThenOrEquals;
         }
 
         /** {@inheritDoc} */
-        public boolean op(double t) {
+        public boolean op(char t) {
             return lessThenOrEquals >= t;
         }
 
-        public double getLessThenOrEquals() {
+        public char getLessThenOrEquals() {
             return lessThenOrEquals;
         }
     }
     /**
-     * A DoublePredicate that evaluates to true iff the Predicate used for constructing
+     * A CharPredicate that evaluates to true iff the Predicate used for constructing
      * evaluates to <code>false</code>.
      */
-    static final class NotDoublePredicate implements DoublePredicate, Serializable {
+    static final class NotCharPredicate implements CharPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -5117781730584740429L;
 
-        /** The DoublePredicate to negate. */
-        private final DoublePredicate predicate;
+        /** The CharPredicate to negate. */
+        private final CharPredicate predicate;
 
         /**
-         * Creates a new NotDoublePredicate.
+         * Creates a new NotCharPredicate.
          *
          * @param predicate
          *            the predicate to negate.
          * @throws NullPointerException
          *             if the specified predicate is <code>null</code>
          */
-        NotDoublePredicate(DoublePredicate predicate) {
+        NotCharPredicate(CharPredicate predicate) {
             if (predicate == null) {
                 throw new NullPointerException("predicate is null");
             }
@@ -420,13 +420,13 @@ public final class DoublePredicates {
 
         /**
          * Returns a boolean representing the logical NOT value of the supplied
-         * DoublePredicate.
+         * CharPredicate.
          *
          * @param element
          *            the element to test
-         * @return the logical NOT of the supplied DoublePredicate
+         * @return the logical NOT of the supplied CharPredicate
          */
-        public boolean op(double element) {
+        public boolean op(char element) {
             return !predicate.op(element);
         }
 
@@ -435,7 +435,7 @@ public final class DoublePredicates {
          *
          * @return the predicate that is being negated.
          */
-        public DoublePredicate getPredicate() {
+        public CharPredicate getPredicate() {
             return predicate;
         }
 
@@ -447,30 +447,30 @@ public final class DoublePredicates {
     }
 
     /**
-     * A DoublePredicate that performs a logical exclusive OR on two supplied predicates.
+     * A CharPredicate that performs a logical exclusive OR on two supplied predicates.
      */
-    static final class OrDoublePredicate implements DoublePredicate, Serializable {
+    static final class OrCharPredicate implements CharPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 747277162607915666L;
 
         /** The left side operand. */
-        private final DoublePredicate left;
+        private final CharPredicate left;
 
         /** The right side operand. */
-        private final DoublePredicate right;
+        private final CharPredicate right;
 
         /**
-         * Creates a new <code>OrDoublePredicate</code>.
+         * Creates a new <code>OrCharPredicate</code>.
          *
          * @param left
-         *            the left side DoublePredicate
+         *            the left side CharPredicate
          * @param right
-         *            the right side DoublePredicate
+         *            the right side CharPredicate
          * @throws NullPointerException
          *             if any of the supplied predicates are <code>null</code>
          */
-        OrDoublePredicate(DoublePredicate left, DoublePredicate right) {
+        OrCharPredicate(CharPredicate left, CharPredicate right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             } else if (right == null) {
@@ -481,25 +481,25 @@ public final class DoublePredicates {
         }
 
         /** {@inheritDoc} */
-        public boolean op(double element) {
+        public boolean op(char element) {
             return left.op(element) || right.op(element);
         }
 
         /**
-         * Returns the left side DoublePredicate.
+         * Returns the left side CharPredicate.
          *
-         * @return the left side DoublePredicate.
+         * @return the left side CharPredicate.
          */
-        public DoublePredicate getLeft() {
+        public CharPredicate getLeft() {
             return left;
         }
 
         /**
-         * Returns the right side DoublePredicate.
+         * Returns the right side CharPredicate.
          *
-         * @return the right side DoublePredicate.
+         * @return the right side CharPredicate.
          */
-        public DoublePredicate getRight() {
+        public CharPredicate getRight() {
             return right;
         }
 
@@ -511,21 +511,21 @@ public final class DoublePredicates {
     }
     
     /**
-     * A DoublePredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get
-     * an instance of this DoublePredicate.
+     * A CharPredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get
+     * an instance of this CharPredicate.
      *
-     * @see FalseDoublePredicate
+     * @see FalseCharPredicate
      */
-    static final class TrueDoublePredicate implements DoublePredicate, Serializable {
+    static final class TrueCharPredicate implements CharPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258129137502925875L;
 
-        /** Creates a new TrueDoublePredicate. */
-        TrueDoublePredicate() {}
+        /** Creates a new TrueCharPredicate. */
+        TrueCharPredicate() {}
 
         /** {@inheritDoc} */
-        public boolean op(double value) {
+        public boolean op(char value) {
             return true;
         }
 
