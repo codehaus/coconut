@@ -479,6 +479,6 @@ public class Ops {
     public static interface BytePredicate              { boolean op(byte a);}
     public static interface CharPredicate              { boolean op(char a);}
     public static interface FloatPredicate              { boolean op(float a);}
-    public static interface FloatComparator            { float     compare(float a, float b);}
+    public static interface FloatComparator            { int     compare(float a, float b);}
     public static interface ShortPredicate              { boolean op(short a);}
 }

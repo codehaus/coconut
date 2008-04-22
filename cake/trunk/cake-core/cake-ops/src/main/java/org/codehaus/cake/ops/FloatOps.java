@@ -38,6 +38,17 @@ public final class FloatOps {
 
      final static FloatAbsOp ABS_OP = new FloatAbsOp();
     /**
+     * A comparator for floats relying on natural ordering. The comparator is Serializable.
+     */
+    public static final FloatComparator COMPARATOR = new NaturalFloatComparator();
+
+    /**
+     * A comparator that imposes the reverse of the <i>natural ordering</i> on floats. The
+     * comparator is Serializable.
+     */
+    public static final FloatComparator REVERSE_COMPARATOR = new NaturalFloatReverseComparator();
+
+    /**
      * A reducer returning the maximum of two float elements, using natural comparator.
      * The Reducer is serializable.
      */
@@ -94,7 +105,7 @@ public final class FloatOps {
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static FloatReducer maxReducer(FloatComparator comparator) {
+    public static FloatReducer max(FloatComparator comparator) {
         return new FloatMaxReducer(comparator);
     }
 
@@ -106,8 +117,22 @@ public final class FloatOps {
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static FloatReducer minReducer(FloatComparator comparator) {
+    public static FloatReducer min(FloatComparator comparator) {
         return new FloatMinReducer(comparator);
+    }
+    
+    /**
+     * Creates a comparator that imposes the reverse ordering of the specified comparator.
+     * <p>
+     * The returned comparator is serializable (assuming the specified comparator is also
+     * serializable).
+     * 
+     * @param comparator
+     *            the comparator to reverse
+     * @return a comparator that imposes the reverse ordering of the specified comparator.
+     */
+    public static FloatComparator reverseOrder(FloatComparator comparator) {
+        return new ReverseFloatComparator(comparator);
     }
     static final class FloatSubtractReducer implements FloatReducer, Serializable {
         /** serialVersionUID. */
@@ -143,7 +168,7 @@ public final class FloatOps {
         private static final long serialVersionUID = -130758681673022439L;
 
         public float op(float a, float b) {
-            return a / b;
+            return a * b;
         }
 
         /** @return Preserves singleton property */
@@ -157,7 +182,7 @@ public final class FloatOps {
         private static final long serialVersionUID = -330758681673022439L;
 
         public float op(float a, float b) {
-            return a * b;
+            return a / b;
         }
 
         /** @return Preserves singleton property */
@@ -176,6 +201,38 @@ public final class FloatOps {
         /** @return Preserves singleton property */
         private Object readResolve() {
             return ABS_OP;
+        }
+    }
+    /** A comparator for floats relying on natural ordering. */
+    static final class NaturalFloatComparator implements FloatComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 8763765406476535022L;
+
+        /** {@inheritDoc} */
+        public int compare(float a, float b) {
+            return Float.compare(a, b);
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return COMPARATOR;
+        }
+    }
+
+    /** A comparator for floats relying on natural ordering. */
+    static final class NaturalFloatReverseComparator implements FloatComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -7289505884757339069L;
+
+        /** {@inheritDoc} */
+        public int compare(float a, float b) {
+            return Float.compare(a, b);
+
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return REVERSE_COMPARATOR;
         }
     }
     /**
@@ -270,6 +327,32 @@ public final class FloatOps {
         }
     }
     
+        /** A comparator that reserves the result of another DoubleComparator. */
+    static final class ReverseFloatComparator implements FloatComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 1585665469031127321L;
+
+        /** The comparator to reverse. */
+        private final FloatComparator comparator;
+
+        /**
+         * Creates a new ReverseFloatComparator.
+         * 
+         * @param comparator
+         *            the comparator to reverse
+         */
+        ReverseFloatComparator(FloatComparator comparator) {
+            if (comparator == null) {
+                throw new NullPointerException("comparator is null");
+            }
+            this.comparator = comparator;
+        }
+
+        /** {@inheritDoc} */
+        public int compare(float a, float b) {
+            return -comparator.compare(a, b);
+        }
+    }
     static final class FloatAddOp implements FloatOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -6604604690824553900L;
@@ -309,7 +392,7 @@ public final class FloatOps {
         }
 
         public float op(float a) {
-            return a * divide;
+            return a / divide;
         }
     }
 
@@ -324,7 +407,7 @@ public final class FloatOps {
         }
 
         public float op(float a) {
-            return a / multiply;
+            return a * multiply;
         }
     }
 }

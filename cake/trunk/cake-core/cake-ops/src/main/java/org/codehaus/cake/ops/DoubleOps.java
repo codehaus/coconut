@@ -38,6 +38,17 @@ public final class DoubleOps {
 
      final static DoubleAbsOp ABS_OP = new DoubleAbsOp();
     /**
+     * A comparator for doubles relying on natural ordering. The comparator is Serializable.
+     */
+    public static final DoubleComparator COMPARATOR = new NaturalDoubleComparator();
+
+    /**
+     * A comparator that imposes the reverse of the <i>natural ordering</i> on doubles. The
+     * comparator is Serializable.
+     */
+    public static final DoubleComparator REVERSE_COMPARATOR = new NaturalDoubleReverseComparator();
+
+    /**
      * A reducer returning the maximum of two double elements, using natural comparator.
      * The Reducer is serializable.
      */
@@ -94,7 +105,7 @@ public final class DoubleOps {
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static DoubleReducer maxReducer(DoubleComparator comparator) {
+    public static DoubleReducer max(DoubleComparator comparator) {
         return new DoubleMaxReducer(comparator);
     }
 
@@ -106,8 +117,22 @@ public final class DoubleOps {
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static DoubleReducer minReducer(DoubleComparator comparator) {
+    public static DoubleReducer min(DoubleComparator comparator) {
         return new DoubleMinReducer(comparator);
+    }
+    
+    /**
+     * Creates a comparator that imposes the reverse ordering of the specified comparator.
+     * <p>
+     * The returned comparator is serializable (assuming the specified comparator is also
+     * serializable).
+     * 
+     * @param comparator
+     *            the comparator to reverse
+     * @return a comparator that imposes the reverse ordering of the specified comparator.
+     */
+    public static DoubleComparator reverseOrder(DoubleComparator comparator) {
+        return new ReverseDoubleComparator(comparator);
     }
     static final class DoubleSubtractReducer implements DoubleReducer, Serializable {
         /** serialVersionUID. */
@@ -143,7 +168,7 @@ public final class DoubleOps {
         private static final long serialVersionUID = -130758681673022439L;
 
         public double op(double a, double b) {
-            return a / b;
+            return a * b;
         }
 
         /** @return Preserves singleton property */
@@ -157,7 +182,7 @@ public final class DoubleOps {
         private static final long serialVersionUID = -330758681673022439L;
 
         public double op(double a, double b) {
-            return a * b;
+            return a / b;
         }
 
         /** @return Preserves singleton property */
@@ -176,6 +201,38 @@ public final class DoubleOps {
         /** @return Preserves singleton property */
         private Object readResolve() {
             return ABS_OP;
+        }
+    }
+    /** A comparator for doubles relying on natural ordering. */
+    static final class NaturalDoubleComparator implements DoubleComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 8763765406476535022L;
+
+        /** {@inheritDoc} */
+        public int compare(double a, double b) {
+            return Double.compare(a, b);
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return COMPARATOR;
+        }
+    }
+
+    /** A comparator for doubles relying on natural ordering. */
+    static final class NaturalDoubleReverseComparator implements DoubleComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -7289505884757339069L;
+
+        /** {@inheritDoc} */
+        public int compare(double a, double b) {
+            return Double.compare(a, b);
+
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return REVERSE_COMPARATOR;
         }
     }
     /**
@@ -270,6 +327,32 @@ public final class DoubleOps {
         }
     }
     
+        /** A comparator that reserves the result of another DoubleComparator. */
+    static final class ReverseDoubleComparator implements DoubleComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 1585665469031127321L;
+
+        /** The comparator to reverse. */
+        private final DoubleComparator comparator;
+
+        /**
+         * Creates a new ReverseDoubleComparator.
+         * 
+         * @param comparator
+         *            the comparator to reverse
+         */
+        ReverseDoubleComparator(DoubleComparator comparator) {
+            if (comparator == null) {
+                throw new NullPointerException("comparator is null");
+            }
+            this.comparator = comparator;
+        }
+
+        /** {@inheritDoc} */
+        public int compare(double a, double b) {
+            return -comparator.compare(a, b);
+        }
+    }
     static final class DoubleAddOp implements DoubleOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -6604604690824553900L;
@@ -309,7 +392,7 @@ public final class DoubleOps {
         }
 
         public double op(double a) {
-            return a * divide;
+            return a / divide;
         }
     }
 
@@ -324,7 +407,7 @@ public final class DoubleOps {
         }
 
         public double op(double a) {
-            return a / multiply;
+            return a * multiply;
         }
     }
 }

@@ -38,6 +38,17 @@ public final class LongOps {
 
      final static LongAbsOp ABS_OP = new LongAbsOp();
     /**
+     * A comparator for longs relying on natural ordering. The comparator is Serializable.
+     */
+    public static final LongComparator COMPARATOR = new NaturalLongComparator();
+
+    /**
+     * A comparator that imposes the reverse of the <i>natural ordering</i> on longs. The
+     * comparator is Serializable.
+     */
+    public static final LongComparator REVERSE_COMPARATOR = new NaturalLongReverseComparator();
+
+    /**
      * A reducer returning the maximum of two long elements, using natural comparator.
      * The Reducer is serializable.
      */
@@ -94,7 +105,7 @@ public final class LongOps {
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static LongReducer maxReducer(LongComparator comparator) {
+    public static LongReducer max(LongComparator comparator) {
         return new LongMaxReducer(comparator);
     }
 
@@ -106,8 +117,22 @@ public final class LongOps {
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static LongReducer minReducer(LongComparator comparator) {
+    public static LongReducer min(LongComparator comparator) {
         return new LongMinReducer(comparator);
+    }
+    
+    /**
+     * Creates a comparator that imposes the reverse ordering of the specified comparator.
+     * <p>
+     * The returned comparator is serializable (assuming the specified comparator is also
+     * serializable).
+     * 
+     * @param comparator
+     *            the comparator to reverse
+     * @return a comparator that imposes the reverse ordering of the specified comparator.
+     */
+    public static LongComparator reverseOrder(LongComparator comparator) {
+        return new ReverseLongComparator(comparator);
     }
     static final class LongSubtractReducer implements LongReducer, Serializable {
         /** serialVersionUID. */
@@ -143,7 +168,7 @@ public final class LongOps {
         private static final long serialVersionUID = -130758681673022439L;
 
         public long op(long a, long b) {
-            return a / b;
+            return a * b;
         }
 
         /** @return Preserves singleton property */
@@ -157,7 +182,7 @@ public final class LongOps {
         private static final long serialVersionUID = -330758681673022439L;
 
         public long op(long a, long b) {
-            return a * b;
+            return a / b;
         }
 
         /** @return Preserves singleton property */
@@ -176,6 +201,38 @@ public final class LongOps {
         /** @return Preserves singleton property */
         private Object readResolve() {
             return ABS_OP;
+        }
+    }
+    /** A comparator for longs relying on natural ordering. */
+    static final class NaturalLongComparator implements LongComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 8763765406476535022L;
+
+        /** {@inheritDoc} */
+        public int compare(long a, long b) {
+            return a < b ? -1 : a > b ? 1 : 0;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return COMPARATOR;
+        }
+    }
+
+    /** A comparator for longs relying on natural ordering. */
+    static final class NaturalLongReverseComparator implements LongComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -7289505884757339069L;
+
+        /** {@inheritDoc} */
+        public int compare(long a, long b) {
+            return a < b ? 1 : a > b ? -1 : 0;
+
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return REVERSE_COMPARATOR;
         }
     }
     /**
@@ -270,6 +327,32 @@ public final class LongOps {
         }
     }
     
+        /** A comparator that reserves the result of another DoubleComparator. */
+    static final class ReverseLongComparator implements LongComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 1585665469031127321L;
+
+        /** The comparator to reverse. */
+        private final LongComparator comparator;
+
+        /**
+         * Creates a new ReverseLongComparator.
+         * 
+         * @param comparator
+         *            the comparator to reverse
+         */
+        ReverseLongComparator(LongComparator comparator) {
+            if (comparator == null) {
+                throw new NullPointerException("comparator is null");
+            }
+            this.comparator = comparator;
+        }
+
+        /** {@inheritDoc} */
+        public int compare(long a, long b) {
+            return -comparator.compare(a, b);
+        }
+    }
     static final class LongAddOp implements LongOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -6604604690824553900L;
@@ -309,7 +392,7 @@ public final class LongOps {
         }
 
         public long op(long a) {
-            return a * divide;
+            return a / divide;
         }
     }
 
@@ -324,7 +407,7 @@ public final class LongOps {
         }
 
         public long op(long a) {
-            return a / multiply;
+            return a * multiply;
         }
     }
 }

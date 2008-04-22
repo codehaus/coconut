@@ -83,7 +83,6 @@ public class ComparatorsTest {
         assertTrue(Comparators.reverseOrder(DOUBLE_COMPARATOR).compare(1, 2) > 0);
         Comparators.reverseOrder(DOUBLE_COMPARATOR).toString(); // does not fail
         assertIsSerializable(Comparators.reverseOrder(DOUBLE_COMPARATOR));
-
     }
 
     /**

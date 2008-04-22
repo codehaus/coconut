@@ -38,6 +38,17 @@ public final class IntOps {
 
      final static IntAbsOp ABS_OP = new IntAbsOp();
     /**
+     * A comparator for ints relying on natural ordering. The comparator is Serializable.
+     */
+    public static final IntComparator COMPARATOR = new NaturalIntComparator();
+
+    /**
+     * A comparator that imposes the reverse of the <i>natural ordering</i> on ints. The
+     * comparator is Serializable.
+     */
+    public static final IntComparator REVERSE_COMPARATOR = new NaturalIntReverseComparator();
+
+    /**
      * A reducer returning the maximum of two int elements, using natural comparator.
      * The Reducer is serializable.
      */
@@ -94,7 +105,7 @@ public final class IntOps {
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static IntReducer maxReducer(IntComparator comparator) {
+    public static IntReducer max(IntComparator comparator) {
         return new IntMaxReducer(comparator);
     }
 
@@ -106,8 +117,22 @@ public final class IntOps {
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static IntReducer minReducer(IntComparator comparator) {
+    public static IntReducer min(IntComparator comparator) {
         return new IntMinReducer(comparator);
+    }
+    
+    /**
+     * Creates a comparator that imposes the reverse ordering of the specified comparator.
+     * <p>
+     * The returned comparator is serializable (assuming the specified comparator is also
+     * serializable).
+     * 
+     * @param comparator
+     *            the comparator to reverse
+     * @return a comparator that imposes the reverse ordering of the specified comparator.
+     */
+    public static IntComparator reverseOrder(IntComparator comparator) {
+        return new ReverseIntComparator(comparator);
     }
     static final class IntSubtractReducer implements IntReducer, Serializable {
         /** serialVersionUID. */
@@ -143,7 +168,7 @@ public final class IntOps {
         private static final long serialVersionUID = -130758681673022439L;
 
         public int op(int a, int b) {
-            return a / b;
+            return a * b;
         }
 
         /** @return Preserves singleton property */
@@ -157,7 +182,7 @@ public final class IntOps {
         private static final long serialVersionUID = -330758681673022439L;
 
         public int op(int a, int b) {
-            return a * b;
+            return a / b;
         }
 
         /** @return Preserves singleton property */
@@ -176,6 +201,38 @@ public final class IntOps {
         /** @return Preserves singleton property */
         private Object readResolve() {
             return ABS_OP;
+        }
+    }
+    /** A comparator for ints relying on natural ordering. */
+    static final class NaturalIntComparator implements IntComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 8763765406476535022L;
+
+        /** {@inheritDoc} */
+        public int compare(int a, int b) {
+            return a < b ? -1 : a > b ? 1 : 0;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return COMPARATOR;
+        }
+    }
+
+    /** A comparator for ints relying on natural ordering. */
+    static final class NaturalIntReverseComparator implements IntComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -7289505884757339069L;
+
+        /** {@inheritDoc} */
+        public int compare(int a, int b) {
+            return a < b ? 1 : a > b ? -1 : 0;
+
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return REVERSE_COMPARATOR;
         }
     }
     /**
@@ -270,6 +327,32 @@ public final class IntOps {
         }
     }
     
+        /** A comparator that reserves the result of another DoubleComparator. */
+    static final class ReverseIntComparator implements IntComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 1585665469031127321L;
+
+        /** The comparator to reverse. */
+        private final IntComparator comparator;
+
+        /**
+         * Creates a new ReverseIntComparator.
+         * 
+         * @param comparator
+         *            the comparator to reverse
+         */
+        ReverseIntComparator(IntComparator comparator) {
+            if (comparator == null) {
+                throw new NullPointerException("comparator is null");
+            }
+            this.comparator = comparator;
+        }
+
+        /** {@inheritDoc} */
+        public int compare(int a, int b) {
+            return -comparator.compare(a, b);
+        }
+    }
     static final class IntAddOp implements IntOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -6604604690824553900L;
@@ -309,7 +392,7 @@ public final class IntOps {
         }
 
         public int op(int a) {
-            return a * divide;
+            return a / divide;
         }
     }
 
@@ -324,7 +407,7 @@ public final class IntOps {
         }
 
         public int op(int a) {
-            return a / multiply;
+            return a * multiply;
         }
     }
 }
