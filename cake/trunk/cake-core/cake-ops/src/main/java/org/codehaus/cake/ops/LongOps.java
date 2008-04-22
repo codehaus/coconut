@@ -5,7 +5,7 @@
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * http://cake.codehaus.org/LICENSE
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -16,55 +16,100 @@
 package org.codehaus.cake.ops;
 
 import java.io.Serializable;
+import static org.codehaus.cake.ops.Ops.*;
+import java.math.*;
+/**
+ * Various implementations of {@link LongPredicate}.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
+ *
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: LongOps.java 590 2008-03-14 08:16:12Z kasper $
+ */
+public final class LongOps {
 
-import org.codehaus.cake.ops.Ops.BinaryLongOp;
-import org.codehaus.cake.ops.Ops.LongOp;
-import org.codehaus.cake.ops.Ops.LongReducer;
+     final static LongAddReducer ADD_REDUCER = new LongAddReducer();
 
-public class LongOps {
-    private final static BinaryLongSubtractOp BINART_DOUBLE_SUBTRACT_OP = new BinaryLongSubtractOp();
-    private final static BinaryLongAddOp BINARY_DOUBLE_ADD_OP = new BinaryLongAddOp();
-    private final static LongAbs DOUBLE_ABS_OP = new LongAbs();
+     final static LongSubtractReducer SUBTRACT_REDUCER = new LongSubtractReducer();
     
+     final static LongDivideReducer DIVIDE_REDUCER = new LongDivideReducer();
+    
+     final static LongMultiplyReducer MULTIPLY_REDUCER = new LongMultiplyReducer();
+
+     final static LongAbsOp ABS_OP = new LongAbsOp();
+    /**
+     * A reducer returning the maximum of two long elements, using natural comparator.
+     * The Reducer is serializable.
+     */
+     static final LongReducer MAX_REDUCER = new NaturalLongMaxReducer();
+
+    /**
+     * A reducer returning the minimum of two long elements, using natural comparator.
+     * The Reducer is serializable.
+     */
+     static final LongReducer MIN_REDUCER = new NaturalLongMinReducer();
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private LongOps() {}
+    ///CLOVER:ON
     public static LongOp abs() {
-        return DOUBLE_ABS_OP;
+        return ABS_OP;
     }
+    public static LongReducer add() {
+        return ADD_REDUCER;
+    }
+    
     public static LongOp add(long add) {
         return new LongAddOp(add);
     }
-
-    public static BinaryLongOp add() {
-        return BINARY_DOUBLE_ADD_OP;
+    
+    public static LongReducer divide() {
+        return DIVIDE_REDUCER;
+    }
+    
+    public static LongOp divide(long divide) {
+        return new LongDivideOp(divide);
+    }
+    
+    public static LongReducer multiply() {
+        return MULTIPLY_REDUCER;
+    }
+    
+    public static LongOp multiply(long multiply) {
+        return new LongMultiplyOp(multiply);
+    }
+    
+    public static LongReducer subtract() {
+        return SUBTRACT_REDUCER;
+    }
+    
+    public static LongOp subtract(long substract) {
+        return new LongSubtractOp(substract);
+    }
+    /**
+     * A reducer returning the maximum of two long elements, using the specified
+     * comparator.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created reducer
+     */
+    public static LongReducer maxReducer(LongComparator comparator) {
+        return new LongMaxReducer(comparator);
     }
 
-    public static BinaryLongOp subtract() {
-        return BINART_DOUBLE_SUBTRACT_OP;
+    /**
+     * A reducer returning the minimum of two long elements, using the specified
+     * comparator.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created reducer
+     */
+    public static LongReducer minReducer(LongComparator comparator) {
+        return new LongMinReducer(comparator);
     }
-
-    public static LongOp divide(long add) {
-        return new LongDivideOp(add);
-    }
-
-    public static LongOp multiply(long add) {
-        return new LongMultiplyOp(add);
-    }
-    public static BinaryLongOp multiply() {
-        throw new UnsupportedOperationException();
-    }
-    static final class BinaryLongAddOp implements LongReducer, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -830758681673022439L;
-
-        public long op(long a, long b) {
-            return a + b;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return BINARY_DOUBLE_ADD_OP;
-        }
-    }
-    static final class BinaryLongSubtractOp implements LongReducer, Serializable {
+    static final class LongSubtractReducer implements LongReducer, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8583260658972887816L;
 
@@ -74,11 +119,53 @@ public class LongOps {
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return BINART_DOUBLE_SUBTRACT_OP;
+            return SUBTRACT_REDUCER;
         }
     }
+    
+    static final class LongAddReducer implements LongReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -830758681673022439L;
 
-    static final class LongAbs implements LongOp, Serializable {
+        public long op(long a, long b) {
+            return a + b;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return ADD_REDUCER;
+        }
+    }
+    
+    
+    static final class LongMultiplyReducer implements LongReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -130758681673022439L;
+
+        public long op(long a, long b) {
+            return a / b;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return MULTIPLY_REDUCER;
+        }
+    }
+    
+    static final class LongDivideReducer implements LongReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -330758681673022439L;
+
+        public long op(long a, long b) {
+            return a * b;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return DIVIDE_REDUCER;
+        }
+    }
+    static final class LongAbsOp implements LongOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8583260658972887816L;
 
@@ -88,7 +175,98 @@ public class LongOps {
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return DOUBLE_ABS_OP;
+            return ABS_OP;
+        }
+    }
+    /**
+     * A reducer returning the maximum of two long elements, using the given comparator.
+     */
+    static final class LongMaxReducer implements LongReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 2065097741025480432L;
+
+        /** Comparator used when reducing. */
+        private final LongComparator comparator;
+
+        /**
+         * Creates a LongMaxReducer.
+         *
+         * @param comparator
+         *            the comparator to use
+         */
+        LongMaxReducer(LongComparator comparator) {
+            if (comparator == null) {
+                throw new NullPointerException("comparator is null");
+            }
+            this.comparator = comparator;
+        }
+
+        /** {@inheritDoc} */
+        public long op(long a, long b) {
+            return comparator.compare(a, b) >= 0 ? a : b;
+        }
+    }
+
+    /**
+     * A reducer returning the minimum of two long elements, using the given comparator.
+     */
+    static final class LongMinReducer implements LongReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 6109941145562459503L;
+
+        /** Comparator used when reducing. */
+        private final LongComparator comparator;
+
+        /**
+         * Creates a LongMinReducer.
+         *
+         * @param comparator
+         *            the comparator to use
+         */
+        LongMinReducer(LongComparator comparator) {
+            if (comparator == null) {
+                throw new NullPointerException("comparator is null");
+            }
+            this.comparator = comparator;
+        }
+
+        /** {@inheritDoc} */
+        public long op(long a, long b) {
+            return comparator.compare(a, b) <= 0 ? a : b;
+        }
+    }
+    
+        /** A reducer returning the maximum of two long elements, using natural comparator. */
+    static final class NaturalLongMaxReducer implements LongReducer, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -5902864811727900806L;
+
+        /** {@inheritDoc} */
+        public long op(long a, long b) {
+            return Math.max(a, b);
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return MAX_REDUCER;
+        }
+    }
+
+    /** A reducer returning the minimum of two long elements, using natural comparator. */
+    static final class NaturalLongMinReducer implements LongReducer, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 9005140841348156699L;
+
+        /** {@inheritDoc} */
+        public long op(long a, long b) {
+            return Math.min(a, b);
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return MIN_REDUCER;
         }
     }
     
@@ -106,7 +284,20 @@ public class LongOps {
             return a + add;
         }
     }
+    static final class LongSubtractOp implements LongOp, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -23423423410L;
 
+        private final long subtract;
+
+        public LongSubtractOp(long subtract) {
+            this.subtract = subtract;
+        }
+
+        public long op(long a) {
+            return a - subtract;
+        }
+    }
     static final class LongDivideOp implements LongOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 661378303438906777L;
@@ -118,7 +309,7 @@ public class LongOps {
         }
 
         public long op(long a) {
-            return a / divide;
+            return a * divide;
         }
     }
 
@@ -133,7 +324,7 @@ public class LongOps {
         }
 
         public long op(long a) {
-            return a * multiply;
+            return a / multiply;
         }
     }
 }

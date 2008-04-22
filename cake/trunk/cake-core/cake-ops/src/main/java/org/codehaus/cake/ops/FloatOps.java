@@ -19,101 +19,101 @@ import java.io.Serializable;
 import static org.codehaus.cake.ops.Ops.*;
 import java.math.*;
 /**
- * Various implementations of {@link DoublePredicate}.
+ * Various implementations of {@link FloatPredicate}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: DoubleOps.java 590 2008-03-14 08:16:12Z kasper $
+ * @version $Id: FloatOps.java 590 2008-03-14 08:16:12Z kasper $
  */
-public final class DoubleOps {
+public final class FloatOps {
 
-     final static DoubleAddReducer ADD_REDUCER = new DoubleAddReducer();
+     final static FloatAddReducer ADD_REDUCER = new FloatAddReducer();
 
-     final static DoubleSubtractReducer SUBTRACT_REDUCER = new DoubleSubtractReducer();
+     final static FloatSubtractReducer SUBTRACT_REDUCER = new FloatSubtractReducer();
     
-     final static DoubleDivideReducer DIVIDE_REDUCER = new DoubleDivideReducer();
+     final static FloatDivideReducer DIVIDE_REDUCER = new FloatDivideReducer();
     
-     final static DoubleMultiplyReducer MULTIPLY_REDUCER = new DoubleMultiplyReducer();
+     final static FloatMultiplyReducer MULTIPLY_REDUCER = new FloatMultiplyReducer();
 
-     final static DoubleAbsOp ABS_OP = new DoubleAbsOp();
+     final static FloatAbsOp ABS_OP = new FloatAbsOp();
     /**
-     * A reducer returning the maximum of two double elements, using natural comparator.
+     * A reducer returning the maximum of two float elements, using natural comparator.
      * The Reducer is serializable.
      */
-     static final DoubleReducer MAX_REDUCER = new NaturalDoubleMaxReducer();
+     static final FloatReducer MAX_REDUCER = new NaturalFloatMaxReducer();
 
     /**
-     * A reducer returning the minimum of two double elements, using natural comparator.
+     * A reducer returning the minimum of two float elements, using natural comparator.
      * The Reducer is serializable.
      */
-     static final DoubleReducer MIN_REDUCER = new NaturalDoubleMinReducer();
+     static final FloatReducer MIN_REDUCER = new NaturalFloatMinReducer();
     ///CLOVER:OFF
     /** Cannot instantiate. */
-    private DoubleOps() {}
+    private FloatOps() {}
     ///CLOVER:ON
-    public static DoubleOp abs() {
+    public static FloatOp abs() {
         return ABS_OP;
     }
-    public static DoubleReducer add() {
+    public static FloatReducer add() {
         return ADD_REDUCER;
     }
     
-    public static DoubleOp add(double add) {
-        return new DoubleAddOp(add);
+    public static FloatOp add(float add) {
+        return new FloatAddOp(add);
     }
     
-    public static DoubleReducer divide() {
+    public static FloatReducer divide() {
         return DIVIDE_REDUCER;
     }
     
-    public static DoubleOp divide(double divide) {
-        return new DoubleDivideOp(divide);
+    public static FloatOp divide(float divide) {
+        return new FloatDivideOp(divide);
     }
     
-    public static DoubleReducer multiply() {
+    public static FloatReducer multiply() {
         return MULTIPLY_REDUCER;
     }
     
-    public static DoubleOp multiply(double multiply) {
-        return new DoubleMultiplyOp(multiply);
+    public static FloatOp multiply(float multiply) {
+        return new FloatMultiplyOp(multiply);
     }
     
-    public static DoubleReducer subtract() {
+    public static FloatReducer subtract() {
         return SUBTRACT_REDUCER;
     }
     
-    public static DoubleOp subtract(double substract) {
-        return new DoubleSubtractOp(substract);
+    public static FloatOp subtract(float substract) {
+        return new FloatSubtractOp(substract);
     }
     /**
-     * A reducer returning the maximum of two double elements, using the specified
+     * A reducer returning the maximum of two float elements, using the specified
      * comparator.
      *
      * @param comparator
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static DoubleReducer maxReducer(DoubleComparator comparator) {
-        return new DoubleMaxReducer(comparator);
+    public static FloatReducer maxReducer(FloatComparator comparator) {
+        return new FloatMaxReducer(comparator);
     }
 
     /**
-     * A reducer returning the minimum of two double elements, using the specified
+     * A reducer returning the minimum of two float elements, using the specified
      * comparator.
      *
      * @param comparator
      *            the comparator to use when comparing elements
      * @return the newly created reducer
      */
-    public static DoubleReducer minReducer(DoubleComparator comparator) {
-        return new DoubleMinReducer(comparator);
+    public static FloatReducer minReducer(FloatComparator comparator) {
+        return new FloatMinReducer(comparator);
     }
-    static final class DoubleSubtractReducer implements DoubleReducer, Serializable {
+    static final class FloatSubtractReducer implements FloatReducer, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8583260658972887816L;
 
-        public double op(double a, double b) {
+        public float op(float a, float b) {
             return a - b;
         }
 
@@ -123,11 +123,11 @@ public final class DoubleOps {
         }
     }
     
-    static final class DoubleAddReducer implements DoubleReducer, Serializable {
+    static final class FloatAddReducer implements FloatReducer, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -830758681673022439L;
 
-        public double op(double a, double b) {
+        public float op(float a, float b) {
             return a + b;
         }
 
@@ -138,11 +138,11 @@ public final class DoubleOps {
     }
     
     
-    static final class DoubleMultiplyReducer implements DoubleReducer, Serializable {
+    static final class FloatMultiplyReducer implements FloatReducer, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -130758681673022439L;
 
-        public double op(double a, double b) {
+        public float op(float a, float b) {
             return a / b;
         }
 
@@ -152,11 +152,11 @@ public final class DoubleOps {
         }
     }
     
-    static final class DoubleDivideReducer implements DoubleReducer, Serializable {
+    static final class FloatDivideReducer implements FloatReducer, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -330758681673022439L;
 
-        public double op(double a, double b) {
+        public float op(float a, float b) {
             return a * b;
         }
 
@@ -165,11 +165,11 @@ public final class DoubleOps {
             return DIVIDE_REDUCER;
         }
     }
-    static final class DoubleAbsOp implements DoubleOp, Serializable {
+    static final class FloatAbsOp implements FloatOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8583260658972887816L;
 
-        public double op(double a) {
+        public float op(float a) {
             return Math.abs(a);
         }
 
@@ -179,22 +179,22 @@ public final class DoubleOps {
         }
     }
     /**
-     * A reducer returning the maximum of two double elements, using the given comparator.
+     * A reducer returning the maximum of two float elements, using the given comparator.
      */
-    static final class DoubleMaxReducer implements DoubleReducer, Serializable {
+    static final class FloatMaxReducer implements FloatReducer, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 2065097741025480432L;
 
         /** Comparator used when reducing. */
-        private final DoubleComparator comparator;
+        private final FloatComparator comparator;
 
         /**
-         * Creates a DoubleMaxReducer.
+         * Creates a FloatMaxReducer.
          *
          * @param comparator
          *            the comparator to use
          */
-        DoubleMaxReducer(DoubleComparator comparator) {
+        FloatMaxReducer(FloatComparator comparator) {
             if (comparator == null) {
                 throw new NullPointerException("comparator is null");
             }
@@ -202,28 +202,28 @@ public final class DoubleOps {
         }
 
         /** {@inheritDoc} */
-        public double op(double a, double b) {
+        public float op(float a, float b) {
             return comparator.compare(a, b) >= 0 ? a : b;
         }
     }
 
     /**
-     * A reducer returning the minimum of two double elements, using the given comparator.
+     * A reducer returning the minimum of two float elements, using the given comparator.
      */
-    static final class DoubleMinReducer implements DoubleReducer, Serializable {
+    static final class FloatMinReducer implements FloatReducer, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 6109941145562459503L;
 
         /** Comparator used when reducing. */
-        private final DoubleComparator comparator;
+        private final FloatComparator comparator;
 
         /**
-         * Creates a DoubleMinReducer.
+         * Creates a FloatMinReducer.
          *
          * @param comparator
          *            the comparator to use
          */
-        DoubleMinReducer(DoubleComparator comparator) {
+        FloatMinReducer(FloatComparator comparator) {
             if (comparator == null) {
                 throw new NullPointerException("comparator is null");
             }
@@ -231,19 +231,19 @@ public final class DoubleOps {
         }
 
         /** {@inheritDoc} */
-        public double op(double a, double b) {
+        public float op(float a, float b) {
             return comparator.compare(a, b) <= 0 ? a : b;
         }
     }
     
-        /** A reducer returning the maximum of two double elements, using natural comparator. */
-    static final class NaturalDoubleMaxReducer implements DoubleReducer, Serializable {
+        /** A reducer returning the maximum of two float elements, using natural comparator. */
+    static final class NaturalFloatMaxReducer implements FloatReducer, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -5902864811727900806L;
 
         /** {@inheritDoc} */
-        public double op(double a, double b) {
+        public float op(float a, float b) {
             return Math.max(a, b);
         }
 
@@ -253,14 +253,14 @@ public final class DoubleOps {
         }
     }
 
-    /** A reducer returning the minimum of two double elements, using natural comparator. */
-    static final class NaturalDoubleMinReducer implements DoubleReducer, Serializable {
+    /** A reducer returning the minimum of two float elements, using natural comparator. */
+    static final class NaturalFloatMinReducer implements FloatReducer, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = 9005140841348156699L;
 
         /** {@inheritDoc} */
-        public double op(double a, double b) {
+        public float op(float a, float b) {
             return Math.min(a, b);
         }
 
@@ -270,60 +270,60 @@ public final class DoubleOps {
         }
     }
     
-    static final class DoubleAddOp implements DoubleOp, Serializable {
+    static final class FloatAddOp implements FloatOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -6604604690824553900L;
 
-        private final double add;
+        private final float add;
 
-        public DoubleAddOp(double add) {
+        public FloatAddOp(float add) {
             this.add = add;
         }
 
-        public double op(double a) {
+        public float op(float a) {
             return a + add;
         }
     }
-    static final class DoubleSubtractOp implements DoubleOp, Serializable {
+    static final class FloatSubtractOp implements FloatOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -23423423410L;
 
-        private final double subtract;
+        private final float subtract;
 
-        public DoubleSubtractOp(double subtract) {
+        public FloatSubtractOp(float subtract) {
             this.subtract = subtract;
         }
 
-        public double op(double a) {
+        public float op(float a) {
             return a - subtract;
         }
     }
-    static final class DoubleDivideOp implements DoubleOp, Serializable {
+    static final class FloatDivideOp implements FloatOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 661378303438906777L;
 
-        private final double divide;
+        private final float divide;
 
-        public DoubleDivideOp(double divide) {
+        public FloatDivideOp(float divide) {
             this.divide = divide;
         }
 
-        public double op(double a) {
+        public float op(float a) {
             return a * divide;
         }
     }
 
-    static final class DoubleMultiplyOp implements DoubleOp, Serializable {
+    static final class FloatMultiplyOp implements FloatOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 6099641660816235381L;
 
-        private final double multiply;
+        private final float multiply;
 
-        public DoubleMultiplyOp(double multiply) {
+        public FloatMultiplyOp(float multiply) {
             this.multiply = multiply;
         }
 
-        public double op(double a) {
+        public float op(float a) {
             return a / multiply;
         }
     }
