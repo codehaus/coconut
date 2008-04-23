@@ -1,10 +1,11 @@
 package org.codehaus.cake.internal.attribute.generator;
 
-import org.codehaus.cake.attribute.AtrStubs;
+import org.codehaus.cake.attribute.IntAttribute;
 import org.junit.Test;
 
-public class AttributeInfoTest extends AtrStubs {
+public class AttributeInfoTest {
 
+    private final static IntAttribute I_1 = new IntAttribute("L_1", 1) {};
     @Test(expected = NullPointerException.class)
     public void testConstructor() {
         new DefaultAttributeConfiguration(null, false, false);
