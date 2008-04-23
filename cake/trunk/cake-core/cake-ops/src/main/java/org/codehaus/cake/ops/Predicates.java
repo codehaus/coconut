@@ -26,12 +26,11 @@ import java.util.List;
 import org.codehaus.cake.ops.Ops.Op;
 import org.codehaus.cake.ops.Ops.Predicate;
 
-
 /**
  * Various implementations of {@link Predicate}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Predicates.java 590 2008-03-14 08:16:12Z kasper $
  */
@@ -54,32 +53,30 @@ public final class Predicates {
 
     /**
      * As {@link #allTrue(Predicate[])} except taking an {@link Iterable} as parameter.
-     *
+     * 
      * @param predicates
      *            the predicates to evaluate against
      * @return the newly created Predicate
      * @param <E>
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
-     *             if the specified iterable is <code>null</code> or contains a null
-     *             element
+     *             if the specified iterable is <code>null</code> or contains a null element
      */
     public static <E> Predicate<E> allTrue(Iterable<? extends Predicate<? super E>> predicates) {
         return new AllPredicate<E>(predicates);
     }
 
     /**
-     * Creates a Predicate that evaluates to true iff each of the specified predicates
-     * evaluates to true for the element being tested. The returned predicate uses
-     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
-     * only evaluated if the previous arguments does not suffice to determine the truth
-     * value.
+     * Creates a Predicate that evaluates to true iff each of the specified predicates evaluates to
+     * true for the element being tested. The returned predicate uses short-circuit evaluation (or
+     * minimal evaluation). That is, subsequent arguments are only evaluated if the previous
+     * arguments does not suffice to determine the truth value.
      * <p>
      * The Predicate will use a copy of the array of supplied predicates.
      * <p>
      * If all the supplied predicates are serializable the returned predicate will also be
      * serializable.
-     *
+     * 
      * @param predicates
      *            the predicates to test against
      * @return the newly created Predicate
@@ -93,19 +90,19 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that performs a logical AND on two supplied predicates. The
-     * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
-     * if the specified left side predicate evaluates to <code>false</code> the right
-     * side predicate will not be evaluated. More formally
-     *
+     * Creates a Predicate that performs a logical AND on two supplied predicates. The returned
+     * predicate uses short-circuit evaluation (or minimal evaluation). That is, if the specified
+     * left side predicate evaluates to <code>false</code> the right side predicate will not be
+     * evaluated. More formally
+     * 
      * <pre>
      * left.evaluate(element) &amp;&amp; right.evaluate(element);
      * </pre>
-     *
+     * 
      * <p>
-     * If both of the supplied predicates are serializable the returned predicate will
-     * also be serializable.
-     *
+     * If both of the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
      * @param left
      *            the left side Predicate
      * @param right
@@ -121,17 +118,16 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to true if any of the specified elements are
-     * equal to the element that is being tested. The returned predicate uses
-     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
-     * only evaluated if the previous arguments does not suffice to determine the truth
-     * value.
+     * Creates a Predicate that evaluates to true if any of the specified elements are equal to the
+     * element that is being tested. The returned predicate uses short-circuit evaluation (or
+     * minimal evaluation). That is, subsequent arguments are only evaluated if the previous
+     * arguments does not suffice to determine the truth value.
      * <p>
      * The Predicate will use a copy of the array of supplied predicates.
      * <p>
      * If all the supplied predicates are serializable the returned predicate will also be
      * serializable.
-     *
+     * 
      * @param elements
      *            the elements to test against
      * @return the newly created Predicate
@@ -151,15 +147,14 @@ public final class Predicates {
 
     /**
      * As {@link #anyEquals(Object...)} except taking an {@link Iterable} as parameter.
-     *
+     * 
      * @param elements
      *            the elements to test against
      * @return the newly created Predicate
      * @param <E>
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
-     *             if the specified iterable is <code>null</code> or contains a null
-     *             element
+     *             if the specified iterable is <code>null</code> or contains a null element
      * @see #equalsTo(Object)
      */
     public static <E> Predicate<E> anyEquals(Iterable<? extends E> elements) {
@@ -172,32 +167,30 @@ public final class Predicates {
 
     /**
      * As {@link #anyTrue(Predicate[])} except taking an {@link Iterable} as parameter.
-     *
+     * 
      * @param predicates
      *            the predicates to evaluate against
      * @return the newly created Predicate
      * @param <E>
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
-     *             if the specified iterable is <code>null</code> or contains a null
-     *             element
+     *             if the specified iterable is <code>null</code> or contains a null element
      */
     public static <E> Predicate<E> anyTrue(Iterable<? extends Predicate<? super E>> predicates) {
         return new AnyPredicate<E>(predicates);
     }
 
     /**
-     * Creates a Predicate that evaluates to true if any of the specified predicates
-     * evaluates to true for the element being tested. The returned predicate uses
-     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
-     * only evaluated if the previous arguments does not suffice to determine the truth
-     * value.
+     * Creates a Predicate that evaluates to true if any of the specified predicates evaluates to
+     * true for the element being tested. The returned predicate uses short-circuit evaluation (or
+     * minimal evaluation). That is, subsequent arguments are only evaluated if the previous
+     * arguments does not suffice to determine the truth value.
      * <p>
      * The Predicate will use a copy of the array of supplied predicates.
      * <p>
      * If all the supplied predicates are serializable the returned predicate will also be
      * serializable.
-     *
+     * 
      * @param predicates
      *            the predicates to test against
      * @return the newly created Predicate
@@ -211,19 +204,18 @@ public final class Predicates {
     }
 
     /**
-     * Returns a predicate that tests whether the class of the element being tested is
-     * either the same as, or is a superclass or superinterface of, any of the classes or
-     * interfaces specified. It returns <code>true</code> if so; otherwise it returns
-     * <code>false</code>. This predicate is serializable. The returned predicate uses
-     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
-     * only evaluated if the previous arguments does not suffice to determine the truth
-     * value.
+     * Returns a predicate that tests whether the class of the element being tested is either the
+     * same as, or is a superclass or superinterface of, any of the classes or interfaces specified.
+     * It returns <code>true</code> if so; otherwise it returns <code>false</code>. This
+     * predicate is serializable. The returned predicate uses short-circuit evaluation (or minimal
+     * evaluation). That is, subsequent arguments are only evaluated if the previous arguments does
+     * not suffice to determine the truth value.
      * <p>
      * The Predicate will use a copy of the array of supplied predicates.
      * <p>
      * If all the supplied predicates are serializable the returned predicate will also be
      * serializable.
-     *
+     * 
      * @param classes
      *            the types to test against
      * @return the newly created Predicate
@@ -241,13 +233,12 @@ public final class Predicates {
 
     /**
      * As {@link #anyType(Class...)} except taking an {@link Iterable} as parameter.
-     *
+     * 
      * @param classes
      *            the types to test against
      * @return the newly created Predicate
      * @throws NullPointerException
-     *             if the specified iterable is <code>null</code> or contains a null
-     *             element
+     *             if the specified iterable is <code>null</code> or contains a null element
      * @see #isTypeOf(Class)
      */
     public static Predicate anyType(Iterable<? extends Class<?>> classes) {
@@ -259,22 +250,22 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to true if the element being tested is between
-     * the two specified elements (both inclusive) according to the <i>natural ordering</i>
-     * of the elements. More formally,
-     *
+     * Creates a Predicate that evaluates to true if the element being tested is between the two
+     * specified elements (both inclusive) according to the <i>natural ordering</i> of the
+     * elements. More formally,
+     * 
      * <pre>
      * left &lt;= element &lt;= right
      * </pre>
-     *
-     * All elements evaluated must implement the <tt>Comparable</tt> interface.
-     * Furthermore, all elements evaluated must be <i>mutually comparable</i> (that is,
-     * <tt>left.compareTo(element)</tt> or <tt>right.compareTo(element)</tt> must not
-     * throw a <tt>ClassCastException</tt>.
+     * 
+     * All elements evaluated must implement the <tt>Comparable</tt> interface. Furthermore, all
+     * elements evaluated must be <i>mutually comparable</i> (that is,
+     * <tt>left.compareTo(element)</tt> or <tt>right.compareTo(element)</tt> must not throw a
+     * <tt>ClassCastException</tt>.
      * <p>
-     * If both of the supplied elements are serializable the returned predicate will also
-     * be serializable.
-     *
+     * If both of the supplied elements are serializable the returned predicate will also be
+     * serializable.
+     * 
      * @param left
      *            the left-hand element to compare with
      * @param right
@@ -294,9 +285,9 @@ public final class Predicates {
     }
 
     /**
-     * As {@link #between(Comparable, Comparable)} except using the specified
-     * {@link Comparator} when evaluating elements.
-     *
+     * As {@link #between(Comparable, Comparable)} except using the specified {@link Comparator}
+     * when evaluating elements.
+     * 
      * @param left
      *            the left-hand element to compare with
      * @param right
@@ -316,13 +307,11 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to <code>true</code> iff the element being
-     * evaluated is the same or {@link Object#equals equal} to the element being specified
-     * in this method.
+     * Creates a Predicate that evaluates to <code>true</code> iff the element being evaluated is
+     * the same or {@link Object#equals equal} to the element being specified in this method.
      * <p>
-     * If the specified object is serializable the returned predicate will also be
-     * serializable.
-     *
+     * If the specified object is serializable the returned predicate will also be serializable.
+     * 
      * @param element
      *            the element to use for comparison
      * @return the newly created Predicate
@@ -336,13 +325,12 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to <code>true</code> if the element being
-     * tested is greater then the element being used to construct the predicate. The
-     * predicate will use the objects natural comparator.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being tested is
+     * greater then the element being used to construct the predicate. The predicate will use the
+     * objects natural comparator.
      * <p>
-     * If the supplied element is serializable the returned predicate will also be
-     * serializable.
-     *
+     * If the supplied element is serializable the returned predicate will also be serializable.
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created Predicate
@@ -356,13 +344,13 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to <code>true</code> if the element being
-     * tested is greater then the element being used to construct the predicate. The
-     * predicate will use the specified Comparator to compare the objects.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being tested is
+     * greater then the element being used to construct the predicate. The predicate will use the
+     * specified Comparator to compare the objects.
      * <p>
-     * If the supplied element and Comparator is serializable the returned predicate will
-     * also be serializable.
-     *
+     * If the supplied element and Comparator is serializable the returned predicate will also be
+     * serializable.
+     * 
      * @param element
      *            the element to compare with
      * @param comparator
@@ -378,13 +366,12 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to <code>true</code> if the element being
-     * tested is greater then or equal to the element being used to construct the
-     * predicate. The predicate will use the objects natural comparator.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being tested is
+     * greater then or equal to the element being used to construct the predicate. The predicate
+     * will use the objects natural comparator.
      * <p>
-     * If the supplied element is serializable the returned predicate will also be
-     * serializable.
-     *
+     * If the supplied element is serializable the returned predicate will also be serializable.
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created Predicate
@@ -398,13 +385,13 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to <code>true</code> if the element being
-     * tested is greater then or equal to the element being used to construct the
-     * predicate. The predicate will use the specified Comparator to compare the objects.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being tested is
+     * greater then or equal to the element being used to construct the predicate. The predicate
+     * will use the specified Comparator to compare the objects.
      * <p>
-     * If the supplied element and Comparator is serializable the returned predicate will
-     * also be serializable.
-     *
+     * If the supplied element and Comparator is serializable the returned predicate will also be
+     * serializable.
+     * 
      * @param element
      *            the element to compare with
      * @param comparator
@@ -421,20 +408,20 @@ public final class Predicates {
     }
 
     /**
-     * Returns a Predicate that always evaluates to <code>false</code>. The returned
-     * predicate is serializable.
+     * Returns a Predicate that always evaluates to <code>false</code>. The returned predicate is
+     * serializable.
      * <p>
      * This example illustrates the type-safe way to obtain a false predicate:
-     *
+     * 
      * <pre>
      * Predicate&lt;String&gt; s = Predicates.falsePredicate();
      * </pre>
-     *
+     * 
      * Implementation note: Implementations of this method need not create a separate
-     * <tt>predicate</tt> object for each call. Using this method is likely to have
-     * comparable cost to using the like-named field. (Unlike this method, the field does
-     * not provide type safety.)
-     *
+     * <tt>predicate</tt> object for each call. Using this method is likely to have comparable
+     * cost to using the like-named field. (Unlike this method, the field does not provide type
+     * safety.)
+     * 
      * @see #FALSE
      * @return a Predicate that returns <tt>false</tt> for any element
      * @param <E>
@@ -444,19 +431,20 @@ public final class Predicates {
     public static <E> Predicate<E> isFalse() {
         return FALSE;
     }
+
     /**
-     * Returns a Predicate that returns <code>false</code> if the element being tested
-     * is <code>null</code>. This predicate is serializable.
+     * Returns a Predicate that returns <code>false</code> if the element being tested is
+     * <code>null</code>. This predicate is serializable.
      * <p>
      * Implementation note: Implementations of this method need not create a separate
-     * <tt>predicate</tt> object for each call. Using this method is likely to have
-     * comparable cost to using the like-named field. (Unlike this method, the field does
-     * not provide type safety.)
-     *
+     * <tt>predicate</tt> object for each call. Using this method is likely to have comparable
+     * cost to using the like-named field. (Unlike this method, the field does not provide type
+     * safety.)
+     * 
      * @param <E>
      *            the types that are accepted by the predicate.
-     * @return a Predicate that returns <code>false</code> if the element being tested
-     *         is <code>null</code>
+     * @return a Predicate that returns <code>false</code> if the element being tested is
+     *         <code>null</code>
      */
     public static <E> Predicate<E> isNotNull() {
         return IS_NOT_NULL;
@@ -467,10 +455,10 @@ public final class Predicates {
      * <code>null</code>. This predicate is serializable.
      * <p>
      * Implementation note: Implementations of this method need not create a separate
-     * <tt>predicate</tt> object for each call. Using this method is likely to have
-     * comparable cost to using the like-named field. (Unlike this method, the field does
-     * not provide type safety.)
-     *
+     * <tt>predicate</tt> object for each call. Using this method is likely to have comparable
+     * cost to using the like-named field. (Unlike this method, the field does not provide type
+     * safety.)
+     * 
      * @param <E>
      *            the types that are accepted by the predicate.
      * @return a Predicate that returns <code>true</code> if the element being tested is
@@ -481,20 +469,20 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that always evaluates to <code>true</code>. The returned
-     * predicate is serializable.
+     * Creates a Predicate that always evaluates to <code>true</code>. The returned predicate is
+     * serializable.
      * <p>
      * This example illustrates the type-safe way to obtain a true predicate:
-     *
+     * 
      * <pre>
      * Predicate&lt;String&gt; s = Predicates.truePredicate();
      * </pre>
-     *
+     * 
      * Implementation note: Implementations of this method need not create a separate
-     * <tt>predicate</tt> object for each call. Using this method is likely to have
-     * comparable cost to using the like-named field. (Unlike this method, the field does
-     * not provide type safety.)
-     *
+     * <tt>predicate</tt> object for each call. Using this method is likely to have comparable
+     * cost to using the like-named field. (Unlike this method, the field does not provide type
+     * safety.)
+     * 
      * @see #TRUE
      * @return a Predicate that returns <tt>true</tt> for any element
      * @param <E>
@@ -506,11 +494,11 @@ public final class Predicates {
     }
 
     /**
-     * Creates a predicate that tests whether the class of the element being tested is
-     * either the same as, or is a superclass or superinterface of, the class or interface
-     * represented by the specified Class parameter. It returns <code>true</code> if so;
-     * otherwise it returns <code>false</code>. This predicate is serializable.
-     *
+     * Creates a predicate that tests whether the class of the element being tested is either the
+     * same as, or is a superclass or superinterface of, the class or interface represented by the
+     * specified Class parameter. It returns <code>true</code> if so; otherwise it returns
+     * <code>false</code>. This predicate is serializable.
+     * 
      * @param clazz
      *            the class to test
      * @return the newly created Predicate
@@ -527,249 +515,8 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to <code>true</code> if the element being
-     * tested is less then the element being used to construct the predicate. The
-     * predicate will use the objects natural comparator.
-     * <p>
-     * If the supplied element is serializable the returned predicate will also be
-     * serializable.
-     *
-     * @param element
-     *            the element to compare with
-     * @return the newly created Predicate
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     * @throws NullPointerException
-     *             if the specified element is <code>null</code>
-     */
-    public static <E extends Comparable<? super E>> Predicate<E> lessThen(E element) {
-        return new LessThenPredicate<E>(element);
-    }
-
-    /**
-     * Creates a Predicate that evaluates to <code>true</code> if the element being
-     * tested is less then the element being used to construct the predicate. The
-     * predicate will use the specified Comparator to compare the objects.
-     * <p>
-     * If the supplied element and Comparator is serializable the returned predicate will
-     * also be serializable.
-     *
-     * @param element
-     *            the element to compare with
-     * @param comparator
-     *            the Comparator used for comparing elements
-     * @return the newly created Predicate
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     * @throws NullPointerException
-     *             if the specified element is <code>null</code>
-     */
-    public static <E> Predicate<E> lessThen(E element, final Comparator<? extends E> comparator) {
-        return new LessThenPredicate<E>(element, comparator);
-    }
-
-    /**
-     * Creates a Predicate that evaluates to <code>true</code> if the element being
-     * tested is less then or equal to the element being used to construct the predicate.
-     * The predicate will use the objects natural comparator.
-     * <p>
-     * If the supplied element is serializable the returned predicate will also be
-     * serializable.
-     *
-     * @param element
-     *            the element to compare with
-     * @return the newly created Predicate
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     * @throws NullPointerException
-     *             if the specified element is <code>null</code>
-     */
-    public static <E extends Comparable<? super E>> Predicate<E> lessThenOrEqual(E element) {
-        return new LessThenOrEqualPredicate<E>(element);
-    }
-
-    /**
-     * Creates a Predicate that evaluates to <code>true</code> if the element being
-     * tested is less then or equal to the element being used to construct the predicate.
-     * The predicate will use the specified Comparator to compare the objects.
-     * <p>
-     * If the supplied element and Comparator is serializable the returned predicate will
-     * also be serializable.
-     *
-     * @param element
-     *            the element to compare with
-     * @param comparator
-     *            the Comparator used for comparing elements
-     * @return the newly created Predicate
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     * @throws NullPointerException
-     *             if the specified element is <code>null</code>
-     */
-    public static <E> Predicate<E> lessThenOrEqual(E element,
-            final Comparator<? extends E> comparator) {
-        return new LessThenOrEqualPredicate<E>(element, comparator);
-    }
-
-    /**
-     * Creates a Predicate that first applies the specified mapper to the argument before
-     * evaluating the specified predicate. More formally
-     *
-     * <pre>
-     * predicate.evaluate(mapper.map(element));
-     * </pre>
-     *
-     * <p>
-     * If both the supplied mapper and predicate are serializable the returned predicate
-     * will also be serializable.
-     *
-     * @param mapper
-     *            the Mapper that will map the element
-     * @param predicate
-     *            the Predicate that will evaluate the mapped element
-     * @return the newly created Predicate
-     * @throws NullPointerException
-     *             if either the specified mapper or predicate are <code>null</code>
-     * @param <F>
-     *            the type of elements accepted by the Predicate being created
-     * @param <T>
-     *            the type of elements accepted by the specified Predicate
-     */
-    public static <F, T> Predicate<F> mapAndEvaluate(final Op<F, T> mapper,
-            Predicate<? super T> predicate) {
-        return new MapAndEvaluatePredicate<F, T>(mapper, predicate);
-    }
-
-    /**
-     * Creates a Predicate that performs a logical logical NOT on the supplied Predicate.
-     * More formally
-     *
-     * <pre>
-     * !predicate.evaluate(element);
-     * </pre>
-     *
-     * <p>
-     * If the specified predicate is serializable the returned predicate will also be
-     * serializable.
-     *
-     * @param predicate
-     *            the predicate to negate
-     * @return the newly created Predicate
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     * @throws NullPointerException
-     *             if the specified predicate is <code>null</code>
-     */
-    public static <E> Predicate<E> not(Predicate<? super E> predicate) {
-        return new NotPredicate<E>(predicate);
-    }
-
-    public static <E> Predicate<E> notEqualsTo(E element) {
-        return not(equalsTo(element));
-    }
-
-    /**
-     * Creates a new Predicate that will evaluate to <code>false</code> if the specified
-     * element is <code>null</code>. Otherwise, it will return the evalutation result
-     * of the specified predicate evaluate the element. More formally
-     *
-     * <pre>
-     * element!=null &amp;&amp; predicate.evaluate(element);
-     * </pre>
-     *
-     * <p>
-     * If the specified predicate is serializable the returned predicate will also be
-     * serializable.
-     *
-     * @param predicate
-     *            the predicate
-     * @return the newly created Predicate
-     * @throws NullPointerException
-     *             if the specified predicate is <code>null</code>
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     */
-    public static <E> Predicate<E> notNullAnd(Predicate<? super E> predicate) {
-        return and(IS_NOT_NULL, predicate);
-    }
-
-    /**
-     * Creates a Predicate that performs a logical OR on two supplied predicates. The
-     * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
-     * if the specified left side predicate evaluates to <code>true</code> the right
-     * side predicate will not be evaluated. More formally
-     *
-     * <pre>
-     * left.evaluate(element) || right.evaluate(element);
-     * </pre>
-     *
-     * <p>
-     * If both of the supplied predicates are serializable the returned predicate will
-     * also be serializable.
-     *
-     * @param left
-     *            the left side Predicate
-     * @param right
-     *            the right side Predicate
-     * @return the newly created Predicate
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     * @throws NullPointerException
-     *             if any of the specified predicates are <code>null</code>
-     */
-    public static <E> Predicate<E> or(Predicate<? super E> left, Predicate<? super E> right) {
-        return new OrPredicate<E>(left, right);
-    }
-
-    /**
-     * Creates a Predicate that evaluates to <code>true</code> iff the element being
-     * evaluated has the same object identity as the element being specified in this
-     * method.
-     * <p>
-     * If the specified object is serializable the returned predicate will also be
-     * serializable.
-     *
-     * @param element
-     *            the element to use for comparison
-     * @return the newly created Predicate
-     * @throws NullPointerException
-     *             if the specified element is <code>null</code>
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     */
-    public static <E> Predicate<E> sameAs(E element) {
-        return new IsSamePredicate<E>(element);
-    }
-
-    /**
-     * Creates a Predicate that performs a logical logical exclusive OR (XOR) on two
-     * supplied predicates. More formally
-     *
-     * <pre>
-     * left.evaluate(element) &circ; right.evaluate(element);
-     * </pre>
-     *
-     * <p>
-     * If both of the supplied predicates are serializable the returned predicate will
-     * also be serializable.
-     *
-     * @param left
-     *            the left side Predicate
-     * @param right
-     *            the right side Predicate
-     * @return the newly created Predicate
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     * @throws NullPointerException
-     *             if any of the specified predicates are <code>null</code>
-     */
-    public static <E> Predicate<E> xor(Predicate<? super E> left, Predicate<? super E> right) {
-        return new XorPredicate<E>(left, right);
-    }
-
-    /**
      * Creates an array of predicates from an {@link Iterable}.
-     *
+     * 
      * @param iterable
      *            the iterable to convert
      * @return and array of predicate
@@ -791,8 +538,243 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that tests that <tt>all</tt> of the supplied Predicates accepts a
-     * given element.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being tested is less
+     * then the element being used to construct the predicate. The predicate will use the objects
+     * natural comparator.
+     * <p>
+     * If the supplied element is serializable the returned predicate will also be serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     */
+    public static <E extends Comparable<? super E>> Predicate<E> lessThen(E element) {
+        return new LessThenPredicate<E>(element);
+    }
+
+    /**
+     * Creates a Predicate that evaluates to <code>true</code> if the element being tested is less
+     * then the element being used to construct the predicate. The predicate will use the specified
+     * Comparator to compare the objects.
+     * <p>
+     * If the supplied element and Comparator is serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @param comparator
+     *            the Comparator used for comparing elements
+     * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     */
+    public static <E> Predicate<E> lessThen(E element, final Comparator<? extends E> comparator) {
+        return new LessThenPredicate<E>(element, comparator);
+    }
+
+    /**
+     * Creates a Predicate that evaluates to <code>true</code> if the element being tested is less
+     * then or equal to the element being used to construct the predicate. The predicate will use
+     * the objects natural comparator.
+     * <p>
+     * If the supplied element is serializable the returned predicate will also be serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     */
+    public static <E extends Comparable<? super E>> Predicate<E> lessThenOrEqual(E element) {
+        return new LessThenOrEqualPredicate<E>(element);
+    }
+
+    /**
+     * Creates a Predicate that evaluates to <code>true</code> if the element being tested is less
+     * then or equal to the element being used to construct the predicate. The predicate will use
+     * the specified Comparator to compare the objects.
+     * <p>
+     * If the supplied element and Comparator is serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @param comparator
+     *            the Comparator used for comparing elements
+     * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     */
+    public static <E> Predicate<E> lessThenOrEqual(E element,
+            final Comparator<? extends E> comparator) {
+        return new LessThenOrEqualPredicate<E>(element, comparator);
+    }
+
+    /**
+     * Creates a Predicate that first applies the specified mapper to the argument before evaluating
+     * the specified predicate. More formally
+     * 
+     * <pre>
+     * predicate.evaluate(mapper.map(element));
+     * </pre>
+     * 
+     * <p>
+     * If both the supplied mapper and predicate are serializable the returned predicate will also
+     * be serializable.
+     * 
+     * @param mapper
+     *            the Mapper that will map the element
+     * @param predicate
+     *            the Predicate that will evaluate the mapped element
+     * @return the newly created Predicate
+     * @throws NullPointerException
+     *             if either the specified mapper or predicate are <code>null</code>
+     * @param <F>
+     *            the type of elements accepted by the Predicate being created
+     * @param <T>
+     *            the type of elements accepted by the specified Predicate
+     */
+    public static <F, T> Predicate<F> mapAndEvaluate(final Op<F, T> mapper,
+            Predicate<? super T> predicate) {
+        return new MapAndEvaluatePredicate<F, T>(mapper, predicate);
+    }
+
+    /**
+     * Creates a Predicate that performs a logical logical NOT on the supplied Predicate. More
+     * formally
+     * 
+     * <pre>
+     * !predicate.evaluate(element);
+     * </pre>
+     * 
+     * <p>
+     * If the specified predicate is serializable the returned predicate will also be serializable.
+     * 
+     * @param predicate
+     *            the predicate to negate
+     * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified predicate is <code>null</code>
+     */
+    public static <E> Predicate<E> not(Predicate<? super E> predicate) {
+        return new NotPredicate<E>(predicate);
+    }
+
+    public static <E> Predicate<E> notEqualsTo(E element) {
+        return not(equalsTo(element));
+    }
+
+    /**
+     * Creates a new Predicate that will evaluate to <code>false</code> if the specified element
+     * is <code>null</code>. Otherwise, it will return the evalutation result of the specified
+     * predicate evaluate the element. More formally
+     * 
+     * <pre>
+     * element!=null &amp;&amp; predicate.evaluate(element);
+     * </pre>
+     * 
+     * <p>
+     * If the specified predicate is serializable the returned predicate will also be serializable.
+     * 
+     * @param predicate
+     *            the predicate
+     * @return the newly created Predicate
+     * @throws NullPointerException
+     *             if the specified predicate is <code>null</code>
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
+    public static <E> Predicate<E> notNullAnd(Predicate<? super E> predicate) {
+        return and(IS_NOT_NULL, predicate);
+    }
+
+    /**
+     * Creates a Predicate that performs a logical OR on two supplied predicates. The returned
+     * predicate uses short-circuit evaluation (or minimal evaluation). That is, if the specified
+     * left side predicate evaluates to <code>true</code> the right side predicate will not be
+     * evaluated. More formally
+     * 
+     * <pre>
+     * left.evaluate(element) || right.evaluate(element);
+     * </pre>
+     * 
+     * <p>
+     * If both of the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param left
+     *            the left side Predicate
+     * @param right
+     *            the right side Predicate
+     * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if any of the specified predicates are <code>null</code>
+     */
+    public static <E> Predicate<E> or(Predicate<? super E> left, Predicate<? super E> right) {
+        return new OrPredicate<E>(left, right);
+    }
+
+    /**
+     * Creates a Predicate that evaluates to <code>true</code> iff the element being evaluated has
+     * the same object identity as the element being specified in this method.
+     * <p>
+     * If the specified object is serializable the returned predicate will also be serializable.
+     * 
+     * @param element
+     *            the element to use for comparison
+     * @return the newly created Predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
+    public static <E> Predicate<E> sameAs(E element) {
+        return new IsSamePredicate<E>(element);
+    }
+
+    /**
+     * Creates a Predicate that performs a logical logical exclusive OR (XOR) on two supplied
+     * predicates. More formally
+     * 
+     * <pre>
+     * left.evaluate(element) &circ; right.evaluate(element);
+     * </pre>
+     * 
+     * <p>
+     * If both of the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param left
+     *            the left side Predicate
+     * @param right
+     *            the right side Predicate
+     * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if any of the specified predicates are <code>null</code>
+     */
+    public static <E> Predicate<E> xor(Predicate<? super E> left, Predicate<? super E> right) {
+        return new XorPredicate<E>(left, right);
+    }
+
+    /**
+     * A Predicate that tests that <tt>all</tt> of the supplied Predicates accepts a given
+     * element.
      */
     static final class AllPredicate<E> implements Predicate<E>, Iterable<Predicate<? super E>>,
             Serializable {
@@ -805,7 +787,7 @@ public final class Predicates {
 
         /**
          * Constructs a new AllPredicate.
-         *
+         * 
          * @param iterable
          *            the iterable to test
          */
@@ -814,9 +796,9 @@ public final class Predicates {
         }
 
         /**
-         * Constructs a new AllPredicate. The Predicate will use a copy of the array of
-         * supplied predicates.
-         *
+         * Constructs a new AllPredicate. The Predicate will use a copy of the array of supplied
+         * predicates.
+         * 
          * @param predicates
          *            the predicates to test
          */
@@ -833,7 +815,7 @@ public final class Predicates {
 
         /**
          * Returns the predicates we are testing against.
-         *
+         * 
          * @return the predicates we are testing against
          */
         public List<Predicate<? super E>> getPredicates() {
@@ -847,7 +829,7 @@ public final class Predicates {
 
         /**
          * Returns <tt>true</tt> if all supplied Predicates accepts the element.
-         *
+         * 
          * @param element
          *            the element to test
          * @return <tt>true</tt> if all supplied Predicates accepts the element.
@@ -900,7 +882,7 @@ public final class Predicates {
 
         /**
          * Creates a new <code>AndPredicate</code>.
-         *
+         * 
          * @param left
          *            the left side Predicate
          * @param right
@@ -920,7 +902,7 @@ public final class Predicates {
 
         /**
          * Returns the left side Predicate.
-         *
+         * 
          * @return the left side Predicate.
          */
         public Predicate<? super E> getLeftPredicate() {
@@ -929,7 +911,7 @@ public final class Predicates {
 
         /**
          * Returns the right side Predicate.
-         *
+         * 
          * @return the right side Predicate.
          */
         public Predicate<? super E> getRightPredicate() {
@@ -949,8 +931,7 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that tests that at least one of the supplied predicates accepts a given
-     * element.
+     * A Predicate that tests that at least one of the supplied predicates accepts a given element.
      */
     static final class AnyPredicate<E> implements Predicate<E>, Iterable<Predicate<? super E>>,
             Serializable {
@@ -963,7 +944,7 @@ public final class Predicates {
 
         /**
          * Constructs a new AllPredicate.
-         *
+         * 
          * @param iterable
          *            the iterable to test
          */
@@ -972,9 +953,9 @@ public final class Predicates {
         }
 
         /**
-         * Constructs a new AllPredicate. The Predicate will use a copy of the array of
-         * supplied predicates.
-         *
+         * Constructs a new AllPredicate. The Predicate will use a copy of the array of supplied
+         * predicates.
+         * 
          * @param predicates
          *            the predicates to test
          */
@@ -991,7 +972,7 @@ public final class Predicates {
 
         /**
          * Returns the predicates we are testing against.
-         *
+         * 
          * @return the predicates we are testing against
          */
         public List<Predicate<? super E>> getPredicates() {
@@ -1005,7 +986,7 @@ public final class Predicates {
 
         /**
          * Returns <tt>true</tt> if all supplied Predicates accepts the element.
-         *
+         * 
          * @param element
          *            the element to test
          * @return <tt>true</tt> if all supplied Predicates accepts the element.
@@ -1043,9 +1024,9 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to get
-     * an instance of this Predicate.
-     *
+     * A Predicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to get an instance
+     * of this Predicate.
+     * 
      * @see TruePredicate
      */
     static final class FalsePredicate implements Predicate, Serializable {
@@ -1058,7 +1039,7 @@ public final class Predicates {
 
         /**
          * Returns <tt>false</tt> for any element.
-         *
+         * 
          * @param element
          *            the element to test
          * @return <tt>false</tt> for any element
@@ -1067,15 +1048,15 @@ public final class Predicates {
             return false;
         }
 
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return FALSE;
+        }
+
         /** {@inheritDoc} */
         @Override
         public String toString() {
             return Boolean.FALSE.toString();
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return FALSE;
         }
     }
 
@@ -1088,8 +1069,8 @@ public final class Predicates {
         private static final long serialVersionUID = -6815218477296552273L;
 
         /**
-         * The comparator to compare elements with or null if the objects natural
-         * comparator should be used.
+         * The comparator to compare elements with or null if the objects natural comparator should
+         * be used.
          */
         private final Comparator comparator;
 
@@ -1098,7 +1079,7 @@ public final class Predicates {
 
         /**
          * Creates a new greater then predicate.
-         *
+         * 
          * @param object
          *            the object to compare with.
          * @param comparator
@@ -1116,7 +1097,7 @@ public final class Predicates {
 
         /**
          * Creates a new greater then predicate.
-         *
+         * 
          * @param object
          *            the object to compare with.
          * @param <T>
@@ -1131,8 +1112,8 @@ public final class Predicates {
         }
 
         /**
-         * @return the comparator to compare elements with or null if the objects natural
-         *         comparator should be used.
+         * @return the comparator to compare elements with or null if the objects natural comparator
+         *         should be used.
          */
         public Comparator<? extends E> getComparator() {
             return comparator;
@@ -1140,7 +1121,7 @@ public final class Predicates {
 
         /**
          * Returns the object we are comparing.
-         *
+         * 
          * @return the object we are comparing
          */
         public E getObject() {
@@ -1169,8 +1150,8 @@ public final class Predicates {
         private static final long serialVersionUID = -6815218477296552273L;
 
         /**
-         * The comparator to compare elements with or null if the objects natural
-         * comparator should be used.
+         * The comparator to compare elements with or null if the objects natural comparator should
+         * be used.
          */
         private final Comparator comparator;
 
@@ -1179,7 +1160,7 @@ public final class Predicates {
 
         /**
          * Creates a new greater then predicate.
-         *
+         * 
          * @param object
          *            the objetc to compare with.
          * @param comparator
@@ -1197,7 +1178,7 @@ public final class Predicates {
 
         /**
          * Creates a new greater then predicate.
-         *
+         * 
          * @param object
          *            the object to compare with.
          * @param <T>
@@ -1212,8 +1193,8 @@ public final class Predicates {
         }
 
         /**
-         * @return the comparator to compare elements with or null if the objects natural
-         *         comparator should be used.
+         * @return the comparator to compare elements with or null if the objects natural comparator
+         *         should be used.
          */
         public Comparator<? extends E> getComparator() {
             return comparator;
@@ -1221,7 +1202,7 @@ public final class Predicates {
 
         /**
          * Returns the object we are comparing.
-         *
+         * 
          * @return the object we are comparing
          */
         public E getObject() {
@@ -1242,8 +1223,8 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
-     * is {@link Object#equals equal} to the element being specified.
+     * A Predicate that evaluates to <code>true</code> iff the element being evaluated is
+     * {@link Object#equals equal} to the element being specified.
      */
     static final class IsEqualsPredicate<E> implements Predicate<E>, Serializable {
 
@@ -1255,7 +1236,7 @@ public final class Predicates {
 
         /**
          * Creates an IsEqualsPredicate.
-         *
+         * 
          * @param element
          *            the element to use for comparison
          * @throws NullPointerException
@@ -1270,7 +1251,7 @@ public final class Predicates {
 
         /**
          * Returns the element we are comparing with.
-         *
+         * 
          * @return the element we are comparing with
          */
         public E getElement() {
@@ -1290,8 +1271,7 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that returns <code>true</code> if the element being tested is not
-     * null.
+     * A Predicate that returns <code>true</code> if the element being tested is not null.
      */
     static final class IsNotNullFilter implements Predicate, Serializable {
         /** serialVersionUID. */
@@ -1302,21 +1282,21 @@ public final class Predicates {
             return element != null;
         }
 
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return IS_NOT_NULL;
+        }
+
         /** {@inheritDoc} */
         @Override
         public String toString() {
             return "is not null";
         }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return IS_NOT_NULL;
-        }
     }
 
     /**
-     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
-     * has the same object identity as the element being specified.
+     * A Predicate that evaluates to <code>true</code> iff the element being evaluated has the
+     * same object identity as the element being specified.
      */
     static final class IsSamePredicate<E> implements Predicate<E>, Serializable {
 
@@ -1328,7 +1308,7 @@ public final class Predicates {
 
         /**
          * Creates an IsSamePredicate.
-         *
+         * 
          * @param element
          *            the element to use for comparison
          * @throws NullPointerException
@@ -1343,7 +1323,7 @@ public final class Predicates {
 
         /**
          * Returns the element we are comparing with.
-         *
+         * 
          * @return the element we are comparing with
          */
         public E getElement() {
@@ -1363,10 +1343,10 @@ public final class Predicates {
     }
 
     /**
-     * A predicate that tests whether the class of the element being tested is either the
-     * same as, or is a superclass or superinterface of, the class or interface
-     * represented by the specified Class parameter. It returns <code>true</code> if so;
-     * otherwise it returns <code>false</code>.
+     * A predicate that tests whether the class of the element being tested is either the same as,
+     * or is a superclass or superinterface of, the class or interface represented by the specified
+     * Class parameter. It returns <code>true</code> if so; otherwise it returns
+     * <code>false</code>.
      */
     static final class IsTypePredicate<E> implements Predicate<E>, Serializable {
 
@@ -1378,7 +1358,7 @@ public final class Predicates {
 
         /**
          * Creates a new IsTypePredicate.
-         *
+         * 
          * @param theClass
          *            the class we are testing against.
          * @throws NullPointerException
@@ -1401,7 +1381,7 @@ public final class Predicates {
 
         /**
          * Returns the class we are testing against.
-         *
+         * 
          * @return Returns the theClass.
          */
         public Class<?> getType() {
@@ -1410,11 +1390,11 @@ public final class Predicates {
 
         /**
          * Tests the given element for acceptance.
-         *
+         * 
          * @param element
          *            the element to test against.
-         * @return <code>true</code> if the filter accepts the element;
-         *         <code>false</code> otherwise.
+         * @return <code>true</code> if the filter accepts the element; <code>false</code>
+         *         otherwise.
          */
         public boolean op(E element) {
             return theClass.isAssignableFrom(element.getClass());
@@ -1430,8 +1410,8 @@ public final class Predicates {
         private static final long serialVersionUID = 1330339174193813467L;
 
         /**
-         * The comparator to compare elements with or null if the objects natural
-         * comparator should be used.
+         * The comparator to compare elements with or null if the objects natural comparator should
+         * be used.
          */
         private final Comparator comparator;
 
@@ -1440,7 +1420,7 @@ public final class Predicates {
 
         /**
          * Creates a new less then or equal predicate.
-         *
+         * 
          * @param object
          *            the objetc to compare with.
          * @param comparator
@@ -1458,7 +1438,7 @@ public final class Predicates {
 
         /**
          * Creates a new less then or equals predicate.
-         *
+         * 
          * @param object
          *            the object to compare with.
          * @param <T>
@@ -1473,8 +1453,8 @@ public final class Predicates {
         }
 
         /**
-         * @return the comparator to compare elements with or null if the objects natural
-         *         comparator should be used.
+         * @return the comparator to compare elements with or null if the objects natural comparator
+         *         should be used.
          */
         public Comparator<? extends E> getComparator() {
             return comparator;
@@ -1482,7 +1462,7 @@ public final class Predicates {
 
         /**
          * Returns the object we are comparing.
-         *
+         * 
          * @return the object we are comparing
          */
         public E getObject() {
@@ -1511,8 +1491,8 @@ public final class Predicates {
         private static final long serialVersionUID = 1330339174193813467L;
 
         /**
-         * The comparator to compare elements with or null if the objects natural
-         * comparator should be used.
+         * The comparator to compare elements with or null if the objects natural comparator should
+         * be used.
          */
 
         private final Comparator comparator;
@@ -1522,7 +1502,7 @@ public final class Predicates {
 
         /**
          * Creates a new less then Predicate.
-         *
+         * 
          * @param object
          *            the object to compare with.
          * @param comparator
@@ -1540,7 +1520,7 @@ public final class Predicates {
 
         /**
          * Creates a new less then predicate.
-         *
+         * 
          * @param object
          *            the object to compare with.
          * @param <T>
@@ -1555,8 +1535,8 @@ public final class Predicates {
         }
 
         /**
-         * @return the comparator to compare elements with or null if the objects natural
-         *         comparator should be used.
+         * @return the comparator to compare elements with or null if the objects natural comparator
+         *         should be used.
          */
         public Comparator<? extends E> getComparator() {
             return comparator;
@@ -1564,7 +1544,7 @@ public final class Predicates {
 
         /**
          * Returns the object we are comparing.
-         *
+         * 
          * @return the object we are comparing
          */
         public E getObject() {
@@ -1585,8 +1565,8 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that first applies the specified mapper to the argument before
-     * evaluating the specified predicate.
+     * A Predicate that first applies the specified mapper to the argument before evaluating the
+     * specified predicate.
      */
     static final class MapAndEvaluatePredicate<F, T> implements Predicate<F>, Serializable {
 
@@ -1601,7 +1581,7 @@ public final class Predicates {
 
         /**
          * Creates a new MapAndEvaluatePredicate.
-         *
+         * 
          * @param mapper
          *            the mapper used to first map the argument
          * @param predicate
@@ -1618,9 +1598,8 @@ public final class Predicates {
         }
 
         /**
-         * Returns the mapper that will map the object before applying the predicate on
-         * it.
-         *
+         * Returns the mapper that will map the object before applying the predicate on it.
+         * 
          * @return the mapper that will map the object before applying the predicate on it
          */
         public Op<F, T> getMapper() {
@@ -1629,7 +1608,7 @@ public final class Predicates {
 
         /**
          * Returns the Predicate we are testing against.
-         *
+         * 
          * @return the Predicate we are testing against.
          */
         public Predicate<? super T> getPredicate() {
@@ -1637,13 +1616,12 @@ public final class Predicates {
         }
 
         /**
-         * Accepts all elements that are {@link Object#equals equal} to the specified
-         * object.
-         *
+         * Accepts all elements that are {@link Object#equals equal} to the specified object.
+         * 
          * @param element
          *            the element to test against.
-         * @return <code>true</code> if the predicate accepts the element;
-         *         <code>false</code> otherwise.
+         * @return <code>true</code> if the predicate accepts the element; <code>false</code>
+         *         otherwise.
          */
         public boolean op(F element) {
             return predicate.op(mapper.op(element));
@@ -1657,8 +1635,8 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that evaluates to true iff the Predicate used for constructing
-     * evaluates to <code>false</code>.
+     * A Predicate that evaluates to true iff the Predicate used for constructing evaluates to
+     * <code>false</code>.
      */
     static final class NotPredicate<E> implements Predicate<E>, Serializable {
 
@@ -1670,7 +1648,7 @@ public final class Predicates {
 
         /**
          * Creates a new NotPredicate.
-         *
+         * 
          * @param predicate
          *            the predicate to negate.
          * @throws NullPointerException
@@ -1685,7 +1663,7 @@ public final class Predicates {
 
         /**
          * Returns the predicate that is being negated.
-         *
+         * 
          * @return the predicate that is being negated.
          */
         public Predicate<? super E> getPredicate() {
@@ -1694,7 +1672,7 @@ public final class Predicates {
 
         /**
          * Returns a boolean representing the logical NOT value of the supplied Predicate.
-         *
+         * 
          * @param element
          *            the element to test
          * @return the logical NOT of the supplied Predicate
@@ -1726,7 +1704,7 @@ public final class Predicates {
 
         /**
          * Creates a new <code>OrPredicate</code>.
-         *
+         * 
          * @param left
          *            the left side Predicate
          * @param right
@@ -1746,7 +1724,7 @@ public final class Predicates {
 
         /**
          * Returns the left side Predicate.
-         *
+         * 
          * @return the left side Predicate.
          */
         public Predicate<? super E> getLeftPredicate() {
@@ -1755,7 +1733,7 @@ public final class Predicates {
 
         /**
          * Returns the right side Predicate.
-         *
+         * 
          * @return the right side Predicate.
          */
         public Predicate<? super E> getRightPredicate() {
@@ -1775,9 +1753,9 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get an
-     * instance of this Predicate.
-     *
+     * A Predicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get an instance
+     * of this Predicate.
+     * 
      * @see FalsePredicate
      */
     static final class TruePredicate implements Predicate, Serializable {
@@ -1790,7 +1768,7 @@ public final class Predicates {
 
         /**
          * Returns <tt>true</tt> for any element.
-         *
+         * 
          * @param element
          *            the element to test
          * @return <tt>true</tt> for any element
@@ -1799,15 +1777,15 @@ public final class Predicates {
             return true;
         }
 
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return TRUE;
+        }
+
         /** {@inheritDoc} */
         @Override
         public String toString() {
             return Boolean.TRUE.toString();
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return TRUE;
         }
     }
 
@@ -1827,7 +1805,7 @@ public final class Predicates {
 
         /**
          * Creates a new <code>XorPredicate</code>.
-         *
+         * 
          * @param left
          *            the left side Predicate
          * @param right
@@ -1847,7 +1825,7 @@ public final class Predicates {
 
         /**
          * Returns the left side Predicate.
-         *
+         * 
          * @return the left side Predicate.
          */
         public Predicate<? super E> getLeftPredicate() {
@@ -1856,7 +1834,7 @@ public final class Predicates {
 
         /**
          * Returns the right side Predicate.
-         *
+         * 
          * @return the right side Predicate.
          */
         public Predicate<? super E> getRightPredicate() {

@@ -19,13 +19,6 @@ public class PairTest {
         assertEquals("{0,1}", me.toString());
     }
 
-
-    @Test
-    public void simpleImmutableEntryHashcode() {
-        assertEquals(0, new Pair(null, null).hashCode());
-        assertEquals(100 ^ 200, new Pair(100, 200).hashCode());
-    }
-
     @Test
     public void simpleImmutableEntryEquals() {
         Pair me = new Pair(0, 1);
@@ -37,6 +30,12 @@ public class PairTest {
         assertFalse(me.equals(new Pair(1, 1)));
         assertFalse(me.equals(new Pair(null, 1)));
         assertTrue(me.equals(new Pair(0, 1)));
+    }
+
+    @Test
+    public void simpleImmutableEntryHashcode() {
+        assertEquals(0, new Pair(null, null).hashCode());
+        assertEquals(100 ^ 200, new Pair(100, 200).hashCode());
     }
 
 }

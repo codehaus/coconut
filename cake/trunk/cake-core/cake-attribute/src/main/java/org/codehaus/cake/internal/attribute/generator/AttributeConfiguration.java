@@ -5,7 +5,7 @@ import org.codehaus.cake.attribute.Attribute;
 public interface AttributeConfiguration {
     Attribute getAttribute();
 
-    boolean isMutable();
-
     boolean isHidden();
+
+    boolean isMutable();
 }

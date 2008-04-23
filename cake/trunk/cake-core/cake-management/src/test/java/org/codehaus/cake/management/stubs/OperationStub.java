@@ -20,8 +20,8 @@ public class OperationStub {
     }
 
     @ManagedOperation
-    public void method3(String arg) {
-        invokeCount += 4;
+    public void method3(Boolean arg) {
+        invokeCount += 16;
     }
 
     @ManagedOperation
@@ -30,8 +30,8 @@ public class OperationStub {
     }
 
     @ManagedOperation
-    public void method3(Boolean arg) {
-        invokeCount += 16;
+    public void method3(String arg) {
+        invokeCount += 4;
     }
 
     @ManagedOperation
@@ -52,13 +52,13 @@ public class OperationStub {
     }
 
     @ManagedOperation
-    public void throwRuntimeException() {
-        throw new IllegalMonitorStateException();
+    public void throwException() throws Exception {
+        throw new IOException();
     }
 
     @ManagedOperation
-    public void throwException() throws Exception {
-        throw new IOException();
+    public void throwRuntimeException() {
+        throw new IllegalMonitorStateException();
     }
 
 }

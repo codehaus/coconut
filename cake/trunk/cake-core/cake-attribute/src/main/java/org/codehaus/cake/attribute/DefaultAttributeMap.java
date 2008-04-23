@@ -42,8 +42,48 @@ public class DefaultAttributeMap implements AttributeMap {
     }
 
     @Override
+    public void clear() {
+        map.clear();
+    }
+
+    @Override
     public boolean contains(Attribute<?> attribute) {
         return map.containsKey(attribute);
+    }
+
+    @Override
+    public Set<Entry<Attribute, Object>> entrySet() {
+        return map.entrySet();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof AttributeMap))
+            return false;
+        AttributeMap m = (AttributeMap) o;
+        if (m.size() != size())
+            return false;
+        return m.entrySet().equals(entrySet());
+    }
+
+    @Override
+    public <T> T get(Attribute<T> key) {
+        if (map.containsKey(key)) {
+            return (T) map.get(key);
+        } else {
+            return key.getDefault();
+        }
+    }
+
+    @Override
+    public <T> T get(Attribute<T> key, T defaultValue) {
+        if (map.containsKey(key)) {
+            return (T) map.get(key);
+        } else {
+            return defaultValue;
+        }
     }
 
     /** {@inheritDoc} */
@@ -160,24 +200,6 @@ public class DefaultAttributeMap implements AttributeMap {
         }
     }
 
-    @Override
-    public <T> T get(Attribute<T> key) {
-        if (map.containsKey(key)) {
-            return (T) map.get(key);
-        } else {
-            return key.getDefault();
-        }
-    }
-
-    @Override
-    public <T> T get(Attribute<T> key, T defaultValue) {
-        if (map.containsKey(key)) {
-            return (T) map.get(key);
-        } else {
-            return defaultValue;
-        }
-    }
-
     /** {@inheritDoc} */
     public short get(ShortAttribute key) {
         if (map.containsKey(key)) {
@@ -193,6 +215,26 @@ public class DefaultAttributeMap implements AttributeMap {
             return (Short) map.get(key);
         } else {
             return defaultValue;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return map.hashCode();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    @Override
+    public <T> T put(Attribute<T> key, T value) {
+        if (map.containsKey(key)) {
+            return (T) map.put(key, value);
+        } else {
+            map.put(key, value);
+            return key.getDefault();
         }
     }
 
@@ -241,21 +283,20 @@ public class DefaultAttributeMap implements AttributeMap {
         return prev == null ? key.getDefaultValue() : (Long) prev;
     }
 
-    @Override
-    public <T> T put(Attribute<T> key, T value) {
-        if (map.containsKey(key)) {
-            return (T) map.put(key, value);
-        } else {
-            map.put(key, value);
-            return key.getDefault();
-        }
-    }
-
     /** {@inheritDoc} */
     public short put(ShortAttribute key, short value) {
         Object prev = map.put(key, value);
         return prev == null ? key.getDefault() : (Short) prev;
 
+    }
+
+    @Override
+    public <T> T remove(Attribute<T> key) {
+        if (map.containsKey(key)) {
+            return (T) map.remove(key);
+        } else {
+            return key.getDefault();
+        }
     }
 
     @Override
@@ -302,28 +343,9 @@ public class DefaultAttributeMap implements AttributeMap {
     }
 
     @Override
-    public <T> T remove(Attribute<T> key) {
-        if (map.containsKey(key)) {
-            return (T) map.remove(key);
-        } else {
-            return key.getDefault();
-        }
-    }
-
-    @Override
     public short remove(ShortAttribute key) {
         Object prev = map.remove(key);
         return prev == null ? key.getDefaultValue() : (Short) prev;
-    }
-
-    @Override
-    public void clear() {
-        map.clear();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return map.isEmpty();
     }
 
     @Override
@@ -332,29 +354,7 @@ public class DefaultAttributeMap implements AttributeMap {
     }
 
     @Override
-    public Set<Entry<Attribute, Object>> entrySet() {
-        return map.entrySet();
-    }
-
-    @Override
     public Collection<Object> values() {
         return map.values();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof AttributeMap))
-            return false;
-        AttributeMap m = (AttributeMap) o;
-        if (m.size() != size())
-            return false;
-        return m.entrySet().equals(entrySet());
-    }
-
-    @Override
-    public int hashCode() {
-        return map.hashCode();
     }
 }

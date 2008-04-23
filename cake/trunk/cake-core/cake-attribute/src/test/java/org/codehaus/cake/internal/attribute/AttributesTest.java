@@ -7,11 +7,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 
 import org.junit.Test;
+
 public class AttributesTest {
 
     @Test
     public void simpleImmutableEntry() {
-    
+
         Map.Entry<Integer, Integer> me = new AttributeHelper.SimpleImmutableEntry(0, 1);
         assertEquals(0, me.getKey().intValue());
         assertEquals(me.getKey(), new AttributeHelper.SimpleImmutableEntry(me).getKey());
@@ -44,5 +45,4 @@ public class AttributesTest {
         new AttributeHelper.SimpleImmutableEntry(0, 1).setValue(2);
     }
 
-    
 }

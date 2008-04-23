@@ -22,54 +22,6 @@ public abstract class AbstractAttributeMapTest extends AtrStubs {
         }
     }
 
-    public void noRemove() {
-        try {
-            map.remove(O_1);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            map.remove(B_TRUE);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            map.remove(B_1);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            map.remove(C_1);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            map.remove(D_1);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            map.remove(F_1);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            map.remove(I_1);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            map.remove(L_1);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-        try {
-            map.remove(S_1);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */
-        }
-    }
-
     public void noPut() {
         try {
             map.put(O_1, "123");
@@ -113,6 +65,54 @@ public abstract class AbstractAttributeMapTest extends AtrStubs {
         }
         try {
             map.put(S_1, (short) 123);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+    }
+
+    public void noRemove() {
+        try {
+            map.remove(O_1);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            map.remove(B_TRUE);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            map.remove(B_1);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            map.remove(C_1);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            map.remove(D_1);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            map.remove(F_1);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            map.remove(I_1);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            map.remove(L_1);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            map.remove(S_1);
             fail("should throw UnsupportedOperationException");
         } catch (UnsupportedOperationException ok) {/* ok */
         }

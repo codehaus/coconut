@@ -42,6 +42,15 @@ abstract class AbstractManagedOperation {
     }
 
     /**
+     * Returns the description of this operation.
+     * 
+     * @return the description of this operation
+     */
+    String getDescription() {
+        return description;
+    }
+
+    /**
      * Returns the MBeanOperationInfo for this operation.
      * 
      * @return the MBeanOperationInfo for this operation
@@ -49,6 +58,15 @@ abstract class AbstractManagedOperation {
      *             could not optain the information for this operation
      */
     abstract MBeanOperationInfo getInfo() throws IntrospectionException;
+
+    /**
+     * Returns the name of this operation.
+     * 
+     * @return the name of this operation
+     */
+    String getName() {
+        return name;
+    }
 
     /**
      * Invoke the operation with specified arguments.
@@ -62,22 +80,4 @@ abstract class AbstractManagedOperation {
      *             could not invoke the operation
      */
     abstract Object invoke(Object... arguments) throws MBeanException, ReflectionException;
-
-    /**
-     * Returns the description of this operation.
-     * 
-     * @return the description of this operation
-     */
-    String getDescription() {
-        return description;
-    }
-
-    /**
-     * Returns the name of this operation.
-     * 
-     * @return the name of this operation
-     */
-    String getName() {
-        return name;
-    }
 }

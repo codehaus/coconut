@@ -15,21 +15,22 @@
  */
 package org.codehaus.cake.attribute;
 
-import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-
-import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
+
 /**
  * Various tests for {@link ShortAttribute}.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: ShortAttributeTest.java 590 2008-03-14 08:16:12Z kasper $
  */
 public final class ShortAttributeTest extends AtrStubs {
-    static final ShortAttribute ATR0 = new ShortAttribute("a0",(short) 0) {};
-    static final ShortAttribute ATR1 = new ShortAttribute("a1",(short) 1) {};
+    static final ShortAttribute ATR0 = new ShortAttribute("a0", (short) 0) {};
+    static final ShortAttribute ATR1 = new ShortAttribute("a1", (short) 1) {};
     static final ShortAttribute ATR100 = new ShortAttribute("a100", (short) 100) {};
 
     static final ShortAttribute NON_NEGATIVE = new ShortAttribute("a50", (short) 50) {
@@ -44,17 +45,19 @@ public final class ShortAttributeTest extends AtrStubs {
         assertEquals((short) 0, new ShortAttribute() {}.getDefault().shortValue());
         assertEquals((short) 0, new ShortAttribute("a") {}.getDefaultValue());
         assertFalse(new ShortAttribute() {}.getName().equals(new ShortAttribute() {}.getName()));
-        assertFalse(new ShortAttribute((short) 3) {}.getName().equals(new ShortAttribute((short) 3) {}.getName()));
-        assertTrue(new ShortAttribute("a") {}.getName().equals(new ShortAttribute("a") {}.getName()));
+        assertFalse(new ShortAttribute((short) 3) {}.getName().equals(
+                new ShortAttribute((short) 3) {}.getName()));
+        assertTrue(new ShortAttribute("a") {}.getName()
+                .equals(new ShortAttribute("a") {}.getName()));
         assertEquals((short) 3, new ShortAttribute((short) 3) {}.getDefaultValue());
         assertEquals((short) 0, ATR0.getDefaultValue());
         assertEquals((short) 100, ATR100.getDefaultValue());
         assertEquals((short) 100, ATR100.getDefault().shortValue());
         assertEquals("a100", ATR100.getName());
-        
+
         assertSame(Short.TYPE, ATR100.getType());
     }
-    
+
     @Test
     public void checkValid() {
         ATR100.checkValid(Short.MIN_VALUE);
@@ -69,7 +72,7 @@ public final class ShortAttributeTest extends AtrStubs {
     public void checkValidIAE() {
         NON_NEGATIVE.checkValid((short) 4);
     }
-    
+
     @Test
     public void comparator() {
         WithAttributes wa1 = withAtr(ATR1.singleton((short) 1));
@@ -85,7 +88,7 @@ public final class ShortAttributeTest extends AtrStubs {
         assertTrue(ATR1.compare(wa3, wa2) > 0);
         assertTrue(ATR1.compare(wa2, wa3) < 0);
     }
-    
+
     @Test
     public void fromString() {
         assertEquals((short) -1, ATR100.fromString(Integer.valueOf(-1).toString()));

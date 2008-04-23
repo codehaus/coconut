@@ -15,21 +15,22 @@
  */
 package org.codehaus.cake.attribute;
 
-import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-
-import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
+
 /**
  * Various tests for {@link ByteAttribute}.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: ByteAttributeTest.java 590 2008-03-14 08:16:12Z kasper $
  */
 public final class ByteAttributeTest extends AtrStubs {
-    static final ByteAttribute ATR0 = new ByteAttribute("a0",(byte) 0) {};
-    static final ByteAttribute ATR1 = new ByteAttribute("a1",(byte) 1) {};
+    static final ByteAttribute ATR0 = new ByteAttribute("a0", (byte) 0) {};
+    static final ByteAttribute ATR1 = new ByteAttribute("a1", (byte) 1) {};
     static final ByteAttribute ATR100 = new ByteAttribute("a100", (byte) 100) {};
 
     static final ByteAttribute NON_NEGATIVE = new ByteAttribute("a50", (byte) 50) {
@@ -44,17 +45,18 @@ public final class ByteAttributeTest extends AtrStubs {
         assertEquals((byte) 0, new ByteAttribute() {}.getDefault().byteValue());
         assertEquals((byte) 0, new ByteAttribute("a") {}.getDefaultValue());
         assertFalse(new ByteAttribute() {}.getName().equals(new ByteAttribute() {}.getName()));
-        assertFalse(new ByteAttribute((byte) 3) {}.getName().equals(new ByteAttribute((byte) 3) {}.getName()));
+        assertFalse(new ByteAttribute((byte) 3) {}.getName().equals(
+                new ByteAttribute((byte) 3) {}.getName()));
         assertTrue(new ByteAttribute("a") {}.getName().equals(new ByteAttribute("a") {}.getName()));
         assertEquals((byte) 3, new ByteAttribute((byte) 3) {}.getDefaultValue());
         assertEquals((byte) 0, ATR0.getDefaultValue());
         assertEquals((byte) 100, ATR100.getDefaultValue());
         assertEquals((byte) 100, ATR100.getDefault().byteValue());
         assertEquals("a100", ATR100.getName());
-        
+
         assertSame(Byte.TYPE, ATR100.getType());
     }
-    
+
     @Test
     public void checkValid() {
         ATR100.checkValid(Byte.MIN_VALUE);
@@ -69,7 +71,7 @@ public final class ByteAttributeTest extends AtrStubs {
     public void checkValidIAE() {
         NON_NEGATIVE.checkValid((byte) 4);
     }
-    
+
     @Test
     public void comparator() {
         WithAttributes wa1 = withAtr(ATR1.singleton((byte) 1));
@@ -85,7 +87,7 @@ public final class ByteAttributeTest extends AtrStubs {
         assertTrue(ATR1.compare(wa3, wa2) > 0);
         assertTrue(ATR1.compare(wa2, wa3) < 0);
     }
-    
+
     @Test
     public void fromString() {
         assertEquals((byte) -1, ATR100.fromString(Integer.valueOf(-1).toString()));

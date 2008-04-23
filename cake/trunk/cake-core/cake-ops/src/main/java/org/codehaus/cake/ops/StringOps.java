@@ -23,7 +23,7 @@ import org.codehaus.cake.ops.Ops.Predicate;
  * Various String based {@link Ops} methods and utility classes.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: StringOps.java 600 2008-04-08 10:01:32Z kasper $
  */
@@ -33,9 +33,9 @@ public final class StringOps {
     private StringOps() {}
 
     /**
-     * Creates a Predicate that will accept any String that contains the specified
-     * CharSequence. The returned predicate is serializable.
-     *
+     * Creates a Predicate that will accept any String that contains the specified CharSequence. The
+     * returned predicate is serializable.
+     * 
      * @param contains
      *            the CharSequence the predicate will check for
      * @return the newly created Predicate
@@ -48,9 +48,9 @@ public final class StringOps {
     }
 
     /**
-     * Creates a Predicate that will accept any String that ends with the specified
-     * String. The returned predicate is serializable.
-     *
+     * Creates a Predicate that will accept any String that ends with the specified String. The
+     * returned predicate is serializable.
+     * 
      * @param endsWith
      *            the String the predicate will check against
      * @return the newly created Predicate
@@ -63,9 +63,9 @@ public final class StringOps {
     }
 
     /**
-     * Creates a Predicate that will accept any String that is equal to the specified
-     * String ignoring case considerations. The returned predicate is serializable.
-     *
+     * Creates a Predicate that will accept any String that is equal to the specified String
+     * ignoring case considerations. The returned predicate is serializable.
+     * 
      * @param equalsToIgnoreCase
      *            the String the predicate will check against
      * @return the newly created Predicate
@@ -78,9 +78,9 @@ public final class StringOps {
     }
 
     /**
-     * Creates a Predicate that will accept any String that starts with the specified
-     * String. The returned predicate is serializable.
-     *
+     * Creates a Predicate that will accept any String that starts with the specified String. The
+     * returned predicate is serializable.
+     * 
      * @param startsWith
      *            the String the predicate will check against
      * @return the newly created Predicate
@@ -94,7 +94,7 @@ public final class StringOps {
 
     /**
      * A Predicate that will accept any String that contains the specified CharSequence.
-     *
+     * 
      * @see String#contains(CharSequence)
      */
     static final class ContainsPredicate implements Predicate<String>, Serializable {
@@ -106,7 +106,7 @@ public final class StringOps {
 
         /**
          * Creates a new ContainsPredicate.
-         *
+         * 
          * @param contains
          *            the CharSequence the predicate will check for
          * @throws NullPointerException
@@ -127,14 +127,14 @@ public final class StringOps {
         }
 
         /** {@inheritDoc} */
-        public boolean op(String element) {
-            return element.contains(contains);
-        }
-
-        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             return contains.hashCode();
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(String element) {
+            return element.contains(contains);
         }
 
         /** {@inheritDoc} */
@@ -157,7 +157,7 @@ public final class StringOps {
 
         /**
          * Creates a new EndsWithPredicate.
-         *
+         * 
          * @param endsWith
          *            the String the predicate will check against
          * @throws NullPointerException
@@ -178,14 +178,14 @@ public final class StringOps {
         }
 
         /** {@inheritDoc} */
-        public boolean op(String element) {
-            return element.endsWith(endsWith);
-        }
-
-        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             return endsWith.hashCode();
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(String element) {
+            return element.endsWith(endsWith);
         }
 
         /** {@inheritDoc} */
@@ -196,9 +196,9 @@ public final class StringOps {
     }
 
     /**
-     * A Predicate that will accept any String that is equal to the specified String
-     * ignoring case considerations.
-     *
+     * A Predicate that will accept any String that is equal to the specified String ignoring case
+     * considerations.
+     * 
      * @see String#equalsIgnoreCase(String)
      */
     static final class EqualsIgnoreCasePredicate implements Predicate<String>, Serializable {
@@ -211,7 +211,7 @@ public final class StringOps {
 
         /**
          * Creates a new EqualsIgnoreCasePredicate.
-         *
+         * 
          * @param equalsIgnoreCase
          *            the String the predicate will check against
          * @throws NullPointerException
@@ -232,14 +232,14 @@ public final class StringOps {
         }
 
         /** {@inheritDoc} */
-        public boolean op(String element) {
-            return element.equalsIgnoreCase(equalsIgnoreCase);
-        }
-
-        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             return equalsIgnoreCase.hashCode();
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(String element) {
+            return element.equalsIgnoreCase(equalsIgnoreCase);
         }
 
         /** {@inheritDoc} */
@@ -262,7 +262,7 @@ public final class StringOps {
 
         /**
          * Creates a new StartsWithPredicate.
-         *
+         * 
          * @param startsWith
          *            the String the predicate will check against
          * @throws NullPointerException
@@ -283,14 +283,14 @@ public final class StringOps {
         }
 
         /** {@inheritDoc} */
-        public boolean op(String element) {
-            return element.startsWith(startsWith);
-        }
-
-        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             return startsWith.hashCode();
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(String element) {
+            return element.startsWith(startsWith);
         }
 
         /** {@inheritDoc} */

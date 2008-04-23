@@ -49,38 +49,39 @@ public final class Attributes {
         return new SingletonAttributeMap(attribute, value);
     }
 
-//    /**
-//     * Creates a new {@link Map} where all the specified keys maps to {@link #EMPTY_ATTRIBUTE_MAP}.
-//     * 
-//     * @param <K>
-//     *            the type of keys
-//     * @param keys
-//     *            the collection of keys that should map to the empty AttributeMap
-//     * @return a new Map where all the specified keys maps to an empty AttributeMap
-//     */
-//    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys) {
-//        return toMap(keys, EMPTY_ATTRIBUTE_MAP);
-//    }
-//
-//    /**
-//     * Creates a new {@link Map} where all the specified keys maps to the specified AttributeMap.
-//     * 
-//     * @param <K>
-//     *            the type of keys
-//     * @param keys
-//     *            the collection of keys that should map to the specified AttributeMap
-//     * @param attributeMap
-//     *            the AttributeMap that all the specified keys must map to
-//     * @return a new Map where all the specified keys maps to the specified AttributeMap
-//     */
-//    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys,
-//            AttributeMap attributeMap) {
-//        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
-//        for (K key : keys) {
-//            map.put(key, attributeMap);
-//        }
-//        return map;
-//    }
+    // /**
+    // * Creates a new {@link Map} where all the specified keys maps to {@link
+    // #EMPTY_ATTRIBUTE_MAP}.
+    // *
+    // * @param <K>
+    // * the type of keys
+    // * @param keys
+    // * the collection of keys that should map to the empty AttributeMap
+    // * @return a new Map where all the specified keys maps to an empty AttributeMap
+    // */
+    // public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys) {
+    // return toMap(keys, EMPTY_ATTRIBUTE_MAP);
+    // }
+    //
+    // /**
+    // * Creates a new {@link Map} where all the specified keys maps to the specified AttributeMap.
+    // *
+    // * @param <K>
+    // * the type of keys
+    // * @param keys
+    // * the collection of keys that should map to the specified AttributeMap
+    // * @param attributeMap
+    // * the AttributeMap that all the specified keys must map to
+    // * @return a new Map where all the specified keys maps to the specified AttributeMap
+    // */
+    // public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys,
+    // AttributeMap attributeMap) {
+    // HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
+    // for (K key : keys) {
+    // map.put(key, attributeMap);
+    // }
+    // return map;
+    // }
 
     /**
      * Returns an unmodifiable view of the specified attribute map. This method allows modules to
@@ -322,13 +323,13 @@ public final class Attributes {
             return 0;
         }
 
+        public String toString() {
+            return "{}";
+        }
+
         @Override
         public Collection<Object> values() {
             return Collections.EMPTY_SET;
-        }
-
-        public String toString() {
-            return "{}";
         }
     }
 
@@ -608,7 +609,8 @@ public final class Attributes {
             }
             Object other = map.get(attribute);
             return AttributeHelper.eq(value, other)
-                    && (!AttributeHelper.eq(value, attribute.getDefault()) || map.contains(attribute));
+                    && (!AttributeHelper.eq(value, attribute.getDefault()) || map
+                            .contains(attribute));
         }
 
         public <T> T get(Attribute<T> key) {

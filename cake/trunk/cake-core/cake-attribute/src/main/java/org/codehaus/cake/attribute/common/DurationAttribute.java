@@ -13,93 +13,89 @@ import org.codehaus.cake.attribute.LongAttribute;
  */
 public abstract class DurationAttribute extends LongAttribute {
 
-	/** The default value of this attribute. */
-	protected static final long DEFAULT_DURATION = Long.MAX_VALUE;
+    /** The default value of this attribute. */
+    protected static final long DEFAULT_DURATION = Long.MAX_VALUE;
 
-	/** A value that indicates forever. */
-	protected static final long FOREVER = Long.MAX_VALUE;
+    /** A value that indicates forever. */
+    protected static final long FOREVER = Long.MAX_VALUE;
 
-	/** The time unit of this attribute. */
-	protected static final TimeUnit TIME_UNIT = TimeUnit.NANOSECONDS;
+    /** The time unit of this attribute. */
+    protected static final TimeUnit TIME_UNIT = TimeUnit.NANOSECONDS;
 
-	/**
-	 * Creates a new DurationAttribute.
-	 * 
-	 * @param name
-	 *            the name of the attribute
-	 */
-	public DurationAttribute(String name) {
-		super(name, DEFAULT_DURATION);
-	}
+    /**
+     * Creates a new DurationAttribute.
+     * 
+     * @param name
+     *            the name of the attribute
+     */
+    public DurationAttribute(String name) {
+        super(name, DEFAULT_DURATION);
+    }
 
-	/**
-	 * Analogous to {@link #getValue(AttributeMap)} except taking a parameter
-	 * indicating what time unit the value should be returned in.
-	 * 
-	 * @param attributes
-	 *            the attribute map to retrieve the value of this attribute from
-	 * @param unit
-	 *            the time unit to return the value in
-	 * @return the value of this attribute
-	 */
-	public long getValue(AttributeMap attributes, TimeUnit unit) {
-		return convertTo(attributes.get(this), unit);
-	}
+    public long convertFrom(long value, TimeUnit unit) {
+        if (value == Long.MAX_VALUE) {
+            return Long.MAX_VALUE;
+        } else {
+            return unit.toNanos(value);
+        }
+    }
 
-	public long getValue(AttributeMap attributes, TimeUnit unit,
-			long defaultValue) {
-		long val = attributes.get(this,0);
-		if (val == 0) {
-			return defaultValue;
-		} else {
-			return convertTo(val, unit);
-		}
-	}
+    public long convertTo(long value, TimeUnit unit) {
+        if (value == Long.MAX_VALUE) {
+            return Long.MAX_VALUE;
+        } else {
+            return unit.convert(value, TimeUnit.NANOSECONDS);
+        }
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public final boolean isValid(long value) {
-		return value > 0;
-	}
+    /**
+     * Analogous to {@link #getValue(AttributeMap)} except taking a parameter indicating what time
+     * unit the value should be returned in.
+     * 
+     * @param attributes
+     *            the attribute map to retrieve the value of this attribute from
+     * @param unit
+     *            the time unit to return the value in
+     * @return the value of this attribute
+     */
+    public long getValue(AttributeMap attributes, TimeUnit unit) {
+        return convertTo(attributes.get(this), unit);
+    }
 
-	public AttributeMap set(AttributeMap attributes, Long duration,
-			TimeUnit unit) {
-		return set(attributes, duration.longValue(), unit);
-	}
+    public long getValue(AttributeMap attributes, TimeUnit unit, long defaultValue) {
+        long val = attributes.get(this, 0);
+        if (val == 0) {
+            return defaultValue;
+        } else {
+            return convertTo(val, unit);
+        }
+    }
 
-	public AttributeMap set(AttributeMap attributes, long duration,
-			TimeUnit unit) {
-		return set(attributes, convertFrom(duration, unit));
-	}
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isValid(long value) {
+        return value > 0;
+    }
 
-	/**
-	 * Returns an immutable AttributeMap containing only this attribute mapping
-	 * to the specified value.
-	 * 
-	 * @param value
-	 *            the value to create the singleton from
-	 * @param unit
-	 *            the time unit of the value
-	 * @return an AttributeMap containing only this attribute mapping to the
-	 *         specified value
-	 */
-	public AttributeMap singleton(long value, TimeUnit unit) {
-		return super.singleton(convertFrom(value, unit));
-	}
+    public AttributeMap set(AttributeMap attributes, Long duration, TimeUnit unit) {
+        return set(attributes, duration.longValue(), unit);
+    }
 
-	public long convertFrom(long value, TimeUnit unit) {
-		if (value == Long.MAX_VALUE) {
-			return Long.MAX_VALUE;
-		} else {
-			return unit.toNanos(value);
-		}
-	}
+    public AttributeMap set(AttributeMap attributes, long duration, TimeUnit unit) {
+        return set(attributes, convertFrom(duration, unit));
+    }
 
-	public long convertTo(long value, TimeUnit unit) {
-		if (value == Long.MAX_VALUE) {
-			return Long.MAX_VALUE;
-		} else {
-			return unit.convert(value, TimeUnit.NANOSECONDS);
-		}
-	}
+    /**
+     * Returns an immutable AttributeMap containing only this attribute mapping to the specified
+     * value.
+     * 
+     * @param value
+     *            the value to create the singleton from
+     * @param unit
+     *            the time unit of the value
+     * @return an AttributeMap containing only this attribute mapping to the specified value
+     */
+    public AttributeMap singleton(long value, TimeUnit unit) {
+        return super.singleton(convertFrom(value, unit));
+    }
 }

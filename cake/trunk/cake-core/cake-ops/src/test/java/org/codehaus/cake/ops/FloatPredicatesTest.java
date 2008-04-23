@@ -15,12 +15,22 @@
  */
 package org.codehaus.cake.ops;
 
-import static org.codehaus.cake.ops.FloatPredicates.*;
+import static org.codehaus.cake.ops.FloatPredicates.FALSE;
+import static org.codehaus.cake.ops.FloatPredicates.TRUE;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-import org.codehaus.cake.ops.FloatPredicates.*;
-import org.codehaus.cake.ops.Ops.*;
+import org.codehaus.cake.ops.FloatPredicates.EqualsToFloatPredicate;
+import org.codehaus.cake.ops.FloatPredicates.GreaterThenFloatPredicate;
+import org.codehaus.cake.ops.FloatPredicates.GreaterThenOrEqualsFloatPredicate;
+import org.codehaus.cake.ops.FloatPredicates.LessThenFloatPredicate;
+import org.codehaus.cake.ops.FloatPredicates.LessThenOrEqualsFloatPredicate;
+import org.codehaus.cake.ops.FloatPredicates.NotFloatPredicate;
+import org.codehaus.cake.ops.Ops.FloatPredicate;
+import org.codehaus.cake.ops.Ops.LongPredicate;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
 /**

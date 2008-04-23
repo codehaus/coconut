@@ -12,6 +12,6 @@ public class AttributeInfoTest extends AtrStubs {
 
     @Test
     public void testToString() {
-        new DefaultAttributeConfiguration(I_1,false,false).toString();
+        new DefaultAttributeConfiguration(I_1, false, false).toString();
     }
 }

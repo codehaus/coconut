@@ -25,6 +25,17 @@ public class LogHelperTest {
 
     Element e;
 
+    @Test
+    public void getLogLevel() {
+        assertEquals(Level.Trace, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Trace)));
+        assertEquals(Level.Debug, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Debug)));
+        assertEquals(Level.Info, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Info)));
+        assertEquals(Level.Warn, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Warn)));
+        assertEquals(Level.Error, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Error)));
+        assertEquals(Level.Fatal, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Fatal)));
+        assertEquals(Level.Off, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Off)));
+    }
+
     @Before
     public void setup() throws ParserConfigurationException {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -32,9 +43,6 @@ public class LogHelperTest {
         e = doc.createElement("element");
         doc.appendChild(e);
     }
-
-
-
 
     @Test
     public void toLevel() {
@@ -46,16 +54,5 @@ public class LogHelperTest {
     public void toLevelIAE() {
         e.setAttribute("level", "unknownlevel");
         assertEquals(Level.Debug, LogHelper.toLevel(e));
-    }
-
-    @Test
-    public void getLogLevel() {
-        assertEquals(Level.Trace, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Trace)));
-        assertEquals(Level.Debug, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Debug)));
-        assertEquals(Level.Info, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Info)));
-        assertEquals(Level.Warn, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Warn)));
-        assertEquals(Level.Error, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Error)));
-        assertEquals(Level.Fatal, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Fatal)));
-        assertEquals(Level.Off, LogHelper.getLogLevel(Loggers.systemErrLogger(Level.Off)));
     }
 }

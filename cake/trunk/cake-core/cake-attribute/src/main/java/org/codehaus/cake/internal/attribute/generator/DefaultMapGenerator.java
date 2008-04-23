@@ -165,6 +165,93 @@ public class DefaultMapGenerator implements Opcodes {
         mv.visitEnd();
     }
 
+    private void addEntrySet() {
+        MethodVisitor mv = cw
+                .visitMethod(
+                        ACC_PUBLIC,
+                        "entrySet",
+                        "()Ljava/util/Set;",
+                        "()Ljava/util/Set<Ljava/util/Map$Entry<Lorg/codehaus/cake/attribute/Attribute;Ljava/lang/Object;>;>;",
+                        null);
+        mv.visitCode();
+        mv.visitTypeInsn(NEW, "java/util/HashSet");
+        mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESPECIAL, "java/util/HashSet", "<init>", "()V");
+        mv.visitVarInsn(ASTORE, 1);
+
+        for (Info i : info) {
+            if (!i.isHidden) {
+                mv.visitVarInsn(ALOAD, 1);
+                mv
+                        .visitTypeInsn(NEW,
+                                "org/codehaus/cake/internal/attribute/AttributeHelper$SimpleImmutableEntry");
+                mv.visitInsn(DUP);
+                i.visitStaticGet(mv);
+                mv.visitVarInsn(ALOAD, 0);
+                i.visitGet(mv);
+                if (i.vType != PrimType.OBJECT) {
+                    mv.visitMethodInsn(INVOKESTATIC, i.vType.getObjectType().getInternalName(),
+                            "valueOf", Type.getMethodDescriptor(i.vType.getObjectType(),
+                                    new Type[] { i.vType.getPrimType() }));
+                }
+                mv
+                        .visitMethodInsn(
+                                INVOKESPECIAL,
+                                "org/codehaus/cake/internal/attribute/AttributeHelper$SimpleImmutableEntry",
+                                "<init>", "(Ljava/lang/Object;Ljava/lang/Object;)V");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/HashSet", "add",
+                        "(Ljava/lang/Object;)Z");
+                mv.visitInsn(POP);
+
+            }
+        }
+
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitMethodInsn(INVOKESTATIC, "java/util/Collections", "unmodifiableSet",
+                "(Ljava/util/Set;)Ljava/util/Set;");
+        mv.visitInsn(ARETURN);
+        mv.visitMaxs(6, 2);
+        mv.visitEnd();
+    }
+
+    private void addEq() {
+        // private static boolean eq(Object o1, Object o2) {
+        // return o1 == null ? o2 == null : o1 == o2 || o1.equals(o2);
+        // }
+        MethodVisitor mv = cw.visitMethod(ACC_PRIVATE + ACC_STATIC, "eq",
+                "(Ljava/lang/Object;Ljava/lang/Object;)Z", null, null);
+        mv.visitCode();
+        mv.visitVarInsn(ALOAD, 0);
+        Label l0 = new Label();
+        mv.visitJumpInsn(IFNONNULL, l0);
+        mv.visitVarInsn(ALOAD, 1);
+        Label l1 = new Label();
+        mv.visitJumpInsn(IFNONNULL, l1);
+        mv.visitInsn(ICONST_1);
+        Label l2 = new Label();
+        mv.visitJumpInsn(GOTO, l2);
+        mv.visitLabel(l1);
+        mv.visitInsn(ICONST_0);
+        mv.visitJumpInsn(GOTO, l2);
+        mv.visitLabel(l0);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ALOAD, 1);
+        Label l3 = new Label();
+        mv.visitJumpInsn(IF_ACMPEQ, l3);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
+        mv.visitJumpInsn(IFNE, l3);
+        mv.visitInsn(ICONST_0);
+        mv.visitJumpInsn(GOTO, l2);
+        mv.visitLabel(l3);
+        mv.visitInsn(ICONST_1);
+        mv.visitLabel(l2);
+        mv.visitInsn(IRETURN);
+        mv.visitMaxs(2, 2);
+        mv.visitEnd();
+    }
+
     private void addEquals() {
         MethodVisitor mv = cw
                 .visitMethod(ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
@@ -268,44 +355,6 @@ public class DefaultMapGenerator implements Opcodes {
         mv.visitEnd();
     }
 
-    private void addEq() {
-        // private static boolean eq(Object o1, Object o2) {
-        // return o1 == null ? o2 == null : o1 == o2 || o1.equals(o2);
-        // }
-        MethodVisitor mv = cw.visitMethod(ACC_PRIVATE + ACC_STATIC, "eq",
-                "(Ljava/lang/Object;Ljava/lang/Object;)Z", null, null);
-        mv.visitCode();
-        mv.visitVarInsn(ALOAD, 0);
-        Label l0 = new Label();
-        mv.visitJumpInsn(IFNONNULL, l0);
-        mv.visitVarInsn(ALOAD, 1);
-        Label l1 = new Label();
-        mv.visitJumpInsn(IFNONNULL, l1);
-        mv.visitInsn(ICONST_1);
-        Label l2 = new Label();
-        mv.visitJumpInsn(GOTO, l2);
-        mv.visitLabel(l1);
-        mv.visitInsn(ICONST_0);
-        mv.visitJumpInsn(GOTO, l2);
-        mv.visitLabel(l0);
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitVarInsn(ALOAD, 1);
-        Label l3 = new Label();
-        mv.visitJumpInsn(IF_ACMPEQ, l3);
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
-        mv.visitJumpInsn(IFNE, l3);
-        mv.visitInsn(ICONST_0);
-        mv.visitJumpInsn(GOTO, l2);
-        mv.visitLabel(l3);
-        mv.visitInsn(ICONST_1);
-        mv.visitLabel(l2);
-        mv.visitInsn(IRETURN);
-        mv.visitMaxs(2, 2);
-        mv.visitEnd();
-    }
-
     private void addGet() {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "get",
                 "(Lorg/codehaus/cake/attribute/Attribute;)Ljava/lang/Object;",
@@ -346,6 +395,31 @@ public class DefaultMapGenerator implements Opcodes {
         mv.visitMaxs(2, 2);
     }
 
+    private void addGet(PrimType type) {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "get", getMethodDescriptor(
+                type.getPrimType(), new Type[] { type.getType() }), null, null);
+        mv.visitCode();
+        Label l = null;
+        for (Info i : info) {
+            if (i.vType == type) {
+                mv.visitVarInsn(ALOAD, 1);
+                i.visitStaticGet(mv);
+                l = new Label();
+                mv.visitJumpInsn(IF_ACMPNE, l);
+                mv.visitVarInsn(ALOAD, 0);
+                i.visitGet(mv);
+                mv.visitInsn(type.returnCode());
+                mv.visitLabel(l);
+            }
+        }
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitMethodInsn(INVOKEVIRTUAL, type.getType().getInternalName(), "getDefaultValue",
+                getMethodDescriptor(type.getPrimType(), new Type[] {}));
+        mv.visitInsn(type.returnCode());
+        mv.visitMaxs(2, 2);
+        mv.visitEnd();
+    }
+
     private void addGetDefault() {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "get",
                 "(Lorg/codehaus/cake/attribute/Attribute;Ljava/lang/Object;)Ljava/lang/Object;",
@@ -382,31 +456,6 @@ public class DefaultMapGenerator implements Opcodes {
         mv.visitVarInsn(ALOAD, 2);
         mv.visitInsn(ARETURN);
         mv.visitMaxs(2, 2);
-    }
-
-    private void addGet(PrimType type) {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "get", getMethodDescriptor(
-                type.getPrimType(), new Type[] { type.getType() }), null, null);
-        mv.visitCode();
-        Label l = null;
-        for (Info i : info) {
-            if (i.vType == type) {
-                mv.visitVarInsn(ALOAD, 1);
-                i.visitStaticGet(mv);
-                l = new Label();
-                mv.visitJumpInsn(IF_ACMPNE, l);
-                mv.visitVarInsn(ALOAD, 0);
-                i.visitGet(mv);
-                mv.visitInsn(type.returnCode());
-                mv.visitLabel(l);
-            }
-        }
-        mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKEVIRTUAL, type.getType().getInternalName(), "getDefaultValue",
-                getMethodDescriptor(type.getPrimType(), new Type[] {}));
-        mv.visitInsn(type.returnCode());
-        mv.visitMaxs(2, 2);
-        mv.visitEnd();
     }
 
     private void addGetDefault(PrimType type) {
@@ -660,9 +709,10 @@ public class DefaultMapGenerator implements Opcodes {
         mv.visitEnd();
     }
 
-    private void addRemove(PrimType type) {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "remove", getMethodDescriptor(type
-                .getPrimType(), new Type[] { type.getType() }), null, null);
+    private void addRemove() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "remove",
+                "(Lorg/codehaus/cake/attribute/Attribute;)Ljava/lang/Object;",
+                "<T:Ljava/lang/Object;>(Lorg/codehaus/cake/attribute/Attribute<TT;>;)TT;", null);
         mv.visitCode();
         mv.visitTypeInsn(NEW, "java/lang/UnsupportedOperationException");
         mv.visitInsn(DUP);
@@ -674,10 +724,9 @@ public class DefaultMapGenerator implements Opcodes {
         mv.visitEnd();
     }
 
-    private void addRemove() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "remove",
-                "(Lorg/codehaus/cake/attribute/Attribute;)Ljava/lang/Object;",
-                "<T:Ljava/lang/Object;>(Lorg/codehaus/cake/attribute/Attribute<TT;>;)TT;", null);
+    private void addRemove(PrimType type) {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "remove", getMethodDescriptor(type
+                .getPrimType(), new Type[] { type.getType() }), null, null);
         mv.visitCode();
         mv.visitTypeInsn(NEW, "java/lang/UnsupportedOperationException");
         mv.visitInsn(DUP);
@@ -695,86 +744,6 @@ public class DefaultMapGenerator implements Opcodes {
         mv.visitIntInsn(BIPUSH, sizeNonHidden);
         mv.visitInsn(IRETURN);
         mv.visitMaxs(1, 1);
-        mv.visitEnd();
-    }
-
-    private void addEntrySet() {
-        MethodVisitor mv = cw
-                .visitMethod(
-                        ACC_PUBLIC,
-                        "entrySet",
-                        "()Ljava/util/Set;",
-                        "()Ljava/util/Set<Ljava/util/Map$Entry<Lorg/codehaus/cake/attribute/Attribute;Ljava/lang/Object;>;>;",
-                        null);
-        mv.visitCode();
-        mv.visitTypeInsn(NEW, "java/util/HashSet");
-        mv.visitInsn(DUP);
-        mv.visitMethodInsn(INVOKESPECIAL, "java/util/HashSet", "<init>", "()V");
-        mv.visitVarInsn(ASTORE, 1);
-
-        for (Info i : info) {
-            if (!i.isHidden) {
-                mv.visitVarInsn(ALOAD, 1);
-                mv
-                        .visitTypeInsn(NEW,
-                                "org/codehaus/cake/internal/attribute/AttributeHelper$SimpleImmutableEntry");
-                mv.visitInsn(DUP);
-                i.visitStaticGet(mv);
-                mv.visitVarInsn(ALOAD, 0);
-                i.visitGet(mv);
-                if (i.vType != PrimType.OBJECT) {
-                    mv.visitMethodInsn(INVOKESTATIC, i.vType.getObjectType().getInternalName(),
-                            "valueOf", Type.getMethodDescriptor(i.vType.getObjectType(),
-                                    new Type[] { i.vType.getPrimType() }));
-                }
-                mv
-                        .visitMethodInsn(
-                                INVOKESPECIAL,
-                                "org/codehaus/cake/internal/attribute/AttributeHelper$SimpleImmutableEntry",
-                                "<init>", "(Ljava/lang/Object;Ljava/lang/Object;)V");
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/HashSet", "add",
-                        "(Ljava/lang/Object;)Z");
-                mv.visitInsn(POP);
-
-            }
-        }
-
-        mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKESTATIC, "java/util/Collections", "unmodifiableSet",
-                "(Ljava/util/Set;)Ljava/util/Set;");
-        mv.visitInsn(ARETURN);
-        mv.visitMaxs(6, 2);
-        mv.visitEnd();
-    }
-
-    private void addValues() {
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "values", "()Ljava/util/Collection;",
-                "()Ljava/util/Collection<Ljava/lang/Object;>;", null);
-        mv.visitCode();
-        mv.visitIntInsn(BIPUSH, sizeNonHidden);
-        mv.visitTypeInsn(ANEWARRAY, "java/lang/Object");
-        int count = 0;
-        for (Info i : info) {
-            if (!i.isHidden) {
-                mv.visitInsn(DUP);
-                mv.visitIntInsn(BIPUSH, count++);
-                mv.visitVarInsn(ALOAD, 0);
-                i.visitGet(mv);
-                if (i.vType != PrimType.OBJECT) {
-                    mv.visitMethodInsn(INVOKESTATIC, i.vType.getObjectType().getInternalName(),
-                            "valueOf", Type.getMethodDescriptor(i.vType.getObjectType(),
-                                    new Type[] { i.vType.getPrimType() }));
-                }
-                mv.visitInsn(AASTORE);
-            }
-        }
-        mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList",
-                "([Ljava/lang/Object;)Ljava/util/List;");
-        mv.visitTypeInsn(CHECKCAST, "java/util/Collection");
-        mv.visitMethodInsn(INVOKESTATIC, "java/util/Collections", "unmodifiableCollection",
-                "(Ljava/util/Collection;)Ljava/util/Collection;");
-        mv.visitInsn(ARETURN);
-        mv.visitMaxs(5, 1);
         mv.visitEnd();
     }
 
@@ -827,6 +796,37 @@ public class DefaultMapGenerator implements Opcodes {
         }
         mv.visitInsn(ARETURN);
         mv.visitMaxs(1, 1);
+        mv.visitEnd();
+    }
+
+    private void addValues() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "values", "()Ljava/util/Collection;",
+                "()Ljava/util/Collection<Ljava/lang/Object;>;", null);
+        mv.visitCode();
+        mv.visitIntInsn(BIPUSH, sizeNonHidden);
+        mv.visitTypeInsn(ANEWARRAY, "java/lang/Object");
+        int count = 0;
+        for (Info i : info) {
+            if (!i.isHidden) {
+                mv.visitInsn(DUP);
+                mv.visitIntInsn(BIPUSH, count++);
+                mv.visitVarInsn(ALOAD, 0);
+                i.visitGet(mv);
+                if (i.vType != PrimType.OBJECT) {
+                    mv.visitMethodInsn(INVOKESTATIC, i.vType.getObjectType().getInternalName(),
+                            "valueOf", Type.getMethodDescriptor(i.vType.getObjectType(),
+                                    new Type[] { i.vType.getPrimType() }));
+                }
+                mv.visitInsn(AASTORE);
+            }
+        }
+        mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList",
+                "([Ljava/lang/Object;)Ljava/util/List;");
+        mv.visitTypeInsn(CHECKCAST, "java/util/Collection");
+        mv.visitMethodInsn(INVOKESTATIC, "java/util/Collections", "unmodifiableCollection",
+                "(Ljava/util/Collection;)Ljava/util/Collection;");
+        mv.visitInsn(ARETURN);
+        mv.visitMaxs(5, 1);
         mv.visitEnd();
     }
 

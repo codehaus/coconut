@@ -39,24 +39,6 @@ public class AttributeTest {
         ATR_VALIDATE.checkValid("werwer");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testConstructorNPE() {
-        new Attribute(null, "default") {};
-
-    }
-
-    @Test
-    public void testConstructor() {
-        Attribute<String> a = new Attribute(String.class, "default") {};
-        assertEquals(String.class, a.getType());
-        assertEquals("default", a.getDefault());
-        assertNotNull(a.getName());
-        a.checkValid(null);
-        a.checkValid("default");
-        assertTrue(a.isValid(null));
-        assertTrue(a.isValid("default"));
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void checkValue() {
         Attribute<String> a = new Attribute(String.class, "default") {
@@ -95,9 +77,38 @@ public class AttributeTest {
     }
 
     //
+    protected AttributeMap newMap() {
+        return new DefaultAttributeMap();
+    }
+
+    //
     @Test
     public void nullDefaultValue() {
         assertNull(new DefaultAttribute("name", String.class, null).getDefault());
+    }
+
+    // @Test(expected = NullPointerException.class)
+    // public void setNPE() {
+    // ATR.set((AttributeMap) null, "value");
+    // }
+    //
+    // @Test
+    // public void setValidate() {
+    // Attribute a = new ValidateAttribute("fooignore");
+    // a.set(new DefaultAttributeMap(), "fooasd");
+    // }
+    //
+    // @Test(expected = UnsupportedOperationException.class)
+    // public void fromStringUOE() {
+    // Attribute a = new ValidateAttribute("fooignore");
+    // a.fromString("foo");
+    // }
+    //
+    @Test
+    public void test() {
+        assertEquals("name", ATR.getName());
+        assertEquals(String.class, ATR.getType());
+        assertEquals("default", ATR.getDefault());
     }
 
     //
@@ -128,28 +139,22 @@ public class AttributeTest {
     // a.set(new DefaultAttributeMap(), "asd");
     // }
 
-    // @Test(expected = NullPointerException.class)
-    // public void setNPE() {
-    // ATR.set((AttributeMap) null, "value");
-    // }
-    //
-    // @Test
-    // public void setValidate() {
-    // Attribute a = new ValidateAttribute("fooignore");
-    // a.set(new DefaultAttributeMap(), "fooasd");
-    // }
-    //
-    // @Test(expected = UnsupportedOperationException.class)
-    // public void fromStringUOE() {
-    // Attribute a = new ValidateAttribute("fooignore");
-    // a.fromString("foo");
-    // }
-    //
     @Test
-    public void test() {
-        assertEquals("name", ATR.getName());
-        assertEquals(String.class, ATR.getType());
-        assertEquals("default", ATR.getDefault());
+    public void testConstructor() {
+        Attribute<String> a = new Attribute(String.class, "default") {};
+        assertEquals(String.class, a.getType());
+        assertEquals("default", a.getDefault());
+        assertNotNull(a.getName());
+        a.checkValid(null);
+        a.checkValid("default");
+        assertTrue(a.isValid(null));
+        assertTrue(a.isValid("default"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructorNPE() {
+        new Attribute(null, "default") {};
+
     }
 
     //
@@ -192,11 +197,6 @@ public class AttributeTest {
         ATR.checkValid(null);
     }
 
-    //
-    protected AttributeMap newMap() {
-        return new DefaultAttributeMap();
-    }
-
     // @Test
     // public void map() {
     // TestUtil.assertIsSerializable(ATR.map());
@@ -223,6 +223,15 @@ public class AttributeTest {
     // assertFalse(filter.op(withAtr(Attributes.singleton(ATR, "adf"))));
     // }
 
+    static WithAttributes withAtr(final AttributeMap map) {
+        return new WithAttributes() {
+            @Override
+            public AttributeMap getAttributes() {
+                return map;
+            }
+        };
+    }
+
     static class DefaultAttribute extends ObjectAttribute<String> {
         public DefaultAttribute(String name, Class<String> clazz, String defaultValue) {
             super(name, clazz, defaultValue);
@@ -231,15 +240,6 @@ public class AttributeTest {
         // public String fromString(String str) {
         // return str;
         // }
-    }
-
-    static WithAttributes withAtr(final AttributeMap map) {
-        return new WithAttributes() {
-            @Override
-            public AttributeMap getAttributes() {
-                return map;
-            }
-        };
     }
 
     static class ValidateAttribute extends DefaultAttribute {

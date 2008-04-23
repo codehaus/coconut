@@ -13,26 +13,47 @@ public abstract class TimeFormatter {
 
     public static TimeFormatter DEFAULT_TIME_FORMATTER = new ShortFormat();
 
-    public static TimeFormatter UPTIME_TIME_FORMATTER = new UptimeFormatter();
-
-    private final static DecimalFormat NN = new DecimalFormat("00");
-
-    private final static DecimalFormat Z = new DecimalFormat("##0.000");
-
     private final static String[] NAME = new String[] { "nanosecond", "microsecond", "millisecond",
             "second", "minute", "hour", "day" };
 
     private final static String[] NAMES = new String[] { "nanoseconds", "microseconds",
             "milliseconds", "seconds", "minutes", "hours", "days" };
 
+    private final static DecimalFormat NN = new DecimalFormat("00");
+
     private final static String[] SI_NAMES = new String[] { "ns", "µs", "ms", "s", "min", "h", "d" };
 
-    protected String getSIName(TimeUnit unit) {
-        return SI_NAMES[unit.ordinal()];
+    public static TimeFormatter UPTIME_TIME_FORMATTER = new UptimeFormatter();
+
+    private final static DecimalFormat Z = new DecimalFormat("##0.000");
+
+    protected String doFormat(int nano) {
+        return doFormat(0, nano);
     }
 
-    protected String getName(long value, TimeUnit unit) {
-        return value == 1 ? NAME[unit.ordinal()] : NAMES[unit.ordinal()];
+    protected String doFormat(int micros, int nano) {
+        return doFormat(0, micros, nano);
+    }
+
+    protected String doFormat(int millies, int micros, int nano) {
+        return doFormat(0, millies, micros, nano);
+    }
+
+    protected String doFormat(int seconds, int millies, int micros, int nano) {
+        return doFormat(0, seconds, millies, micros, nano);
+    }
+
+    protected String doFormat(int minutes, int seconds, int millies, int micros, int nano) {
+        return doFormat(0, minutes, seconds, millies, micros, nano);
+    }
+
+    protected String doFormat(int hours, int minutes, int seconds, int millies, int micros, int nano) {
+        return doFormat(0, hours, minutes, seconds, millies, micros, nano);
+    }
+
+    protected String doFormat(int days, int hours, int minutes, int seconds, int millies,
+            int micros, int nano) {
+        throw new IllegalArgumentException("Cannot format the specified time");
     }
 
     public String format(long time, TimeUnit unit) {
@@ -68,33 +89,12 @@ public abstract class TimeFormatter {
         }
     }
 
-    protected String doFormat(int nano) {
-        return doFormat(0, nano);
+    protected String getName(long value, TimeUnit unit) {
+        return value == 1 ? NAME[unit.ordinal()] : NAMES[unit.ordinal()];
     }
 
-    protected String doFormat(int micros, int nano) {
-        return doFormat(0, micros, nano);
-    }
-
-    protected String doFormat(int millies, int micros, int nano) {
-        return doFormat(0, millies, micros, nano);
-    }
-
-    protected String doFormat(int seconds, int millies, int micros, int nano) {
-        return doFormat(0, seconds, millies, micros, nano);
-    }
-
-    protected String doFormat(int minutes, int seconds, int millies, int micros, int nano) {
-        return doFormat(0, minutes, seconds, millies, micros, nano);
-    }
-
-    protected String doFormat(int hours, int minutes, int seconds, int millies, int micros, int nano) {
-        return doFormat(0, hours, minutes, seconds, millies, micros, nano);
-    }
-
-    protected String doFormat(int days, int hours, int minutes, int seconds, int millies,
-            int micros, int nano) {
-        throw new IllegalArgumentException("Cannot format the specified time");
+    protected String getSIName(TimeUnit unit) {
+        return SI_NAMES[unit.ordinal()];
     }
 
     static class ShortFormat extends UptimeFormatter {

@@ -52,19 +52,6 @@ public class StringPredicatesTest {
     }
 
     @Test
-    public void startsWith() {
-        Predicate<String> p = StringOps.startsWith("foo");
-        assertNotNull(p);
-        assertTrue(p.op("foo"));
-        assertFalse(p.op("bfoo"));
-        assertTrue(p.op("foofff"));
-        assertEquals(StringOps.startsWith("foo"), p);
-        assertEquals(StringOps.startsWith("foo").hashCode(), p.hashCode());
-        assertNotNull(p.toString());
-        assertIsSerializable(p);
-    }
-
-    @Test
     public void endsWith() {
         Predicate<String> p = StringOps.endsWith("foo");
         assertNotNull(p);
@@ -75,11 +62,6 @@ public class StringPredicatesTest {
         assertEquals(StringOps.endsWith("foo").hashCode(), p.hashCode());
         assertNotNull(p.toString());
         assertIsSerializable(p);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void startsWithNPE() {
-        StringOps.startsWith(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -104,5 +86,23 @@ public class StringPredicatesTest {
     @Test(expected = NullPointerException.class)
     public void equalsIgnoreCaseNPE() {
         StringOps.equalsToIgnoreCase(null);
+    }
+
+    @Test
+    public void startsWith() {
+        Predicate<String> p = StringOps.startsWith("foo");
+        assertNotNull(p);
+        assertTrue(p.op("foo"));
+        assertFalse(p.op("bfoo"));
+        assertTrue(p.op("foofff"));
+        assertEquals(StringOps.startsWith("foo"), p);
+        assertEquals(StringOps.startsWith("foo").hashCode(), p.hashCode());
+        assertNotNull(p.toString());
+        assertIsSerializable(p);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void startsWithNPE() {
+        StringOps.startsWith(null);
     }
 }

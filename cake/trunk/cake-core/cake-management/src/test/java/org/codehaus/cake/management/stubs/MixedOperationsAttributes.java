@@ -6,6 +6,8 @@ import org.codehaus.cake.management.annotation.ManagedAttribute;
 import org.codehaus.cake.management.annotation.ManagedOperation;
 
 public class MixedOperationsAttributes {
+    public int invokeCount;
+
     private String string;
 
     @ManagedAttribute
@@ -13,14 +15,12 @@ public class MixedOperationsAttributes {
         return string;
     }
 
-    public void setString(String string) {
-        this.string = string;
-    }
-    
-    public int invokeCount;
-
     @ManagedOperation
     public void method1() {
         invokeCount += 1;
+    }
+
+    public void setString(String string) {
+        this.string = string;
     }
 }

@@ -11,47 +11,42 @@ import org.codehaus.cake.management.annotation.ManagedAttribute;
  * @version $Id: AttributedStub3.java 415 2007-11-09 08:25:23Z kasper $
  */
 public class VariousAttributes {
-    private boolean readOnly;
-
-    private String writeOnly;
-
     private String none;
+
+    private boolean readOnly;
 
     private Integer readWrite;
 
-    @ManagedAttribute
-    public boolean isReadOnly() {
-        return readOnly;
+    private String writeOnly;
+
+    public String getError() {
+        throw new LinkageError();
     }
 
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-    }
-
-    public String getWriteOnly() {
-        return writeOnly;
-    }
-
-    @ManagedAttribute(isWriteOnly = true)
-    public void setWriteOnly(String writeOnly) {
-        this.writeOnly = writeOnly;
+    @ManagedAttribute()
+    public String getException2() throws Exception {
+        throw new IOException();
     }
 
     public String getNone() {
         return none;
     }
 
-    public void setNone(String none) {
-        this.none = none;
-    }
-
     public Integer getReadWrite() {
         return readWrite;
     }
 
-    @ManagedAttribute()
-    public void setReadWrite(Integer readWrite) {
-        this.readWrite = readWrite;
+    public String getRuntimeException() {
+        throw new IllegalMonitorStateException();
+    }
+
+    public String getWriteOnly() {
+        return writeOnly;
+    }
+
+    @ManagedAttribute
+    public boolean isReadOnly() {
+        return readOnly;
     }
 
     @ManagedAttribute(defaultValue = "throwError", description = "desc")
@@ -59,8 +54,22 @@ public class VariousAttributes {
         throw new LinkageError();
     }
 
-    public String getError() {
-        throw new LinkageError();
+    @ManagedAttribute()
+    public void setException1(String re) throws Exception {
+        throw new IOException();
+    }
+
+    public void setNone(String none) {
+        this.none = none;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    @ManagedAttribute()
+    public void setReadWrite(Integer readWrite) {
+        this.readWrite = readWrite;
     }
 
     @ManagedAttribute(defaultValue = "throwRuntimeException", description = "desc")
@@ -68,16 +77,8 @@ public class VariousAttributes {
         throw new IllegalMonitorStateException();
     }
 
-    public String getRuntimeException() {
-        throw new IllegalMonitorStateException();
-    }
-    
-    @ManagedAttribute()
-    public void setException1(String re) throws Exception {
-        throw new IOException();
-    }
-    @ManagedAttribute()
-    public String getException2() throws Exception {
-        throw new IOException();
+    @ManagedAttribute(isWriteOnly = true)
+    public void setWriteOnly(String writeOnly) {
+        this.writeOnly = writeOnly;
     }
 }

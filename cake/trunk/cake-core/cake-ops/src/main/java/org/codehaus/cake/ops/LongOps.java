@@ -16,31 +16,44 @@
 package org.codehaus.cake.ops;
 
 import java.io.Serializable;
-import static org.codehaus.cake.ops.Ops.*;
-import java.math.*;
+
+import org.codehaus.cake.ops.Ops.LongComparator;
+import org.codehaus.cake.ops.Ops.LongOp;
+import org.codehaus.cake.ops.Ops.LongPredicate;
+import org.codehaus.cake.ops.Ops.LongReducer;
+
 /**
  * Various implementations of {@link LongPredicate}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: LongOps.java 590 2008-03-14 08:16:12Z kasper $
  */
 public final class LongOps {
+    final static LongAbsOp ABS_OP = new LongAbsOp();
 
-     final static LongAddReducer ADD_REDUCER = new LongAddReducer();
+    final static LongAddReducer ADD_REDUCER = new LongAddReducer();
 
-     final static LongSubtractReducer SUBTRACT_REDUCER = new LongSubtractReducer();
-    
-     final static LongDivideReducer DIVIDE_REDUCER = new LongDivideReducer();
-    
-     final static LongMultiplyReducer MULTIPLY_REDUCER = new LongMultiplyReducer();
-
-     final static LongAbsOp ABS_OP = new LongAbsOp();
     /**
      * A comparator for longs relying on natural ordering. The comparator is Serializable.
      */
     public static final LongComparator COMPARATOR = new NaturalLongComparator();
+
+    final static LongDivideReducer DIVIDE_REDUCER = new LongDivideReducer();
+    /**
+     * A reducer returning the maximum of two long elements, using natural comparator. The Reducer
+     * is serializable.
+     */
+    static final LongReducer MAX_REDUCER = new NaturalLongMaxReducer();
+
+    /**
+     * A reducer returning the minimum of two long elements, using natural comparator. The Reducer
+     * is serializable.
+     */
+    static final LongReducer MIN_REDUCER = new NaturalLongMinReducer();
+
+    final static LongMultiplyReducer MULTIPLY_REDUCER = new LongMultiplyReducer();
 
     /**
      * A comparator that imposes the reverse of the <i>natural ordering</i> on longs. The
@@ -48,59 +61,37 @@ public final class LongOps {
      */
     public static final LongComparator REVERSE_COMPARATOR = new NaturalLongReverseComparator();
 
-    /**
-     * A reducer returning the maximum of two long elements, using natural comparator.
-     * The Reducer is serializable.
-     */
-     static final LongReducer MAX_REDUCER = new NaturalLongMaxReducer();
+    final static LongSubtractReducer SUBTRACT_REDUCER = new LongSubtractReducer();
 
-    /**
-     * A reducer returning the minimum of two long elements, using natural comparator.
-     * The Reducer is serializable.
-     */
-     static final LongReducer MIN_REDUCER = new NaturalLongMinReducer();
-    ///CLOVER:OFF
+    // /CLOVER:OFF
     /** Cannot instantiate. */
     private LongOps() {}
-    ///CLOVER:ON
+
+    // /CLOVER:ON
+
     public static LongOp abs() {
         return ABS_OP;
     }
+
     public static LongReducer add() {
         return ADD_REDUCER;
     }
-    
+
     public static LongOp add(long add) {
         return new LongAddOp(add);
     }
-    
+
     public static LongReducer divide() {
         return DIVIDE_REDUCER;
     }
-    
+
     public static LongOp divide(long divide) {
         return new LongDivideOp(divide);
     }
-    
-    public static LongReducer multiply() {
-        return MULTIPLY_REDUCER;
-    }
-    
-    public static LongOp multiply(long multiply) {
-        return new LongMultiplyOp(multiply);
-    }
-    
-    public static LongReducer subtract() {
-        return SUBTRACT_REDUCER;
-    }
-    
-    public static LongOp subtract(long substract) {
-        return new LongSubtractOp(substract);
-    }
+
     /**
-     * A reducer returning the maximum of two long elements, using the specified
-     * comparator.
-     *
+     * A reducer returning the maximum of two long elements, using the specified comparator.
+     * 
      * @param comparator
      *            the comparator to use when comparing elements
      * @return the newly created reducer
@@ -110,9 +101,8 @@ public final class LongOps {
     }
 
     /**
-     * A reducer returning the minimum of two long elements, using the specified
-     * comparator.
-     *
+     * A reducer returning the minimum of two long elements, using the specified comparator.
+     * 
      * @param comparator
      *            the comparator to use when comparing elements
      * @return the newly created reducer
@@ -120,7 +110,15 @@ public final class LongOps {
     public static LongReducer min(LongComparator comparator) {
         return new LongMinReducer(comparator);
     }
-    
+
+    public static LongReducer multiply() {
+        return MULTIPLY_REDUCER;
+    }
+
+    public static LongOp multiply(long multiply) {
+        return new LongMultiplyOp(multiply);
+    }
+
     /**
      * Creates a comparator that imposes the reverse ordering of the specified comparator.
      * <p>
@@ -134,62 +132,15 @@ public final class LongOps {
     public static LongComparator reverseOrder(LongComparator comparator) {
         return new ReverseLongComparator(comparator);
     }
-    static final class LongSubtractReducer implements LongReducer, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -8583260658972887816L;
 
-        public long op(long a, long b) {
-            return a - b;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return SUBTRACT_REDUCER;
-        }
+    public static LongReducer subtract() {
+        return SUBTRACT_REDUCER;
     }
-    
-    static final class LongAddReducer implements LongReducer, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -830758681673022439L;
 
-        public long op(long a, long b) {
-            return a + b;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return ADD_REDUCER;
-        }
+    public static LongOp subtract(long substract) {
+        return new LongSubtractOp(substract);
     }
-    
-    
-    static final class LongMultiplyReducer implements LongReducer, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -130758681673022439L;
 
-        public long op(long a, long b) {
-            return a * b;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return MULTIPLY_REDUCER;
-        }
-    }
-    
-    static final class LongDivideReducer implements LongReducer, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -330758681673022439L;
-
-        public long op(long a, long b) {
-            return a / b;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return DIVIDE_REDUCER;
-        }
-    }
     static final class LongAbsOp implements LongOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8583260658972887816L;
@@ -203,38 +154,65 @@ public final class LongOps {
             return ABS_OP;
         }
     }
-    /** A comparator for longs relying on natural ordering. */
-    static final class NaturalLongComparator implements LongComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 8763765406476535022L;
 
-        /** {@inheritDoc} */
-        public int compare(long a, long b) {
-            return a < b ? -1 : a > b ? 1 : 0;
+    static final class LongAddOp implements LongOp, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -6604604690824553900L;
+
+        private final long add;
+
+        public LongAddOp(long add) {
+            this.add = add;
+        }
+
+        public long op(long a) {
+            return a + add;
+        }
+    }
+
+    static final class LongAddReducer implements LongReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -830758681673022439L;
+
+        public long op(long a, long b) {
+            return a + b;
         }
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return COMPARATOR;
+            return ADD_REDUCER;
         }
     }
 
-    /** A comparator for longs relying on natural ordering. */
-    static final class NaturalLongReverseComparator implements LongComparator, Serializable {
+    static final class LongDivideOp implements LongOp, Serializable {
         /** serialVersionUID. */
-        private static final long serialVersionUID = -7289505884757339069L;
+        private static final long serialVersionUID = 661378303438906777L;
 
-        /** {@inheritDoc} */
-        public int compare(long a, long b) {
-            return a < b ? 1 : a > b ? -1 : 0;
+        private final long divide;
 
+        public LongDivideOp(long divide) {
+            this.divide = divide;
+        }
+
+        public long op(long a) {
+            return a / divide;
+        }
+    }
+
+    static final class LongDivideReducer implements LongReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -330758681673022439L;
+
+        public long op(long a, long b) {
+            return a / b;
         }
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return REVERSE_COMPARATOR;
+            return DIVIDE_REDUCER;
         }
     }
+
     /**
      * A reducer returning the maximum of two long elements, using the given comparator.
      */
@@ -247,7 +225,7 @@ public final class LongOps {
 
         /**
          * Creates a LongMaxReducer.
-         *
+         * 
          * @param comparator
          *            the comparator to use
          */
@@ -276,7 +254,7 @@ public final class LongOps {
 
         /**
          * Creates a LongMinReducer.
-         *
+         * 
          * @param comparator
          *            the comparator to use
          */
@@ -292,8 +270,82 @@ public final class LongOps {
             return comparator.compare(a, b) <= 0 ? a : b;
         }
     }
-    
-        /** A reducer returning the maximum of two long elements, using natural comparator. */
+
+    static final class LongMultiplyOp implements LongOp, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 6099641660816235381L;
+
+        private final long multiply;
+
+        public LongMultiplyOp(long multiply) {
+            this.multiply = multiply;
+        }
+
+        public long op(long a) {
+            return a * multiply;
+        }
+    }
+
+    static final class LongMultiplyReducer implements LongReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -130758681673022439L;
+
+        public long op(long a, long b) {
+            return a * b;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return MULTIPLY_REDUCER;
+        }
+    }
+
+    static final class LongSubtractOp implements LongOp, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -23423423410L;
+
+        private final long subtract;
+
+        public LongSubtractOp(long subtract) {
+            this.subtract = subtract;
+        }
+
+        public long op(long a) {
+            return a - subtract;
+        }
+    }
+
+    static final class LongSubtractReducer implements LongReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -8583260658972887816L;
+
+        public long op(long a, long b) {
+            return a - b;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return SUBTRACT_REDUCER;
+        }
+    }
+
+    /** A comparator for longs relying on natural ordering. */
+    static final class NaturalLongComparator implements LongComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 8763765406476535022L;
+
+        /** {@inheritDoc} */
+        public int compare(long a, long b) {
+            return a < b ? -1 : a > b ? 1 : 0;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return COMPARATOR;
+        }
+    }
+
+    /** A reducer returning the maximum of two long elements, using natural comparator. */
     static final class NaturalLongMaxReducer implements LongReducer, Serializable {
 
         /** serialVersionUID. */
@@ -326,8 +378,25 @@ public final class LongOps {
             return MIN_REDUCER;
         }
     }
-    
-        /** A comparator that reserves the result of another DoubleComparator. */
+
+    /** A comparator for longs relying on natural ordering. */
+    static final class NaturalLongReverseComparator implements LongComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -7289505884757339069L;
+
+        /** {@inheritDoc} */
+        public int compare(long a, long b) {
+            return a < b ? 1 : a > b ? -1 : 0;
+
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return REVERSE_COMPARATOR;
+        }
+    }
+
+    /** A comparator that reserves the result of another DoubleComparator. */
     static final class ReverseLongComparator implements LongComparator, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 1585665469031127321L;
@@ -351,63 +420,6 @@ public final class LongOps {
         /** {@inheritDoc} */
         public int compare(long a, long b) {
             return -comparator.compare(a, b);
-        }
-    }
-    static final class LongAddOp implements LongOp, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -6604604690824553900L;
-
-        private final long add;
-
-        public LongAddOp(long add) {
-            this.add = add;
-        }
-
-        public long op(long a) {
-            return a + add;
-        }
-    }
-    static final class LongSubtractOp implements LongOp, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -23423423410L;
-
-        private final long subtract;
-
-        public LongSubtractOp(long subtract) {
-            this.subtract = subtract;
-        }
-
-        public long op(long a) {
-            return a - subtract;
-        }
-    }
-    static final class LongDivideOp implements LongOp, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 661378303438906777L;
-
-        private final long divide;
-
-        public LongDivideOp(long divide) {
-            this.divide = divide;
-        }
-
-        public long op(long a) {
-            return a / divide;
-        }
-    }
-
-    static final class LongMultiplyOp implements LongOp, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 6099641660816235381L;
-
-        private final long multiply;
-
-        public LongMultiplyOp(long multiply) {
-            this.multiply = multiply;
-        }
-
-        public long op(long a) {
-            return a * multiply;
         }
     }
 }

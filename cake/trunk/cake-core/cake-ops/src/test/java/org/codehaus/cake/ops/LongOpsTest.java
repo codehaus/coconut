@@ -15,22 +15,19 @@
  */
 package org.codehaus.cake.ops;
 
-import static org.junit.Assert.*;
-
-import static org.codehaus.cake.test.util.TestUtil.*;
+import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
+import static org.codehaus.cake.test.util.TestUtil.serializeAndUnserialize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-import org.codehaus.cake.ops.Ops.DoubleReducer;
+import org.codehaus.cake.ops.Ops.LongReducer;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
-import org.codehaus.cake.ops.Ops.*;
-import org.codehaus.cake.test.util.TestUtil;
-import org.junit.Test;
-import java.math.*;
+
 /**
  * Various tests for {@link LongOps}.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: LongOpsTest.java 590 2008-03-14 08:16:12Z kasper $
  */
@@ -71,8 +68,32 @@ public final class LongOpsTest {
         assertIsSerializable(LongOps.add(5L));
         assertEquals(-9L, serializeAndUnserialize(LongOps.add(12L)).op(-21L));
     }
-    
-   /**
+
+    /**
+     * Tests {@link {Type}Ops#COMPARATOR}.
+     */
+    @Test
+    public void comparator() {
+        assertEquals(0, LongOps.COMPARATOR.compare(1L, 1L));
+        assertTrue(LongOps.COMPARATOR.compare(2L, 1L) > 0);
+        assertTrue(LongOps.COMPARATOR.compare(1L, 2L) < 0);
+        LongOps.COMPARATOR.toString(); // does not fail
+        TestUtil.assertSingletonSerializable(LongOps.COMPARATOR);
+    }
+
+    /**
+     * Tests {@link {Type}Ops#REVERSE_COMPARATOR}.
+     */
+    @Test
+    public void comparatorReverse() {
+        assertEquals(0, LongOps.REVERSE_COMPARATOR.compare(1L, 1L));
+        assertTrue(LongOps.REVERSE_COMPARATOR.compare(2L, 1L) < 0);
+        assertTrue(LongOps.REVERSE_COMPARATOR.compare(1L, 2L) > 0);
+        LongOps.REVERSE_COMPARATOR.toString(); // does not fail
+        TestUtil.assertSingletonSerializable(LongOps.REVERSE_COMPARATOR);
+    }
+
+    /**
      * Tests {@link LongOps#DIVIDE_REDUCER} and {@link LongOps#divide()}.
      */
     @Test
@@ -95,8 +116,40 @@ public final class LongOpsTest {
         assertIsSerializable(LongOps.divide(5L));
         assertEquals(-4L, serializeAndUnserialize(LongOps.divide(4L)).op(-16L));
     }
-    
-        /**
+
+    /**
+     * Tests {@link Reducers#MAX_REDUCER}.
+     */
+    @Test
+    public void doubleMaxReducer() {
+        assertEquals(2L, LongOps.MAX_REDUCER.op(2L, 1L));
+        assertEquals(2L, LongOps.MAX_REDUCER.op(1L, 2L));
+        assertEquals(2L, LongOps.MAX_REDUCER.op(2L, 2L));
+        LongOps.MAX_REDUCER.toString(); // does not fail
+        assertIsSerializable(LongOps.MAX_REDUCER);
+        TestUtil.assertSingletonSerializable(LongOps.MAX_REDUCER);
+    }
+
+    /**
+     * Tests {@link Reducers#doubleMaxReducer(org.codehaus.cake.ops.Ops.DoubleComparator)}
+     */
+    @Test
+    public void doubleMaxReducerComparator() {
+        LongReducer r = LongOps.max(LongOps.COMPARATOR);
+        assertEquals(2L, r.op(1L, 2L));
+        assertEquals(2L, r.op(2L, 1L));
+        assertEquals(2L, r.op(2L, 2L));
+        assertEquals(2L, serializeAndUnserialize(r).op(1L, 2L));
+        r.toString(); // does not fail
+        assertIsSerializable(r);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void maxNPE() {
+        LongOps.max(null);
+    }
+
+    /**
      * Tests {@link LongOps#MIN_REDUCER}.
      */
     @Test
@@ -126,41 +179,8 @@ public final class LongOpsTest {
     public void minNPE() {
         LongOps.min(null);
     }
-    
-        /**
-     * Tests {@link Reducers#MAX_REDUCER}.
-     */
-    @Test
-    public void doubleMaxReducer() {
-        assertEquals(2L, LongOps.MAX_REDUCER.op(2L, 1L));
-        assertEquals(2L, LongOps.MAX_REDUCER.op(1L, 2L));
-        assertEquals(2L, LongOps.MAX_REDUCER.op(2L, 2L));
-        LongOps.MAX_REDUCER.toString(); // does not fail
-        assertIsSerializable(LongOps.MAX_REDUCER);
-        TestUtil.assertSingletonSerializable(LongOps.MAX_REDUCER);
-    }
 
     /**
-     * Tests
-     * {@link Reducers#doubleMaxReducer(org.codehaus.cake.ops.Ops.DoubleComparator)}
-     */
-    @Test
-    public void doubleMaxReducerComparator() {
-        LongReducer r = LongOps.max(LongOps.COMPARATOR);
-        assertEquals(2L, r.op(1L, 2L));
-        assertEquals(2L, r.op(2L, 1L));
-        assertEquals(2L, r.op(2L, 2L));
-assertEquals(2L, serializeAndUnserialize(r).op(1L, 2L));
-        r.toString(); // does not fail
-        assertIsSerializable(r);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void maxNPE() {
-        LongOps.max(null);
-    }
-    
-       /**
      * Tests {@link LongOps#MULTIPLY_REDUCER} and {@link LongOps#multiply()}.
      */
     @Test
@@ -183,8 +203,27 @@ assertEquals(2L, serializeAndUnserialize(r).op(1L, 2L));
         assertIsSerializable(LongOps.multiply(5L));
         assertEquals(-16L, serializeAndUnserialize(LongOps.multiply(4L)).op(-4L));
     }
-    
-        /**
+
+    /**
+     * Tests {@link LongOps#reverseOrder}.
+     */
+    @Test
+    public void reverseOrder() {
+        assertEquals(0, LongOps.reverseOrder(LongOps.COMPARATOR).compare(1L, 1L));
+        assertTrue(LongOps.reverseOrder(LongOps.COMPARATOR).compare(2L, 1L) < 0);
+        assertTrue(LongOps.reverseOrder(LongOps.COMPARATOR).compare(1L, 2L) > 0);
+        LongOps.reverseOrder(LongOps.COMPARATOR).toString(); // does not fail
+        assertIsSerializable(LongOps.reverseOrder(LongOps.COMPARATOR));
+        assertTrue(serializeAndUnserialize(LongOps.reverseOrder(LongOps.COMPARATOR))
+                .compare(2L, 1L) < 0);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void reverseOrder_NPE() {
+        LongOps.reverseOrder(null);
+    }
+
+    /**
      * Tests {@link LongOps#SUBTRACT_REDUCER} and {@link LongOps#subtract()}.
      */
     @Test
@@ -207,5 +246,4 @@ assertEquals(2L, serializeAndUnserialize(r).op(1L, 2L));
         assertIsSerializable(LongOps.subtract(5L));
         assertEquals(-33L, serializeAndUnserialize(LongOps.subtract(12L)).op(-21L));
     }
-    
 }

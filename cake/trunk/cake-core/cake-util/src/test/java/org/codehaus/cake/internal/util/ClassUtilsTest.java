@@ -37,6 +37,38 @@ public class ClassUtilsTest {
         assertFalse(ClassUtils.isNumberOrPrimitiveNumber(String.class));
     }
 
+    @Test
+    public void overridesMethod() {
+        assertTrue(ClassUtils.overridesMethod(A1.class, A2.class, "foo"));
+        assertFalse(ClassUtils.overridesMethod(A1.class, A2.class, "foo2", String.class));
+        assertTrue(ClassUtils.overridesMethod(A1.class, B2.class, "foo"));
+        assertTrue(ClassUtils.overridesMethod(A1.class, A3.class, "foo"));
+        assertTrue(ClassUtils.overridesMethod(A1.class, A3.class, "foo2", String.class));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void overridesMethodIAE() {
+        ClassUtils.overridesMethod(A1.class, A2.class, "unknown");
+    }
+
+    @Test
+    public void overridesMethodSecurityManager() {
+        System.setSecurityManager(new SecurityManager() {
+            @Override
+            public void checkMemberAccess(Class<?> clazz, int which) {
+                throw new SecurityException();
+            }
+
+            @Override
+            public void checkPermission(Permission perm) {}
+        });
+        try {
+            assertTrue(ClassUtils.overridesMethod(A1.class, A2.class, "foo2", String.class));
+        } finally {
+            System.setSecurityManager(null);
+        }
+    }
+
     public static class A1 {
         public void foo() {}
 
@@ -47,43 +79,11 @@ public class ClassUtilsTest {
         public void foo() {}
     }
 
-    public static class B2 {
-        public void foo() {}
-    }
-
     public static class A3 extends A2 {
         public void foo2(String ignore) {}
     }
 
-    @Test
-    public void overridesMethod() {
-        assertTrue(ClassUtils.overridesMethod(A1.class, A2.class, "foo"));
-        assertFalse(ClassUtils.overridesMethod(A1.class, A2.class, "foo2", String.class));
-        assertTrue(ClassUtils.overridesMethod(A1.class, B2.class, "foo"));
-        assertTrue(ClassUtils.overridesMethod(A1.class, A3.class, "foo"));
-        assertTrue(ClassUtils.overridesMethod(A1.class, A3.class, "foo2", String.class));
-    }
-
-    @Test
-    public void overridesMethodSecurityManager() {
-        System.setSecurityManager(new SecurityManager() {
-            @Override
-            public void checkPermission(Permission perm) {}
-
-            @Override
-            public void checkMemberAccess(Class<?> clazz, int which) {
-                throw new SecurityException();
-            }
-        });
-        try {
-            assertTrue(ClassUtils.overridesMethod(A1.class, A2.class, "foo2", String.class));
-        } finally {
-            System.setSecurityManager(null);
-        }
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void overridesMethodIAE() {
-        ClassUtils.overridesMethod(A1.class, A2.class, "unknown");
+    public static class B2 {
+        public void foo() {}
     }
 }

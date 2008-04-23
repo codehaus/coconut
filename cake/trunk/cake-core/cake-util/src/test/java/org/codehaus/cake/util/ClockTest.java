@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.codehaus.cake.util.Clock.DeterministicClock;
 import org.junit.Test;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: ClockTest.java 415 2007-11-09 08:25:23Z kasper $
@@ -31,7 +32,7 @@ public class ClockTest {
         assertTrue(deadline <= System.currentTimeMillis() + 1000);
 
         assertTrue(c.isPassed(c.timestamp()));
-        
+
         assertIsSerializable(c);
     }
 
@@ -45,16 +46,16 @@ public class ClockTest {
 
         assertEquals(100l, c.relativeTime());
         assertEquals(200l, c.timestamp());
-        
+
         c.incrementRelativeTime();
         c.incrementTimestamp();
 
         assertEquals(101l, c.relativeTime());
         assertEquals(201l, c.timestamp());
-        
+
         c.incrementRelativeTime(10);
         c.incrementTimestamp(10);
-        
+
         assertEquals(111l, c.relativeTime());
         assertEquals(211l, c.timestamp());
 

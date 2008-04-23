@@ -15,21 +15,22 @@
  */
 package org.codehaus.cake.attribute;
 
-import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-
-import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
+
 /**
  * Various tests for {@link IntAttribute}.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: IntAttributeTest.java 590 2008-03-14 08:16:12Z kasper $
  */
 public final class IntAttributeTest extends AtrStubs {
-    static final IntAttribute ATR0 = new IntAttribute("a0",0) {};
-    static final IntAttribute ATR1 = new IntAttribute("a1",1) {};
+    static final IntAttribute ATR0 = new IntAttribute("a0", 0) {};
+    static final IntAttribute ATR1 = new IntAttribute("a1", 1) {};
     static final IntAttribute ATR100 = new IntAttribute("a100", 100) {};
 
     static final IntAttribute NON_NEGATIVE = new IntAttribute("a50", 50) {
@@ -51,10 +52,10 @@ public final class IntAttributeTest extends AtrStubs {
         assertEquals(100, ATR100.getDefaultValue());
         assertEquals(100, ATR100.getDefault().intValue());
         assertEquals("a100", ATR100.getName());
-        
+
         assertSame(Integer.TYPE, ATR100.getType());
     }
-    
+
     @Test
     public void checkValid() {
         ATR100.checkValid(Integer.MIN_VALUE);
@@ -69,7 +70,7 @@ public final class IntAttributeTest extends AtrStubs {
     public void checkValidIAE() {
         NON_NEGATIVE.checkValid(4);
     }
-    
+
     @Test
     public void comparator() {
         WithAttributes wa1 = withAtr(ATR1.singleton(1));
@@ -85,12 +86,14 @@ public final class IntAttributeTest extends AtrStubs {
         assertTrue(ATR1.compare(wa3, wa2) > 0);
         assertTrue(ATR1.compare(wa2, wa3) < 0);
     }
-    
+
     @Test
     public void fromString() {
         assertEquals(-1, ATR100.fromString(Integer.valueOf(-1).toString()));
-        assertEquals(Integer.MIN_VALUE, ATR100.fromString(new Integer(Integer.MIN_VALUE).toString()));
-        assertEquals(Integer.MAX_VALUE, ATR100.fromString(new Integer(Integer.MAX_VALUE).toString()));
+        assertEquals(Integer.MIN_VALUE, ATR100
+                .fromString(new Integer(Integer.MIN_VALUE).toString()));
+        assertEquals(Integer.MAX_VALUE, ATR100
+                .fromString(new Integer(Integer.MAX_VALUE).toString()));
     }
 
     @Test

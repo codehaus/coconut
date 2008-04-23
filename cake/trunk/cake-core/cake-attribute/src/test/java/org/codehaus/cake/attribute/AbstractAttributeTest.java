@@ -42,12 +42,16 @@ public abstract class AbstractAttributeTest {
         c = a.getType();
         this.valid = valid;
         this.invalid = invalid;
-        defaultValue=a.getDefault();
-//        try {
-//            defaultValue = a.getClass().getField("DEFAULT_VALUE").get(null);
-//        } catch (Exception e) {
-//            throw new AssertionError(e);
-//        }
+        defaultValue = a.getDefault();
+        // try {
+        // defaultValue = a.getClass().getField("DEFAULT_VALUE").get(null);
+        // } catch (Exception e) {
+        // throw new AssertionError(e);
+        // }
+    }
+
+    protected Attribute a() {
+        return a;
     }
 
     @Test
@@ -62,8 +66,7 @@ public abstract class AbstractAttributeTest {
         try {
             getMethod = a.getClass().getMethod("get", AttributeMap.class);
         } catch (NoSuchMethodException e) {
-            getMethod = a.getClass().getMethod("get" + capitalize(a.getName()),
-                    AttributeMap.class);
+            getMethod = a.getClass().getMethod("get" + capitalize(a.getName()), AttributeMap.class);
         }
 
         assertTrue(getMethod.getReturnType().equals(c));
@@ -87,36 +90,21 @@ public abstract class AbstractAttributeTest {
         assertSame(a, a.getClass().getField("INSTANCE").get(null));
     }
 
-    @Test
-    public void isValid() {
-        isValid(valid.toArray());
-        isNotValid(invalid.toArray());
-    }
-
-    @Test
-    public void name() throws Exception {
-        String name = (String) a.getClass().getField("NAME").get(null);
-        assertEquals(name, a.getName());
-    }
-
-    @Test
-    public void serializableAndPreservesSingletonProperty()  {
-        TestUtil.assertIsSerializable(a);
-        assertSame(a, TestUtil.serializeAndUnserialize(a));
-    }
-
-    protected Attribute a() {
-        return a;
-    }
-
     protected void isNotValid(Object... o) {
         for (Object oo : o) {
             assertFalse(a.isValid(oo));
             try {
                 a.checkValid(oo);
                 throw new AssertionError("Should fail");
-            } catch (IllegalArgumentException ok) {/* ignore */}
+            } catch (IllegalArgumentException ok) {/* ignore */
+            }
         }
+    }
+
+    @Test
+    public void isValid() {
+        isValid(valid.toArray());
+        isNotValid(invalid.toArray());
     }
 
     protected void isValid(Object... o) {
@@ -126,15 +114,27 @@ public abstract class AbstractAttributeTest {
         }
     }
 
+    @Test
+    public void name() throws Exception {
+        String name = (String) a.getClass().getField("NAME").get(null);
+        assertEquals(name, a.getName());
+    }
+
     protected AttributeMap newMap() {
         return new DefaultAttributeMap();
     }
-    
-    static String capitalize(String capitalizeMe) {
-        return capitalizeMe.substring(0, 1).toUpperCase()
-                + capitalizeMe.substring(1);
+
+    @Test
+    public void serializableAndPreservesSingletonProperty() {
+        TestUtil.assertIsSerializable(a);
+        assertSame(a, TestUtil.serializeAndUnserialize(a));
     }
-     static Class fromPrimitive(Class c) {
+
+    static String capitalize(String capitalizeMe) {
+        return capitalizeMe.substring(0, 1).toUpperCase() + capitalizeMe.substring(1);
+    }
+
+    static Class fromPrimitive(Class c) {
         if (c.equals(Integer.TYPE)) {
             return Integer.class;
         } else if (c.equals(Double.TYPE)) {

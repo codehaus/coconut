@@ -50,6 +50,16 @@ public class LazyLoggerTest {
     }
 
     @Test
+    public void jdkLogger() {
+        java.util.logging.Logger.getLogger("myLogger");
+        ll = new LazyLogger("myLogger", "foo321");
+        ll.log(Level.Warn, "abc");
+        assertTrue(str.toString().contains("abc"));
+        assertFalse(str.toString().contains("getLogger"));
+        str = null;
+    }
+
+    @Test
     public void log() {
         ll = new LazyLogger("lazylogger-log", "foo321");
         assertEquals("lazylogger-log", ll.getName());
@@ -67,15 +77,5 @@ public class LazyLoggerTest {
         assertFalse(str.toString().contains("RuntimeException1"));
         ll.log(Level.Warn, "abc", new RuntimeException1());
         assertTrue(str.toString().contains("abc"));
-    }
-
-    @Test
-    public void jdkLogger() {
-        java.util.logging.Logger.getLogger("myLogger");
-        ll = new LazyLogger("myLogger", "foo321");
-        ll.log(Level.Warn, "abc");
-        assertTrue(str.toString().contains("abc"));
-        assertFalse(str.toString().contains("getLogger"));
-        str = null;
     }
 }

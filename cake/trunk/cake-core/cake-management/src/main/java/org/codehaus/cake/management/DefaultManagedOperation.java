@@ -40,8 +40,7 @@ class DefaultManagedOperation extends AbstractManagedOperation {
      * @param description
      *            the description of the operation
      * @throws NullPointerException
-     *             if the specified object, method, name or description is
-     *             <code>null</code>
+     *             if the specified object, method, name or description is <code>null</code>
      */
     DefaultManagedOperation(Object obj, Method method, final String name, final String description) {
         super(name, description);
@@ -52,6 +51,13 @@ class DefaultManagedOperation extends AbstractManagedOperation {
         }
         this.m = method;
         this.o = obj;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    MBeanOperationInfo getInfo() throws IntrospectionException {
+        return new MBeanOperationInfo(getName(), getDescription(), ManagementUtil
+                .methodSignature(m), m.getReturnType().getName(), MBeanOperationInfo.UNKNOWN);
     }
 
     /** {@inheritDoc} */
@@ -75,13 +81,6 @@ class DefaultManagedOperation extends AbstractManagedOperation {
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    MBeanOperationInfo getInfo() throws IntrospectionException {
-        return new MBeanOperationInfo(getName(), getDescription(), ManagementUtil
-                .methodSignature(m), m.getReturnType().getName(), MBeanOperationInfo.UNKNOWN);
-    }
-
     /**
      * Creates a DefaultManagedAttribute from the specified MethodDescriptors if the
      * {@link ManagedOperation} annotation is present.
@@ -90,8 +89,7 @@ class DefaultManagedOperation extends AbstractManagedOperation {
      *            the MethodDescriptors for the object
      * @param obj
      *            the object that the operations should be invoked on
-     * @return a map mapping from the combined name of the attribute to the
-     *         AbstractManagedOperation
+     * @return a map mapping from the combined name of the attribute to the AbstractManagedOperation
      */
     static Map<OperationKey, AbstractManagedOperation> fromMethodDescriptors(
             MethodDescriptor[] mds, Object obj) {

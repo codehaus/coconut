@@ -28,13 +28,70 @@ import org.junit.runner.RunWith;
 
 @RunWith(JMock.class)
 public class ManagementsTest {
+    Mockery context = new JUnit4Mockery();
+
     private DefaultManagedGroup dmg;
 
     private int initCount;
 
     private MBeanServer server;
 
-    Mockery context = new JUnit4Mockery();
+    @Test
+    public void delegatedManagedGroup() throws Exception {
+        final ManagedGroup mg = context.mock(ManagedGroup.class);
+        final ManagedGroup c1 = context.mock(ManagedGroup.class, "c1");
+        final ManagedGroup c2 = context.mock(ManagedGroup.class, "c2");
+        final ObjectName on = new ObjectName("ff.wfer:er=er");
+        final MBeanServer server = TestUtil.dummy(MBeanServer.class);
+        context.checking(new Expectations() {
+            {
+                one(mg).add(1);
+                will(returnValue(mg));
+                one(mg).addChild("name", "description");
+                will(returnValue(c1));
+                one(mg).getChildren();
+                will(returnValue(Arrays.asList(c1, c2)));
+                one(mg).getDescription();
+                will(returnValue("desc"));
+                one(mg).getName();
+                will(returnValue("name"));
+                one(mg).getObjectName();
+                will(returnValue(on));
+                one(mg).getObjects();
+                will(returnValue(Arrays.asList(1, 2)));
+                one(mg).getParent();
+                will(returnValue(c1));
+                one(mg).getServer();
+                will(returnValue(server));
+                one(mg).isRegistered();
+                will(returnValue(true));
+                one(mg).register(server, on);
+
+                one(mg).remove();
+                one(mg).unregister();
+            }
+        });
+        ManagedGroup m = Managements.delegatedManagedGroup(mg);
+        assertSame(m, m.add(1));
+        assertTrue(m.addChild("name", "description") != m);
+        assertEquals(2, m.getChildren().size());
+        assertEquals("desc", m.getDescription());
+        assertEquals("name", m.getName());
+        assertSame(on, m.getObjectName());
+        assertEquals(2, m.getObjects().size());
+        assertSame(c1, m.getParent());
+        assertSame(server, m.getServer());
+        assertTrue(m.isRegistered());
+        m.register(server, on);
+        m.remove();
+        m.toString();
+        m.unregister();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void delegatedManagedGroupNPE() {
+        Managements.delegatedManagedGroup(null);
+    }
 
     @Test
     public void hierarchicalRegistrant() throws Exception {
@@ -89,6 +146,35 @@ public class ManagementsTest {
     }
 
     @Test
+    public void test() {
+        Integer[] i = new Integer[] { 1, 2, 3 };
+        Integer[] i2 = Managements.copyOf(i);
+        assertTrue(Arrays.equals(i, i2));
+        assertEquals(3, i2.length);
+    }
+
+    @Test
+    public void test2() {
+        Integer[] i = new Integer[] { 1, 2, 3 };
+        Object[] i2 = Managements.copyOf(i, 3, Object[].class);
+        assertTrue(Arrays.equals(i, i2));
+    }
+
+    @Test
+    public void test3() {
+        Integer[] i = new Integer[] { 1, 2, 3 };
+        Number[] i2 = Managements.copyOf(i, 3, Number[].class);
+        assertTrue(Arrays.equals(i, i2));
+    }
+
+    @Test
+    public void test4() {
+        Integer[] i = new Integer[] { 1, 2, 3 };
+        Integer[] i2 = Managements.copyOf(i, 3, Integer[].class);
+        assertTrue(Arrays.equals(i, i2));
+    }
+
+    @Test
     public void unregister() throws Exception {
         ManagedVisitor mv = Managements.unregister();
         final ManagedGroup mg = context.mock(ManagedGroup.class);
@@ -135,91 +221,5 @@ public class ManagementsTest {
         Map<ManagedGroup, Exception> result = mv.traverse(mg);
         assertEquals(1, result.size());
         assertTrue(result.get(c1) instanceof RuntimeException1);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void delegatedManagedGroupNPE() {
-        Managements.delegatedManagedGroup(null);
-    }
-
-    @Test
-    public void delegatedManagedGroup() throws Exception {
-        final ManagedGroup mg = context.mock(ManagedGroup.class);
-        final ManagedGroup c1 = context.mock(ManagedGroup.class, "c1");
-        final ManagedGroup c2 = context.mock(ManagedGroup.class, "c2");
-        final ObjectName on = new ObjectName("ff.wfer:er=er");
-        final MBeanServer server = TestUtil.dummy(MBeanServer.class);
-        context.checking(new Expectations() {
-            {
-                one(mg).add(1);
-                will(returnValue(mg));
-                one(mg).addChild("name", "description");
-                will(returnValue(c1));
-                one(mg).getChildren();
-                will(returnValue(Arrays.asList(c1, c2)));
-                one(mg).getDescription();
-                will(returnValue("desc"));
-                one(mg).getName();
-                will(returnValue("name"));
-                one(mg).getObjectName();
-                will(returnValue(on));
-                one(mg).getObjects();
-                will(returnValue(Arrays.asList(1, 2)));
-                one(mg).getParent();
-                will(returnValue(c1));
-                one(mg).getServer();
-                will(returnValue(server));
-                one(mg).isRegistered();
-                will(returnValue(true));
-                one(mg).register(server, on);
-
-                one(mg).remove();
-                one(mg).unregister();
-            }
-        });
-        ManagedGroup m = Managements.delegatedManagedGroup(mg);
-        assertSame(m, m.add(1));
-        assertTrue(m.addChild("name", "description") != m);
-        assertEquals(2, m.getChildren().size());
-        assertEquals("desc", m.getDescription());
-        assertEquals("name", m.getName());
-        assertSame(on, m.getObjectName());
-        assertEquals(2, m.getObjects().size());
-        assertSame(c1, m.getParent());
-        assertSame(server, m.getServer());
-        assertTrue(m.isRegistered());
-        m.register(server, on);
-        m.remove();
-        m.toString();
-        m.unregister();
-    }
-    
-    @Test
-    public void test() {
-        Integer[] i = new Integer[] { 1, 2, 3 };
-        Integer[] i2 = Managements.copyOf(i);
-        assertTrue(Arrays.equals(i, i2));
-        assertEquals(3, i2.length);
-    }
-
-    @Test
-    public void test2() {
-        Integer[] i = new Integer[] { 1, 2, 3 };
-        Object[] i2 = Managements.copyOf(i, 3, Object[].class);
-        assertTrue(Arrays.equals(i, i2));
-    }
-
-    @Test
-    public void test3() {
-        Integer[] i = new Integer[] { 1, 2, 3 };
-        Number[] i2 = Managements.copyOf(i, 3, Number[].class);
-        assertTrue(Arrays.equals(i, i2));
-    }
-
-    @Test
-    public void test4() {
-        Integer[] i = new Integer[] { 1, 2, 3 };
-        Integer[] i2 = Managements.copyOf(i, 3, Integer[].class);
-        assertTrue(Arrays.equals(i, i2));
     }
 }

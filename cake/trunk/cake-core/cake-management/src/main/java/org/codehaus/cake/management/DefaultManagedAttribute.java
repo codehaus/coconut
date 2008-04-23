@@ -34,18 +34,16 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
      * @param obj
      *            the object that contains the attribute
      * @param reader
-     *            the reader method of the attribute or <code>null</code> if it is
-     *            write-only.
+     *            the reader method of the attribute or <code>null</code> if it is write-only.
      * @param writer
-     *            the writer method of the attribute or <code>null</code> if it is
-     *            read-only.
+     *            the writer method of the attribute or <code>null</code> if it is read-only.
      * @param name
      *            the name of the attribute
      * @param description
      *            the description of the attribute
      * @throws NullPointerException
-     *             if the specified object, name or description is <code>null</code>.
-     *             Or if both reader and writer are <code>null</code>
+     *             if the specified object, name or description is <code>null</code>. Or if both
+     *             reader and writer are <code>null</code>
      */
     DefaultManagedAttribute(Object obj, Method reader, Method writer, String name,
             String description) {
@@ -62,7 +60,7 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
 
     /** {@inheritDoc} */
     MBeanAttributeInfo getInfo() throws IntrospectionException {
-            return new MBeanAttributeInfo(getName(), getDescription(), getter, setter);
+        return new MBeanAttributeInfo(getName(), getDescription(), getter, setter);
     }
 
     /** {@inheritDoc} */
@@ -111,6 +109,13 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
         }
     }
 
+    static String capitalize(String capitalizeMe) {
+        if (capitalizeMe.length() == 0) {
+            return capitalizeMe;
+        }
+        return capitalizeMe.substring(0, 1).toUpperCase() + capitalizeMe.substring(1);
+    }
+
     /**
      * Creates a DefaultManagedAttribute from the specified PropertyDescriptor if the
      * {@link ManagedAttribute} annotation is present on the getter or setter.
@@ -119,12 +124,12 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
      *            the PropertyDescriptor of the attribute
      * @param obj
      *            the object where the attribute should be read and written to.
-     * @return a DefaultManagedAttribute if the ManagedAttribute annotation is present on
-     *         the getter or setter. Or <code>null</code> if no annotation is present.
+     * @return a DefaultManagedAttribute if the ManagedAttribute annotation is present on the getter
+     *         or setter. Or <code>null</code> if no annotation is present.
      * @throws IllegalArgumentException
-     *             if an attribute has the ManagedAttribute set for both the reader and
-     *             the writter. Or if it has a ManagedAttribute set on the reader where
-     *             isWriteOnly is set to <code>true</code>
+     *             if an attribute has the ManagedAttribute set for both the reader and the writter.
+     *             Or if it has a ManagedAttribute set on the reader where isWriteOnly is set to
+     *             <code>true</code>
      */
     static DefaultManagedAttribute fromPropertyDescriptor(PropertyDescriptor pd, Object obj) {
         ManagedAttribute readAttribute = pd.getReadMethod() == null ? null : pd.getReadMethod()
@@ -163,16 +168,13 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
     }
 
     /**
-     * Creates {@link AbstractManagedAttribute}'s for the object and its
-     * {@link PropertyDescriptor}'s.
+     * Creates {@link AbstractManagedAttribute}'s for the object and its {@link PropertyDescriptor}'s.
      * 
      * @param pds
-     *            the PropertyDescriptor that should be created AbstractManagedAttributes
-     *            for
+     *            the PropertyDescriptor that should be created AbstractManagedAttributes for
      * @param obj
      *            the object that the properties can be set and retrieved from
-     * @return a map mapping from the name of the attribute to the
-     *         AbstractManagedAttribute
+     * @return a map mapping from the name of the attribute to the AbstractManagedAttribute
      */
     static Map<String, AbstractManagedAttribute> fromPropertyDescriptors(PropertyDescriptor[] pds,
             Object obj) {
@@ -184,13 +186,5 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
             }
         }
         return result;
-    }
-    
-    static String capitalize(String capitalizeMe) {
-       if (capitalizeMe.length() == 0) {
-            return capitalizeMe;
-        }
-        return capitalizeMe.substring(0, 1).toUpperCase()
-                + capitalizeMe.substring(1);
     }
 }

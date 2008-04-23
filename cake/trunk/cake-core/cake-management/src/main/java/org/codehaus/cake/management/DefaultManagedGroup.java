@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-
 /**
  * The default implementation of {@link ManagedGroup}.
  * 
@@ -29,6 +28,10 @@ public class DefaultManagedGroup extends AbstractManagedGroup {
     /** A set of the objects that have been registered with this group. */
     private final Set<Object> os = new CopyOnWriteArraySet<Object>();
 
+    DefaultManagedGroup(DefaultManagedGroup parent, String name, String description) {
+        super(parent, name, description);
+    }
+
     /**
      * Creates a new DefaultManagedGroup with the specified name and description.
      * 
@@ -39,15 +42,10 @@ public class DefaultManagedGroup extends AbstractManagedGroup {
      * @throws NullPointerException
      *             if the specified name or description is <code>null</code>
      * @throws IllegalArgumentException
-     *             if the specified name does not follow the naming standard of managed
-     *             groups
+     *             if the specified name does not follow the naming standard of managed groups
      */
     public DefaultManagedGroup(String name, String description) {
         super(name, description);
-    }
-
-    DefaultManagedGroup(DefaultManagedGroup parent, String name, String description) {
-        super(parent, name, description);
     }
 
     /** {@inheritDoc} */
@@ -66,7 +64,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup {
                 bi = Introspector.getBeanInfo(o.getClass());
             } catch (java.beans.IntrospectionException e) {
                 // /CLOVER:OFF
-                throw new IllegalArgumentException(e); //cannot happen
+                throw new IllegalArgumentException(e); // cannot happen
                 // /CLOVER:ON
             }
             attributes.putAll(DefaultManagedAttribute.fromPropertyDescriptors(bi

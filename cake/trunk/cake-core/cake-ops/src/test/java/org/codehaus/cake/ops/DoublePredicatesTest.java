@@ -15,17 +15,28 @@
  */
 package org.codehaus.cake.ops;
 
-import static org.codehaus.cake.ops.DoublePredicates.*;
+import static org.codehaus.cake.ops.DoublePredicates.FALSE;
+import static org.codehaus.cake.ops.DoublePredicates.TRUE;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-import org.codehaus.cake.ops.DoublePredicates.*;
-import org.codehaus.cake.ops.Ops.*;
+import org.codehaus.cake.ops.DoublePredicates.EqualsToDoublePredicate;
+import org.codehaus.cake.ops.DoublePredicates.GreaterThenDoublePredicate;
+import org.codehaus.cake.ops.DoublePredicates.GreaterThenOrEqualsDoublePredicate;
+import org.codehaus.cake.ops.DoublePredicates.LessThenDoublePredicate;
+import org.codehaus.cake.ops.DoublePredicates.LessThenOrEqualsDoublePredicate;
+import org.codehaus.cake.ops.DoublePredicates.NotDoublePredicate;
+import org.codehaus.cake.ops.Ops.DoublePredicate;
+import org.codehaus.cake.ops.Ops.LongPredicate;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
+
 /**
  * Various tests for {@link DoublePredicates}.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: DoublePredicatesTest.java 590 2008-03-14 08:16:12Z kasper $
  */
@@ -53,8 +64,7 @@ public final class DoublePredicatesTest {
 
     /**
      * Tests that {@link DoublePredicates#and(DoublePredicate, DoublePredicate)} throws a
-     * {@link NullPointerException} when invoked with a left side <code>null</code>
-     * argument.
+     * {@link NullPointerException} when invoked with a left side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE() {
@@ -63,19 +73,18 @@ public final class DoublePredicatesTest {
 
     /**
      * Tests that {@link DoublePredicates#and(DoublePredicate, DoublePredicate)} throws a
-     * {@link NullPointerException} when invoked with a right side <code>null</code>
-     * argument.
+     * {@link NullPointerException} when invoked with a right side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE1() {
         DoublePredicates.and(TRUE, null);
     }
-    
+
     /* Test greater then */
     @Test
     public void equalsTo() {
         DoublePredicate f = DoublePredicates.equalsTo(5D);
-        assertEquals(5D, new EqualsToDoublePredicate(5D).getEqualsTo(),0);
+        assertEquals(5D, new EqualsToDoublePredicate(5D).getEqualsTo(), 0);
         assertFalse(f.op(4D));
         assertTrue(f.op(5D));
         assertFalse(f.op(6D));
@@ -84,7 +93,7 @@ public final class DoublePredicatesTest {
 
         TestUtil.assertIsSerializable(f);
     }
-    
+
     /**
      * Tests {@link DoublePredicates#FALSE}.
      */
@@ -96,12 +105,12 @@ public final class DoublePredicatesTest {
         assertIsSerializable(FALSE);
         assertSame(FALSE, TestUtil.serializeAndUnserialize(FALSE));
     }
-   
+
     /* Test greater then */
     @Test
     public void greaterThen() {
         DoublePredicate f = DoublePredicates.greaterThen(5D);
-        assertEquals(5D, new GreaterThenDoublePredicate(5D).getGreaterThen(),0);
+        assertEquals(5D, new GreaterThenDoublePredicate(5D).getGreaterThen(), 0);
         assertFalse(f.op(4D));
         assertFalse(f.op(5D));
         assertTrue(f.op(6D));
@@ -114,7 +123,7 @@ public final class DoublePredicatesTest {
     @Test
     public void greaterThenOrEquals() {
         DoublePredicate f = DoublePredicates.greaterThenOrEquals(5D);
-        assertEquals(5D, new GreaterThenOrEqualsDoublePredicate(5D).getGreaterThenOrEquals(),0);
+        assertEquals(5D, new GreaterThenOrEqualsDoublePredicate(5D).getGreaterThenOrEquals(), 0);
         assertFalse(f.op(4D));
         assertTrue(f.op(5D));
         assertTrue(f.op(6D));
@@ -128,7 +137,7 @@ public final class DoublePredicatesTest {
     @Test
     public void lessThen() {
         DoublePredicate f = DoublePredicates.lessThen(5D);
-        assertEquals(5D, new LessThenDoublePredicate(5D).getLessThen(),0);
+        assertEquals(5D, new LessThenDoublePredicate(5D).getLessThen(), 0);
         assertTrue(f.op(4D));
         assertFalse(f.op(5D));
         assertFalse(f.op(6D));
@@ -142,7 +151,7 @@ public final class DoublePredicatesTest {
     @Test
     public void lessThenOrEquals() {
         DoublePredicate f = DoublePredicates.lessThenOrEquals(5D);
-        assertEquals(5D, new LessThenOrEqualsDoublePredicate(5D).getLessThenOrEquals(),0);
+        assertEquals(5D, new LessThenOrEqualsDoublePredicate(5D).getLessThenOrEquals(), 0);
         assertTrue(f.op(4D));
         assertTrue(f.op(5D));
         assertFalse(f.op(6D));
@@ -151,9 +160,8 @@ public final class DoublePredicatesTest {
 
         TestUtil.assertIsSerializable(f);
     }
-   
-   
-     /**
+
+    /**
      * Tests that {@link DoublePredicates#not(DoublePredicate)} throws a
      * {@link NullPointerException} when invoked with a <code>null</code> argument.
      */
@@ -196,8 +204,7 @@ public final class DoublePredicatesTest {
 
     /**
      * Tests that {@link DoublePredicates#or(DoublePredicate, DoublePredicate)} throws a
-     * {@link NullPointerException} when invoked with a left side <code>null</code>
-     * argument.
+     * {@link NullPointerException} when invoked with a left side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE() {
@@ -206,16 +213,14 @@ public final class DoublePredicatesTest {
 
     /**
      * Tests that {@link DoublePredicates#or(DoublePredicate, DoublePredicate)} throws a
-     * {@link NullPointerException} when invoked with a right side <code>null</code>
-     * argument.
+     * {@link NullPointerException} when invoked with a right side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE1() {
         DoublePredicates.or(TRUE, null);
     }
-   
-    
-   /**
+
+    /**
      * Tests {@link DoublePredicates#TRUE}.
      */
     @Test

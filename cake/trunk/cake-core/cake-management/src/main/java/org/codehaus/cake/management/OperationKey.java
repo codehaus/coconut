@@ -12,14 +12,14 @@ import java.util.Arrays;
  */
 class OperationKey {
 
+    /** The hashcode of this object. */
+    private int hashCode;
+
     /** The name of the operation. */
     private final String methodName;
 
     /** The signature of the operation. */
     private final String[] signature;
-
-    /** The hashcode of this object. */
-    private int hashCode;
 
     /**
      * Creates a new OperationKey.

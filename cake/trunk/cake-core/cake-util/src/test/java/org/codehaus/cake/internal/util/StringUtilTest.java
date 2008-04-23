@@ -14,15 +14,15 @@ import org.junit.Test;
  */
 public class StringUtilTest {
 
-    @Test(expected = NullPointerException.class)
-    public void capitalizeNPE() {
-        StringUtil.capitalize(null);
-    }
-
     @Test
     public void capitalize() {
         assertEquals("", StringUtil.capitalize(""));
         assertEquals("Foo", StringUtil.capitalize("foo"));
         assertEquals("Foo", StringUtil.capitalize("Foo"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void capitalizeNPE() {
+        StringUtil.capitalize(null);
     }
 }

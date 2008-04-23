@@ -9,11 +9,11 @@ import org.codehaus.cake.management.annotation.ManagedOperation;
  * @version $Id: AttributedStub1.java 415 2007-11-09 08:25:23Z kasper $
  */
 public class SingleOperation {
-	public int invokeCount;
+    public int invokeCount;
 
-	@ManagedOperation
-	public void method1() {
-		invokeCount++;
-	}
+    @ManagedOperation
+    public void method1() {
+        invokeCount++;
+    }
 
 }

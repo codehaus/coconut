@@ -21,16 +21,16 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class Attribute<T> implements Serializable {
     /* All fields are transient because attributes should be a singleton. */
 
+    static final AtomicLong NAME = new AtomicLong();
+
     /** The type of this attribute, as returned {@link #getType()}. */
     private final transient Class<T> clazz;
 
     /** The default value of this attribute. */
     private final transient T defaultValue;
-
+    private final transient int hashCode;
     /** The name of this attribute. */
     private final transient String name;
-    static final AtomicLong NAME = new AtomicLong();
-    private final transient int hashCode;
 
     /**
      * Creates a new AbstractAttribute.
@@ -74,6 +74,22 @@ public abstract class Attribute<T> implements Serializable {
         checkValid(defaultValue);
         this.defaultValue = defaultValue;
         hashCode = name.hashCode() ^ clazz.hashCode();
+    }
+
+    /**
+     * Checks if the specified value is valid for this attribute. If the specified value is not
+     * valid this method will throw an {@link IllegalArgumentException}.
+     * 
+     * @param value
+     *            the value to check
+     * @throws IllegalArgumentException
+     *             if the specified value is not valid
+     */
+    public void checkValid(T value) {
+        if (!isValid(value)) {
+            throw new IllegalArgumentException("Illegal value for attribute " + getName()
+                    + ", value = " + value);
+        }
     }
 
     public final boolean equals(Object obj) {
@@ -125,30 +141,6 @@ public abstract class Attribute<T> implements Serializable {
         return attributes.getAttributes().contains(this);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return name;
-//        "Attribute [name='" + name + "', type='" + getType() + "', defaultValue='"
-//                + getDefault() + "'";
-    }
-
-    /**
-     * Checks if the specified value is valid for this attribute. If the specified value is not
-     * valid this method will throw an {@link IllegalArgumentException}.
-     * 
-     * @param value
-     *            the value to check
-     * @throws IllegalArgumentException
-     *             if the specified value is not valid
-     */
-    public void checkValid(T value) {
-        if (!isValid(value)) {
-            throw new IllegalArgumentException("Illegal value for attribute " + getName()
-                    + ", value = " + value);
-        }
-    }
-
     /**
      * Returns whether or not the specified value is valid for this attribute. This method can be
      * overriden to only accept certain values.
@@ -173,5 +165,13 @@ public abstract class Attribute<T> implements Serializable {
     public AttributeMap singleton(T value) {
         checkValid(value);
         return Attributes.singleton(this, value);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return name;
+        // "Attribute [name='" + name + "', type='" + getType() + "', defaultValue='"
+        // + getDefault() + "'";
     }
 }

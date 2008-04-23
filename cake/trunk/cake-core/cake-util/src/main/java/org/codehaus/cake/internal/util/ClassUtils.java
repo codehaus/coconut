@@ -18,8 +18,8 @@ public final class ClassUtils {
     // /CLOVER:ON
 
     /**
-     * Converts the specified primitive class to the corresponding Object based class. Or
-     * returns the specified class if it is not a primitive class.
+     * Converts the specified primitive class to the corresponding Object based class. Or returns
+     * the specified class if it is not a primitive class.
      * 
      * @param c
      *            the class to convert
@@ -74,7 +74,8 @@ public final class ClassUtils {
                 }
                 return false;
             }
-        } catch (SecurityException ignore) {/* ignore exception, return unknown */}
+        } catch (SecurityException ignore) {/* ignore exception, return unknown */
+        }
         return true; // unknown
     }
 }

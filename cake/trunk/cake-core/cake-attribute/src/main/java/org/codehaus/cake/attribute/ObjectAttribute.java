@@ -31,10 +31,6 @@ public abstract class ObjectAttribute<T> extends Attribute<T> {
         super(name, clazz, defaultValue);
     }
 
-    public T getDefaultValue() {
-        return super.getDefault();
-    }
-
     /**
      * Checks if the specified value is valid for this attribute. If the specified value is not
      * valid this method will throw an {@link IllegalArgumentException}.
@@ -49,57 +45,6 @@ public abstract class ObjectAttribute<T> extends Attribute<T> {
             throw new IllegalArgumentException("Illegal value for attribute " + getName()
                     + ", value = " + value);
         }
-    }
-
-    /**
-     * Returns whether or not the specified value is valid for this attribute. This method can be
-     * overriden to only accept certain values.
-     * 
-     * @param value
-     *            the specified value to check
-     * @return <code>true</code> if the specified value is valid for this attribute, otherwise
-     *         <code>false</code>
-     */
-    public boolean isValid(T value) {
-        return true; // all values are accepted by default.
-    }
-
-    /**
-     * Returns an AttributeMap containing only this attribute mapping to the specified value. The
-     * returned map is immutable.
-     * 
-     * @param value
-     *            the value to create the singleton from
-     * @return an AttributeMap containing only this attribute mapping to the specified value
-     */
-    public AttributeMap singleton(T value) {
-        checkValid(value);
-        return Attributes.singleton(this, value);
-    }
-
-    /**
-     * Sets the specified value in the specified attribute map.
-     * 
-     * @param attributes
-     *            the attribute map to set the value in.
-     * @param value
-     *            the value that should be set
-     * @return the specified attribute map
-     * @throws IllegalArgumentException
-     *             if the specified value is not valid accordingly to {@link #checkValid(Object)}
-     */
-    public AttributeMap set(AttributeMap attributes, T value) {
-        if (attributes == null) {
-            throw new NullPointerException("attributes is null");
-        }
-        checkValid(value);
-        attributes.put(this, value);
-        return attributes;
-    }
-
-    public <S extends WithAttributes> S set(S attributes, T value) {
-        set(attributes.getAttributes(), value);
-        return attributes;
     }
 
     /**
@@ -142,5 +87,60 @@ public abstract class ObjectAttribute<T> extends Attribute<T> {
 
     public final T get(WithAttributes withAttributes, T defaultValue) {
         return withAttributes.getAttributes().get(this, defaultValue);
+    }
+
+    public T getDefaultValue() {
+        return super.getDefault();
+    }
+
+    /**
+     * Returns whether or not the specified value is valid for this attribute. This method can be
+     * overriden to only accept certain values.
+     * 
+     * @param value
+     *            the specified value to check
+     * @return <code>true</code> if the specified value is valid for this attribute, otherwise
+     *         <code>false</code>
+     */
+    public boolean isValid(T value) {
+        return true; // all values are accepted by default.
+    }
+
+    /**
+     * Sets the specified value in the specified attribute map.
+     * 
+     * @param attributes
+     *            the attribute map to set the value in.
+     * @param value
+     *            the value that should be set
+     * @return the specified attribute map
+     * @throws IllegalArgumentException
+     *             if the specified value is not valid accordingly to {@link #checkValid(Object)}
+     */
+    public AttributeMap set(AttributeMap attributes, T value) {
+        if (attributes == null) {
+            throw new NullPointerException("attributes is null");
+        }
+        checkValid(value);
+        attributes.put(this, value);
+        return attributes;
+    }
+
+    public <S extends WithAttributes> S set(S attributes, T value) {
+        set(attributes.getAttributes(), value);
+        return attributes;
+    }
+
+    /**
+     * Returns an AttributeMap containing only this attribute mapping to the specified value. The
+     * returned map is immutable.
+     * 
+     * @param value
+     *            the value to create the singleton from
+     * @return an AttributeMap containing only this attribute mapping to the specified value
+     */
+    public AttributeMap singleton(T value) {
+        checkValid(value);
+        return Attributes.singleton(this, value);
     }
 }

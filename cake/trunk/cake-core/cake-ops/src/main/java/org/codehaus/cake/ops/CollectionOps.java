@@ -29,28 +29,25 @@ import org.codehaus.cake.ops.Ops.Predicate;
 import org.codehaus.cake.ops.Ops.Procedure;
 
 /**
- * Various ops implementations that operate on {@link Collection}, {@link Iterable} and
- * {@link Map}.
+ * Various ops implementations that operate on {@link Collection}, {@link Iterable} and {@link Map}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: CollectionOps.java 590 2008-03-14 08:16:12Z kasper $
  */
 public final class CollectionOps {
     /**
-     * A comparator for doubles relying on natural ordering. The comparator is
-     * Serializable.
+     * A comparator for doubles relying on natural ordering. The comparator is Serializable.
      */
     public static final Op MAP_ENTRY_TO_KEY_OP = new KeyFromMapEntry();
 
     /**
-     * A comparator for doubles relying on natural ordering. The comparator is
-     * Serializable.
+     * A comparator for doubles relying on natural ordering. The comparator is Serializable.
      */
     public static final Op MAP_ENTRY_TO_VALUE_OP = new ValueFromMapEntry();
     /**
-     * A comparator for doubles relying on natural ordering. The comparator is
-     * Serializable.
+     * A comparator for doubles relying on natural ordering. The comparator is Serializable.
      */
     public static final Op MAP_GET_OP = new ValueFromMapEntry();
 
@@ -78,10 +75,9 @@ public final class CollectionOps {
         return new ContainsPredicate(col);
     }
 
-
     /**
-     * Filters the specified iterable, returning a new list of those items that evaluated
-     * to true given the specified predicate.
+     * Filters the specified iterable, returning a new list of those items that evaluated to true
+     * given the specified predicate.
      * 
      * @param <E>
      *            the types of items that are filtered
@@ -107,8 +103,8 @@ public final class CollectionOps {
     }
 
     /**
-     * Filters the specified map, returning a new map of those items that evaluated to
-     * true given the specified predicate.
+     * Filters the specified map, returning a new map of those items that evaluated to true given
+     * the specified predicate.
      * 
      * @param <K>
      *            the type of keys in the map
@@ -167,8 +163,8 @@ public final class CollectionOps {
     }
 
     /**
-     * Returns whether or not <b>all</b> of elements in the specified can be accepted by
-     * the specified predicate.
+     * Returns whether or not <b>all</b> of elements in the specified can be accepted by the
+     * specified predicate.
      * 
      * @param <E>
      *            the types accepted
@@ -176,8 +172,8 @@ public final class CollectionOps {
      *            the iterable to check
      * @param predicate
      *            the predicate to test against
-     * @return whether or not all of elements in the specified can be accepted by the
-     *         specified predicate
+     * @return whether or not all of elements in the specified can be accepted by the specified
+     *         predicate
      */
     public static <E> boolean isAllTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
         if (iterable == null) {
@@ -194,8 +190,8 @@ public final class CollectionOps {
     }
 
     /**
-     * Returns whether or not <b>any</b> of elements in the specified can be accepted by
-     * the specified predicate.
+     * Returns whether or not <b>any</b> of elements in the specified can be accepted by the
+     * specified predicate.
      * 
      * @param <E>
      *            the types accepted
@@ -203,8 +199,8 @@ public final class CollectionOps {
      *            the iterable to check
      * @param predicate
      *            the predicate to test against
-     * @return whether or not any of elements in the specified can be accepted by the
-     *         specified predicate
+     * @return whether or not any of elements in the specified can be accepted by the specified
+     *         predicate
      */
     public static <E> boolean isAnyTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
         if (iterable == null) {
@@ -290,8 +286,8 @@ public final class CollectionOps {
     }
 
     /**
-     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
-     * is contained in the collection specified when construction it.
+     * A Predicate that evaluates to <code>true</code> iff the element being evaluated is
+     * contained in the collection specified when construction it.
      */
     static final class ContainsPredicate<E> implements Predicate<E>, Serializable {
 

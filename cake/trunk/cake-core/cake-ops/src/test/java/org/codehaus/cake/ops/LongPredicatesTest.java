@@ -15,17 +15,27 @@
  */
 package org.codehaus.cake.ops;
 
-import static org.codehaus.cake.ops.LongPredicates.*;
+import static org.codehaus.cake.ops.LongPredicates.FALSE;
+import static org.codehaus.cake.ops.LongPredicates.TRUE;
 import static org.codehaus.cake.test.util.TestUtil.assertIsSerializable;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-import org.codehaus.cake.ops.LongPredicates.*;
-import org.codehaus.cake.ops.Ops.*;
+import org.codehaus.cake.ops.LongPredicates.EqualsToLongPredicate;
+import org.codehaus.cake.ops.LongPredicates.GreaterThenLongPredicate;
+import org.codehaus.cake.ops.LongPredicates.GreaterThenOrEqualsLongPredicate;
+import org.codehaus.cake.ops.LongPredicates.LessThenLongPredicate;
+import org.codehaus.cake.ops.LongPredicates.LessThenOrEqualsLongPredicate;
+import org.codehaus.cake.ops.LongPredicates.NotLongPredicate;
+import org.codehaus.cake.ops.Ops.LongPredicate;
 import org.codehaus.cake.test.util.TestUtil;
 import org.junit.Test;
+
 /**
  * Various tests for {@link LongPredicates}.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: LongPredicatesTest.java 590 2008-03-14 08:16:12Z kasper $
  */
@@ -53,8 +63,7 @@ public final class LongPredicatesTest {
 
     /**
      * Tests that {@link LongPredicates#and(LongPredicate, LongPredicate)} throws a
-     * {@link NullPointerException} when invoked with a left side <code>null</code>
-     * argument.
+     * {@link NullPointerException} when invoked with a left side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE() {
@@ -63,14 +72,13 @@ public final class LongPredicatesTest {
 
     /**
      * Tests that {@link LongPredicates#and(LongPredicate, LongPredicate)} throws a
-     * {@link NullPointerException} when invoked with a right side <code>null</code>
-     * argument.
+     * {@link NullPointerException} when invoked with a right side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE1() {
         LongPredicates.and(TRUE, null);
     }
-    
+
     /* Test greater then */
     @Test
     public void equalsTo() {
@@ -84,7 +92,7 @@ public final class LongPredicatesTest {
 
         TestUtil.assertIsSerializable(f);
     }
-    
+
     /**
      * Tests {@link LongPredicates#FALSE}.
      */
@@ -96,7 +104,7 @@ public final class LongPredicatesTest {
         assertIsSerializable(FALSE);
         assertSame(FALSE, TestUtil.serializeAndUnserialize(FALSE));
     }
-   
+
     /* Test greater then */
     @Test
     public void greaterThen() {
@@ -151,11 +159,10 @@ public final class LongPredicatesTest {
 
         TestUtil.assertIsSerializable(f);
     }
-   
-   
-     /**
-     * Tests that {@link LongPredicates#not(LongPredicate)} throws a
-     * {@link NullPointerException} when invoked with a <code>null</code> argument.
+
+    /**
+     * Tests that {@link LongPredicates#not(LongPredicate)} throws a {@link NullPointerException}
+     * when invoked with a <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void notNPE() {
@@ -196,8 +203,7 @@ public final class LongPredicatesTest {
 
     /**
      * Tests that {@link LongPredicates#or(LongPredicate, LongPredicate)} throws a
-     * {@link NullPointerException} when invoked with a left side <code>null</code>
-     * argument.
+     * {@link NullPointerException} when invoked with a left side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE() {
@@ -206,16 +212,14 @@ public final class LongPredicatesTest {
 
     /**
      * Tests that {@link LongPredicates#or(LongPredicate, LongPredicate)} throws a
-     * {@link NullPointerException} when invoked with a right side <code>null</code>
-     * argument.
+     * {@link NullPointerException} when invoked with a right side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE1() {
         LongPredicates.or(TRUE, null);
     }
-   
-    
-   /**
+
+    /**
      * Tests {@link LongPredicates#TRUE}.
      */
     @Test

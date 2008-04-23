@@ -20,28 +20,20 @@ import org.junit.Test;
 
 public class DefaultManagedOperationTest {
 
+    private final static Method DUMMY = DefaultManagedOperationTest.class.getMethods()[0];
+
     Map<OperationKey, AbstractManagedOperation> attr;
 
     OperationStub stub;
 
-    @Before
-    public void setup() throws Exception {
-        BeanInfo bi = Introspector.getBeanInfo(OperationStub.class);
-        stub = new OperationStub();
-        attr = DefaultManagedOperation.fromMethodDescriptors(bi.getMethodDescriptors(), stub);
-        assertEquals(10, attr.size());
+    @Test(expected = NullPointerException.class)
+    public void constructorNPEDescription() {
+        new DefaultManagedOperation("foo", DUMMY, "desc", null);
     }
-
-    private final static Method DUMMY = DefaultManagedOperationTest.class.getMethods()[0];
 
     @Test(expected = NullPointerException.class)
     public void constructorNPEMethod() {
         new DefaultManagedOperation("foo", null, "desc", "foo");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void constructorNPEObject() {
-        new DefaultManagedOperation(null, DUMMY, "desc", "foo");
     }
 
     @Test(expected = NullPointerException.class)
@@ -50,14 +42,21 @@ public class DefaultManagedOperationTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void constructorNPEDescription() {
-        new DefaultManagedOperation("foo", DUMMY, "desc", null);
+    public void constructorNPEObject() {
+        new DefaultManagedOperation(null, DUMMY, "desc", "foo");
     }
 
     public void getNameDescription() {
         DefaultManagedOperation o = new DefaultManagedOperation("foo", DUMMY, "name", "desc");
         assertEquals("name", o.getName());
         assertEquals("desc", o.getDescription());
+    }
+
+    @Test(expected = ReflectionException.class)
+    public void illegalAccess() throws Exception {
+        Method m = PrivateMethods.class.getDeclaredMethod("illegal");
+        DefaultManagedOperation opr = new DefaultManagedOperation(new PrivateMethods(), m, "", "");
+        opr.invoke();
     }
 
     @Test
@@ -89,17 +88,17 @@ public class DefaultManagedOperationTest {
     }
 
     @Test
-    public void method3String() throws Exception {
-        AbstractManagedOperation opr = attr.get(new OperationKey("method3", "java.lang.String"));
+    public void method3Boolean() throws Exception {
+        AbstractManagedOperation opr = attr.get(new OperationKey("method3", "java.lang.Boolean"));
 
         MBeanOperationInfo info = opr.getInfo();
         assertEquals("method3", info.getName());
         assertEquals("", info.getDescription());
         assertEquals("void", info.getReturnType());
         assertEquals(1, info.getSignature().length);
-        assertEquals("java.lang.String", info.getSignature()[0].getType());
-        opr.invoke("foo");
-        assertEquals(4, stub.invokeCount);
+        assertEquals("java.lang.Boolean", info.getSignature()[0].getType());
+        opr.invoke(Boolean.FALSE);
+        assertEquals(16, stub.invokeCount);
     }
 
     @Test
@@ -117,17 +116,17 @@ public class DefaultManagedOperationTest {
     }
 
     @Test
-    public void method3Boolean() throws Exception {
-        AbstractManagedOperation opr = attr.get(new OperationKey("method3", "java.lang.Boolean"));
+    public void method3String() throws Exception {
+        AbstractManagedOperation opr = attr.get(new OperationKey("method3", "java.lang.String"));
 
         MBeanOperationInfo info = opr.getInfo();
         assertEquals("method3", info.getName());
         assertEquals("", info.getDescription());
         assertEquals("void", info.getReturnType());
         assertEquals(1, info.getSignature().length);
-        assertEquals("java.lang.Boolean", info.getSignature()[0].getType());
-        opr.invoke(Boolean.FALSE);
-        assertEquals(16, stub.invokeCount);
+        assertEquals("java.lang.String", info.getSignature()[0].getType());
+        opr.invoke("foo");
+        assertEquals(4, stub.invokeCount);
     }
 
     @Test
@@ -152,6 +151,14 @@ public class DefaultManagedOperationTest {
         assertEquals(64, opr.invoke());
     }
 
+    @Before
+    public void setup() throws Exception {
+        BeanInfo bi = Introspector.getBeanInfo(OperationStub.class);
+        stub = new OperationStub();
+        attr = DefaultManagedOperation.fromMethodDescriptors(bi.getMethodDescriptors(), stub);
+        assertEquals(10, attr.size());
+    }
+
     @Test(expected = LinkageError.class)
     public void throwError() throws Exception {
         AbstractManagedOperation opr = attr.get(new OperationKey("throwError"));
@@ -172,13 +179,6 @@ public class DefaultManagedOperationTest {
     @Test(expected = IllegalMonitorStateException.class)
     public void throwRuntimeError() throws Exception {
         AbstractManagedOperation opr = attr.get(new OperationKey("throwRuntimeException"));
-        opr.invoke();
-    }
-
-    @Test(expected = ReflectionException.class)
-    public void illegalAccess() throws Exception {
-        Method m = PrivateMethods.class.getDeclaredMethod("illegal");
-        DefaultManagedOperation opr = new DefaultManagedOperation(new PrivateMethods(), m, "", "");
         opr.invoke();
     }
 

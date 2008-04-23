@@ -16,31 +16,44 @@
 package org.codehaus.cake.ops;
 
 import java.io.Serializable;
-import static org.codehaus.cake.ops.Ops.*;
-import java.math.*;
+
+import org.codehaus.cake.ops.Ops.FloatComparator;
+import org.codehaus.cake.ops.Ops.FloatOp;
+import org.codehaus.cake.ops.Ops.FloatPredicate;
+import org.codehaus.cake.ops.Ops.FloatReducer;
+
 /**
  * Various implementations of {@link FloatPredicate}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: FloatOps.java 590 2008-03-14 08:16:12Z kasper $
  */
 public final class FloatOps {
+    final static FloatAbsOp ABS_OP = new FloatAbsOp();
 
-     final static FloatAddReducer ADD_REDUCER = new FloatAddReducer();
+    final static FloatAddReducer ADD_REDUCER = new FloatAddReducer();
 
-     final static FloatSubtractReducer SUBTRACT_REDUCER = new FloatSubtractReducer();
-    
-     final static FloatDivideReducer DIVIDE_REDUCER = new FloatDivideReducer();
-    
-     final static FloatMultiplyReducer MULTIPLY_REDUCER = new FloatMultiplyReducer();
-
-     final static FloatAbsOp ABS_OP = new FloatAbsOp();
     /**
      * A comparator for floats relying on natural ordering. The comparator is Serializable.
      */
     public static final FloatComparator COMPARATOR = new NaturalFloatComparator();
+
+    final static FloatDivideReducer DIVIDE_REDUCER = new FloatDivideReducer();
+    /**
+     * A reducer returning the maximum of two float elements, using natural comparator. The Reducer
+     * is serializable.
+     */
+    static final FloatReducer MAX_REDUCER = new NaturalFloatMaxReducer();
+
+    /**
+     * A reducer returning the minimum of two float elements, using natural comparator. The Reducer
+     * is serializable.
+     */
+    static final FloatReducer MIN_REDUCER = new NaturalFloatMinReducer();
+
+    final static FloatMultiplyReducer MULTIPLY_REDUCER = new FloatMultiplyReducer();
 
     /**
      * A comparator that imposes the reverse of the <i>natural ordering</i> on floats. The
@@ -48,59 +61,37 @@ public final class FloatOps {
      */
     public static final FloatComparator REVERSE_COMPARATOR = new NaturalFloatReverseComparator();
 
-    /**
-     * A reducer returning the maximum of two float elements, using natural comparator.
-     * The Reducer is serializable.
-     */
-     static final FloatReducer MAX_REDUCER = new NaturalFloatMaxReducer();
+    final static FloatSubtractReducer SUBTRACT_REDUCER = new FloatSubtractReducer();
 
-    /**
-     * A reducer returning the minimum of two float elements, using natural comparator.
-     * The Reducer is serializable.
-     */
-     static final FloatReducer MIN_REDUCER = new NaturalFloatMinReducer();
-    ///CLOVER:OFF
+    // /CLOVER:OFF
     /** Cannot instantiate. */
     private FloatOps() {}
-    ///CLOVER:ON
+
+    // /CLOVER:ON
+
     public static FloatOp abs() {
         return ABS_OP;
     }
+
     public static FloatReducer add() {
         return ADD_REDUCER;
     }
-    
+
     public static FloatOp add(float add) {
         return new FloatAddOp(add);
     }
-    
+
     public static FloatReducer divide() {
         return DIVIDE_REDUCER;
     }
-    
+
     public static FloatOp divide(float divide) {
         return new FloatDivideOp(divide);
     }
-    
-    public static FloatReducer multiply() {
-        return MULTIPLY_REDUCER;
-    }
-    
-    public static FloatOp multiply(float multiply) {
-        return new FloatMultiplyOp(multiply);
-    }
-    
-    public static FloatReducer subtract() {
-        return SUBTRACT_REDUCER;
-    }
-    
-    public static FloatOp subtract(float substract) {
-        return new FloatSubtractOp(substract);
-    }
+
     /**
-     * A reducer returning the maximum of two float elements, using the specified
-     * comparator.
-     *
+     * A reducer returning the maximum of two float elements, using the specified comparator.
+     * 
      * @param comparator
      *            the comparator to use when comparing elements
      * @return the newly created reducer
@@ -110,9 +101,8 @@ public final class FloatOps {
     }
 
     /**
-     * A reducer returning the minimum of two float elements, using the specified
-     * comparator.
-     *
+     * A reducer returning the minimum of two float elements, using the specified comparator.
+     * 
      * @param comparator
      *            the comparator to use when comparing elements
      * @return the newly created reducer
@@ -120,7 +110,15 @@ public final class FloatOps {
     public static FloatReducer min(FloatComparator comparator) {
         return new FloatMinReducer(comparator);
     }
-    
+
+    public static FloatReducer multiply() {
+        return MULTIPLY_REDUCER;
+    }
+
+    public static FloatOp multiply(float multiply) {
+        return new FloatMultiplyOp(multiply);
+    }
+
     /**
      * Creates a comparator that imposes the reverse ordering of the specified comparator.
      * <p>
@@ -134,62 +132,15 @@ public final class FloatOps {
     public static FloatComparator reverseOrder(FloatComparator comparator) {
         return new ReverseFloatComparator(comparator);
     }
-    static final class FloatSubtractReducer implements FloatReducer, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -8583260658972887816L;
 
-        public float op(float a, float b) {
-            return a - b;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return SUBTRACT_REDUCER;
-        }
+    public static FloatReducer subtract() {
+        return SUBTRACT_REDUCER;
     }
-    
-    static final class FloatAddReducer implements FloatReducer, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -830758681673022439L;
 
-        public float op(float a, float b) {
-            return a + b;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return ADD_REDUCER;
-        }
+    public static FloatOp subtract(float substract) {
+        return new FloatSubtractOp(substract);
     }
-    
-    
-    static final class FloatMultiplyReducer implements FloatReducer, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -130758681673022439L;
 
-        public float op(float a, float b) {
-            return a * b;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return MULTIPLY_REDUCER;
-        }
-    }
-    
-    static final class FloatDivideReducer implements FloatReducer, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -330758681673022439L;
-
-        public float op(float a, float b) {
-            return a / b;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return DIVIDE_REDUCER;
-        }
-    }
     static final class FloatAbsOp implements FloatOp, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8583260658972887816L;
@@ -203,38 +154,65 @@ public final class FloatOps {
             return ABS_OP;
         }
     }
-    /** A comparator for floats relying on natural ordering. */
-    static final class NaturalFloatComparator implements FloatComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 8763765406476535022L;
 
-        /** {@inheritDoc} */
-        public int compare(float a, float b) {
-            return Float.compare(a, b);
+    static final class FloatAddOp implements FloatOp, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -6604604690824553900L;
+
+        private final float add;
+
+        public FloatAddOp(float add) {
+            this.add = add;
+        }
+
+        public float op(float a) {
+            return a + add;
+        }
+    }
+
+    static final class FloatAddReducer implements FloatReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -830758681673022439L;
+
+        public float op(float a, float b) {
+            return a + b;
         }
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return COMPARATOR;
+            return ADD_REDUCER;
         }
     }
 
-    /** A comparator for floats relying on natural ordering. */
-    static final class NaturalFloatReverseComparator implements FloatComparator, Serializable {
+    static final class FloatDivideOp implements FloatOp, Serializable {
         /** serialVersionUID. */
-        private static final long serialVersionUID = -7289505884757339069L;
+        private static final long serialVersionUID = 661378303438906777L;
 
-        /** {@inheritDoc} */
-        public int compare(float a, float b) {
-            return Float.compare(a, b);
+        private final float divide;
 
+        public FloatDivideOp(float divide) {
+            this.divide = divide;
+        }
+
+        public float op(float a) {
+            return a / divide;
+        }
+    }
+
+    static final class FloatDivideReducer implements FloatReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -330758681673022439L;
+
+        public float op(float a, float b) {
+            return a / b;
         }
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return REVERSE_COMPARATOR;
+            return DIVIDE_REDUCER;
         }
     }
+
     /**
      * A reducer returning the maximum of two float elements, using the given comparator.
      */
@@ -247,7 +225,7 @@ public final class FloatOps {
 
         /**
          * Creates a FloatMaxReducer.
-         *
+         * 
          * @param comparator
          *            the comparator to use
          */
@@ -276,7 +254,7 @@ public final class FloatOps {
 
         /**
          * Creates a FloatMinReducer.
-         *
+         * 
          * @param comparator
          *            the comparator to use
          */
@@ -292,8 +270,82 @@ public final class FloatOps {
             return comparator.compare(a, b) <= 0 ? a : b;
         }
     }
-    
-        /** A reducer returning the maximum of two float elements, using natural comparator. */
+
+    static final class FloatMultiplyOp implements FloatOp, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 6099641660816235381L;
+
+        private final float multiply;
+
+        public FloatMultiplyOp(float multiply) {
+            this.multiply = multiply;
+        }
+
+        public float op(float a) {
+            return a * multiply;
+        }
+    }
+
+    static final class FloatMultiplyReducer implements FloatReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -130758681673022439L;
+
+        public float op(float a, float b) {
+            return a * b;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return MULTIPLY_REDUCER;
+        }
+    }
+
+    static final class FloatSubtractOp implements FloatOp, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -23423423410L;
+
+        private final float subtract;
+
+        public FloatSubtractOp(float subtract) {
+            this.subtract = subtract;
+        }
+
+        public float op(float a) {
+            return a - subtract;
+        }
+    }
+
+    static final class FloatSubtractReducer implements FloatReducer, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -8583260658972887816L;
+
+        public float op(float a, float b) {
+            return a - b;
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return SUBTRACT_REDUCER;
+        }
+    }
+
+    /** A comparator for floats relying on natural ordering. */
+    static final class NaturalFloatComparator implements FloatComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 8763765406476535022L;
+
+        /** {@inheritDoc} */
+        public int compare(float a, float b) {
+            return Float.compare(a, b);
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return COMPARATOR;
+        }
+    }
+
+    /** A reducer returning the maximum of two float elements, using natural comparator. */
     static final class NaturalFloatMaxReducer implements FloatReducer, Serializable {
 
         /** serialVersionUID. */
@@ -326,8 +378,25 @@ public final class FloatOps {
             return MIN_REDUCER;
         }
     }
-    
-        /** A comparator that reserves the result of another DoubleComparator. */
+
+    /** A comparator for floats relying on natural ordering. */
+    static final class NaturalFloatReverseComparator implements FloatComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -7289505884757339069L;
+
+        /** {@inheritDoc} */
+        public int compare(float a, float b) {
+            return -Float.compare(a, b);
+
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return REVERSE_COMPARATOR;
+        }
+    }
+
+    /** A comparator that reserves the result of another DoubleComparator. */
     static final class ReverseFloatComparator implements FloatComparator, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 1585665469031127321L;
@@ -351,63 +420,6 @@ public final class FloatOps {
         /** {@inheritDoc} */
         public int compare(float a, float b) {
             return -comparator.compare(a, b);
-        }
-    }
-    static final class FloatAddOp implements FloatOp, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -6604604690824553900L;
-
-        private final float add;
-
-        public FloatAddOp(float add) {
-            this.add = add;
-        }
-
-        public float op(float a) {
-            return a + add;
-        }
-    }
-    static final class FloatSubtractOp implements FloatOp, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -23423423410L;
-
-        private final float subtract;
-
-        public FloatSubtractOp(float subtract) {
-            this.subtract = subtract;
-        }
-
-        public float op(float a) {
-            return a - subtract;
-        }
-    }
-    static final class FloatDivideOp implements FloatOp, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 661378303438906777L;
-
-        private final float divide;
-
-        public FloatDivideOp(float divide) {
-            this.divide = divide;
-        }
-
-        public float op(float a) {
-            return a / divide;
-        }
-    }
-
-    static final class FloatMultiplyOp implements FloatOp, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 6099641660816235381L;
-
-        private final float multiply;
-
-        public FloatMultiplyOp(float multiply) {
-            this.multiply = multiply;
-        }
-
-        public float op(float a) {
-            return a * multiply;
         }
     }
 }

@@ -23,14 +23,6 @@ public class DefaultAttributeMapTest extends AtrStubs {
 
     AttributeMap m2;
 
-    @Before
-    public void setup() {
-        m = create();
-        m2 = create();
-        m2.put(a1, 12.23);
-        m2.put(a2, 12);
-    }
-
     @Test
     public void clear() {
         assertEquals(2, m2.size());
@@ -45,6 +37,30 @@ public class DefaultAttributeMapTest extends AtrStubs {
         assertTrue(m2.contains(a1));
         assertTrue(m2.contains(a2));
         assertFalse(m2.contains(a3));
+    }
+
+    @Test
+    public void copyConstructor() {
+        AttributeMap am = create();
+        am.put(a1, 12.23);
+        am.put(a2, 12);
+        assertEquals(am, new DefaultAttributeMap(am));
+    }
+
+    protected AttributeMap create() {
+        return new DefaultAttributeMap();
+    }
+
+    @Test
+    public void equals() {
+        assertEquals(m2, m2);
+        assertFalse(m2.equals(new Object()));
+        assertFalse(m2.equals(new DefaultAttributeMap()));
+        assertEquals(m2, new DefaultAttributeMap(m2));
+    }
+
+    void mappedPutted() {
+
     }
 
     @Test
@@ -69,11 +85,6 @@ public class DefaultAttributeMapTest extends AtrStubs {
         assertEquals(null, m.put(O_3, "15"));
         assertEquals("15", m.put(O_2, "25"));
         assertEquals("15", m.put(O_3, "25"));
-
-
-    }
-
-    void mappedPutted() {
 
     }
 
@@ -263,23 +274,11 @@ public class DefaultAttributeMapTest extends AtrStubs {
 
     }
 
-    @Test
-    public void equals() {
-        assertEquals(m2, m2);
-        assertFalse(m2.equals(new Object()));
-        assertFalse(m2.equals(new DefaultAttributeMap()));
-        assertEquals(m2, new DefaultAttributeMap(m2));
-    }
-
-    protected AttributeMap create() {
-        return new DefaultAttributeMap();
-    }
-
-    @Test
-    public void copyConstructor() {
-        AttributeMap am = create();
-        am.put(a1, 12.23);
-        am.put(a2, 12);
-        assertEquals(am, new DefaultAttributeMap(am));
+    @Before
+    public void setup() {
+        m = create();
+        m2 = create();
+        m2.put(a1, 12.23);
+        m2.put(a2, 12);
     }
 }

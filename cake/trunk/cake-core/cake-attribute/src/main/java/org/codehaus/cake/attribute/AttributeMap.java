@@ -11,20 +11,7 @@ import java.util.Set;
  * @version $Id: AttributeMap.java 415 2007-11-09 08:25:23Z kasper $
  */
 public interface AttributeMap {
-    /**
-     * Returns <tt>true</tt> if this map contains no attribute-value mappings.
-     * 
-     * @return <tt>true</tt> if this map contains no attribute-value mappings
-     */
-    boolean isEmpty();
-
-    /**
-     * Returns the number of attribite-value mappings in this attributemap. If the map contains more
-     * than <tt>Integer.MAX_VALUE</tt> elements, returns <tt>Integer.MAX_VALUE</tt>.
-     * 
-     * @return the number of attribute-value mappings in this map
-     */
-    int size();
+    Set<Attribute> attributeSet();
 
     /**
      * Removes all of the mappings from this map (optional operation). The map will be empty after
@@ -49,19 +36,11 @@ public interface AttributeMap {
      */
     boolean contains(Attribute<?> attribute);
 
-    Set<Attribute> attributeSet();
-
     Set<Map.Entry<Attribute, Object>> entrySet();
-
-    Collection<Object> values();
 
     <T> T get(Attribute<T> key);
 
     <T> T get(Attribute<T> key, T defaultValue);
-
-    <T> T put(Attribute<T> key, T value);
-
-    <T> T remove(Attribute<T> key);
 
     /**
      * Returns the byte value to which this attribute-map maps the specified key. Returns the value
@@ -94,10 +73,6 @@ public interface AttributeMap {
 
     boolean get(BooleanAttribute attribute, boolean defaultValue);
 
-    boolean put(BooleanAttribute attribute, boolean value);
-
-    boolean remove(BooleanAttribute key);
-
     /**
      * Returns the byte value to which this attribute-map maps the specified key. Returns the value
      * returned by the specified attributes {@link ByteAttribute#getDefaultValue()} method if the
@@ -128,10 +103,6 @@ public interface AttributeMap {
 
     byte get(ByteAttribute attribute, byte defaultValue);
 
-    byte put(ByteAttribute attribute, byte value);
-
-    byte remove(ByteAttribute key);
-
     /**
      * Returns the byte value to which this attribute-map maps the specified key. Returns the value
      * returned by the specified attributes {@link CharAttribute#getDefaultValue()} method if the
@@ -161,10 +132,6 @@ public interface AttributeMap {
     char get(CharAttribute attribute);
 
     char get(CharAttribute attribute, char defaultValue);
-
-    char put(CharAttribute attribute, char value);
-
-    char remove(CharAttribute key);
 
     /**
      * Returns the byte value to which this attribute-map maps the specified key. Returns the value
@@ -197,10 +164,6 @@ public interface AttributeMap {
 
     double get(DoubleAttribute attribute, double defaultValue);
 
-    double put(DoubleAttribute attribute, double value);
-
-    double remove(DoubleAttribute key);
-
     /**
      * Returns the byte value to which this attribute-map maps the specified key. Returns the value
      * returned by the specified attributes {@link FloatAttribute#getDefaultValue()} method if the
@@ -232,10 +195,6 @@ public interface AttributeMap {
 
     float get(FloatAttribute attribute, float defaultValue);
 
-    float put(FloatAttribute attribute, float value);
-
-    float remove(FloatAttribute key);
-
     /**
      * Returns the byte value to which this attribute-map maps the specified key. Returns the value
      * returned by the specified attributes {@link IntAttribute#getDefaultValue()} method if the
@@ -266,10 +225,6 @@ public interface AttributeMap {
 
     int get(IntAttribute attribute, int defaultValue);
 
-    int put(IntAttribute attribute, int value);
-
-    int remove(IntAttribute key);
-
     /**
      * Returns the byte value to which this attribute-map maps the specified key. Returns the value
      * returned by the specified attributes {@link LongAttribute#getDefaultValue()} method if the
@@ -299,10 +254,6 @@ public interface AttributeMap {
     long get(LongAttribute attribute);
 
     long get(LongAttribute attribute, long defaultValue);
-
-    long put(LongAttribute attribute, long value);
-
-    long remove(LongAttribute key);
 
     /**
      * Returns the byte value to which this attribute-map maps the specified key. Returns the value
@@ -335,8 +286,57 @@ public interface AttributeMap {
 
     short get(ShortAttribute attribute, short defaultValue);
 
+    /**
+     * Returns <tt>true</tt> if this map contains no attribute-value mappings.
+     * 
+     * @return <tt>true</tt> if this map contains no attribute-value mappings
+     */
+    boolean isEmpty();
+
+    <T> T put(Attribute<T> key, T value);
+
+    boolean put(BooleanAttribute attribute, boolean value);
+
+    byte put(ByteAttribute attribute, byte value);
+
+    char put(CharAttribute attribute, char value);
+
+    double put(DoubleAttribute attribute, double value);
+
+    float put(FloatAttribute attribute, float value);
+
+    int put(IntAttribute attribute, int value);
+
+    long put(LongAttribute attribute, long value);
+
     short put(ShortAttribute attribute, short value);
 
+    <T> T remove(Attribute<T> key);
+
+    boolean remove(BooleanAttribute key);
+
+    byte remove(ByteAttribute key);
+
+    char remove(CharAttribute key);
+
+    double remove(DoubleAttribute key);
+
+    float remove(FloatAttribute key);
+
+    int remove(IntAttribute key);
+
+    long remove(LongAttribute key);
+
     short remove(ShortAttribute key);
+
+    /**
+     * Returns the number of attribite-value mappings in this attributemap. If the map contains more
+     * than <tt>Integer.MAX_VALUE</tt> elements, returns <tt>Integer.MAX_VALUE</tt>.
+     * 
+     * @return the number of attribute-value mappings in this map
+     */
+    int size();
+
+    Collection<Object> values();
 
 }

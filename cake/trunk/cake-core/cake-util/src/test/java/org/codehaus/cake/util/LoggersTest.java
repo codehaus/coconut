@@ -32,8 +32,8 @@ import org.junit.runner.RunWith;
 /**
  * Test of different loggers.
  * <p>
- * The tests that tests commons logging are a bit fragile. Just stay away from commons
- * logging it is a serious PITA.
+ * The tests that tests commons logging are a bit fragile. Just stay away from commons logging it is
+ * a serious PITA.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
@@ -57,11 +57,41 @@ public class LoggersTest {
 
     }
 
+    @Test
+    public void printStreamLogger() {
+        SystemErrOutHelper str = SystemErrOutHelper.get();
+        try {
+            Loggers.printStreamLogger(Logger.Level.Off, System.out).error("foo");
+            assertEquals(1, str.last.size());
+
+            Logger log = Loggers.printStreamLogger(Logger.Level.Trace, System.out);
+            assertEquals("simple-logger", Loggers.getName(log));
+            testPrintStream(log, str);
+        } finally {
+            str.terminate();
+        }
+    }
+
     @Test(expected = NullPointerException.class)
     public void printStreamLoggerNPE() {
         Loggers.printStreamLogger(Level.Error, null);
     }
 
+    private void runMock(Logger log, Throwable t) {
+        log.debug("a");
+        log.debug("b", t);
+        log.error("c");
+        log.error("d", t);
+        log.fatal("e");
+        log.fatal("f", t);
+        log.info("g");
+        log.info("h", t);
+        log.trace("i");
+        log.trace("j", t);
+        log.warn("k");
+        log.warn("l", t);
+        testLevelOn(log, Logger.Level.Trace.getLevel());
+    }
 
     @Test
     public void systemErrLogger() {
@@ -94,47 +124,6 @@ public class LoggersTest {
         }
     }
 
-    private void testPrintStream(Logger log, SystemErrOutHelper str) {
-        testLevelOn(log, Logger.Level.Trace.getLevel());
-        log.trace("trace test a");
-        assertTrue(str.last.getLast().indexOf("trace test a") >= 0);
-
-        log.debug("debug test a");
-        assertTrue(str.last.getLast().indexOf("debug test a") >= 0);
-
-        log.info("info test a");
-        assertTrue(str.last.getLast().indexOf("info test a") >= 0);
-
-        log.warn("warn test a");
-        assertTrue(str.last.getLast().indexOf("warn test a") >= 0);
-
-        log.error("error test a");
-        assertTrue(str.last.getLast().indexOf("error test a") >= 0);
-
-        log.fatal("fatal test a");
-        assertTrue(str.last.getLast().indexOf("fatal") >= 0);
-
-        Throwable t = new Throwable();
-        int l = t.getStackTrace().length + 1;
-        log.trace("trace test a", t);
-        assertTrue(str.getFromLast(l).indexOf("trace test a") >= 0);
-
-        log.debug("debug test a", t);
-        assertTrue(str.getFromLast(l).indexOf("debug test a") >= 0);
-
-        log.info("info test a", t);
-        assertTrue(str.getFromLast(l).indexOf("info test a") >= 0);
-
-        log.warn("warn test a", t);
-        assertTrue(str.getFromLast(l).indexOf("warn test a") >= 0);
-
-        log.error("error test a", t);
-        assertTrue(str.getFromLast(l).indexOf("error test a") >= 0);
-
-        log.fatal("fatal test a", t);
-        assertTrue(str.getFromLast(l).indexOf("fatal") >= 0);
-    }
-
     @Test
     public void testCommonsCacheLogging() {
         SystemErrOutHelper str = SystemErrOutHelper.getErr();
@@ -161,7 +150,8 @@ public class LoggersTest {
         try {
             Loggers.Commons.getAsCommonsLogger(Loggers.systemErrLogger(Level.Error));
             fail("Should throw IllegalArgumentException");
-        } catch (IllegalArgumentException iea) {}
+        } catch (IllegalArgumentException iea) {
+        }
     }
 
     @Test
@@ -237,7 +227,8 @@ public class LoggersTest {
         try {
             Loggers.JDK.getAsJDKLogger(Loggers.systemErrLogger(Level.Error));
             fail("Should throw IllegalArgumentException");
-        } catch (IllegalArgumentException iea) {/* OK */}
+        } catch (IllegalArgumentException iea) {/* OK */
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -256,6 +247,15 @@ public class LoggersTest {
         l.setLevel(java.util.logging.Level.OFF);
         Logger log = Loggers.JDK.from(l);
         testIgnoreLog(log);
+    }
+
+    private void testLevelOn(Logger log, int level) {
+        assertEquals(level <= Logger.Level.Trace.getLevel(), log.isTraceEnabled());
+        assertEquals(level <= Logger.Level.Debug.getLevel(), log.isDebugEnabled());
+        assertEquals(level <= Logger.Level.Info.getLevel(), log.isInfoEnabled());
+        assertEquals(level <= Logger.Level.Warn.getLevel(), log.isWarnEnabled());
+        assertEquals(level <= Logger.Level.Error.getLevel(), log.isErrorEnabled());
+        assertEquals(level <= Logger.Level.Fatal.getLevel(), log.isFatalEnabled());
     }
 
     @Test
@@ -288,7 +288,8 @@ public class LoggersTest {
         try {
             Loggers.Log4j.getAsLog4jLogger(Loggers.systemErrLogger(Level.Error));
             fail("Should throw IllegalArgumentException");
-        } catch (IllegalArgumentException iea) {}
+        } catch (IllegalArgumentException iea) {
+        }
     }
 
     @Test
@@ -300,19 +301,45 @@ public class LoggersTest {
         testIgnoreLog(log);
     }
 
-    @Test
-    public void printStreamLogger() {
-        SystemErrOutHelper str = SystemErrOutHelper.get();
-        try {
-            Loggers.printStreamLogger(Logger.Level.Off, System.out).error("foo");
-            assertEquals(1, str.last.size());
+    private void testPrintStream(Logger log, SystemErrOutHelper str) {
+        testLevelOn(log, Logger.Level.Trace.getLevel());
+        log.trace("trace test a");
+        assertTrue(str.last.getLast().indexOf("trace test a") >= 0);
 
-            Logger log = Loggers.printStreamLogger(Logger.Level.Trace, System.out);
-            assertEquals("simple-logger", Loggers.getName(log));
-            testPrintStream(log, str);
-        } finally {
-            str.terminate();
-        }
+        log.debug("debug test a");
+        assertTrue(str.last.getLast().indexOf("debug test a") >= 0);
+
+        log.info("info test a");
+        assertTrue(str.last.getLast().indexOf("info test a") >= 0);
+
+        log.warn("warn test a");
+        assertTrue(str.last.getLast().indexOf("warn test a") >= 0);
+
+        log.error("error test a");
+        assertTrue(str.last.getLast().indexOf("error test a") >= 0);
+
+        log.fatal("fatal test a");
+        assertTrue(str.last.getLast().indexOf("fatal") >= 0);
+
+        Throwable t = new Throwable();
+        int l = t.getStackTrace().length + 1;
+        log.trace("trace test a", t);
+        assertTrue(str.getFromLast(l).indexOf("trace test a") >= 0);
+
+        log.debug("debug test a", t);
+        assertTrue(str.getFromLast(l).indexOf("debug test a") >= 0);
+
+        log.info("info test a", t);
+        assertTrue(str.getFromLast(l).indexOf("info test a") >= 0);
+
+        log.warn("warn test a", t);
+        assertTrue(str.getFromLast(l).indexOf("warn test a") >= 0);
+
+        log.error("error test a", t);
+        assertTrue(str.getFromLast(l).indexOf("error test a") >= 0);
+
+        log.fatal("fatal test a", t);
+        assertTrue(str.getFromLast(l).indexOf("fatal") >= 0);
     }
 
     @Test
@@ -351,35 +378,10 @@ public class LoggersTest {
         runMock(Loggers.Commons.from(log), t);
     }
 
-    private void runMock(Logger log, Throwable t) {
-        log.debug("a");
-        log.debug("b", t);
-        log.error("c");
-        log.error("d", t);
-        log.fatal("e");
-        log.fatal("f", t);
-        log.info("g");
-        log.info("h", t);
-        log.trace("i");
-        log.trace("j", t);
-        log.warn("k");
-        log.warn("l", t);
-        testLevelOn(log, Logger.Level.Trace.getLevel());
-    }
-
-    private void testLevelOn(Logger log, int level) {
-        assertEquals(level <= Logger.Level.Trace.getLevel(), log.isTraceEnabled());
-        assertEquals(level <= Logger.Level.Debug.getLevel(), log.isDebugEnabled());
-        assertEquals(level <= Logger.Level.Info.getLevel(), log.isInfoEnabled());
-        assertEquals(level <= Logger.Level.Warn.getLevel(), log.isWarnEnabled());
-        assertEquals(level <= Logger.Level.Error.getLevel(), log.isErrorEnabled());
-        assertEquals(level <= Logger.Level.Fatal.getLevel(), log.isFatalEnabled());
-    }
-    
     private final static class SystemErrOutHelper {
-        public LinkedList<String> last = new LinkedList<String>();
-
         private final boolean isErr;
+
+        public LinkedList<String> last = new LinkedList<String>();
 
         PrintStream old;
 
@@ -419,7 +421,7 @@ public class LoggersTest {
             SystemErrOutHelper ps = new SystemErrOutHelper(true);
             ps.p = new PrintStream(ps.new MyOutput());
             ps.old = System.err;
-            //System.out.println(System.identityHashCode(ps.old));
+            // System.out.println(System.identityHashCode(ps.old));
             ps.last.add("");
             System.setErr(ps.p);
             return ps;

@@ -9,10 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-
 /**
  * Various collection utility functions.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: CollectionUtils.java 546 2008-01-07 20:47:32Z kasper $
  */
@@ -25,7 +24,7 @@ public final class CollectionUtils {
 
     /**
      * Checks whether or not the specified collection contains a <code>null</code>.
-     *
+     * 
      * @param col
      *            the collection to check
      * @throws NullPointerException
@@ -40,9 +39,8 @@ public final class CollectionUtils {
     }
 
     /**
-     * Checks whether or not the specified map contains a null key or value
-     * <code>null</code>.
-     *
+     * Checks whether or not the specified map contains a null key or value <code>null</code>.
+     * 
      * @param map
      *            the map to check
      * @throws NullPointerException
@@ -178,9 +176,9 @@ public final class CollectionUtils {
         }
 
         /**
-         * This method is overridden to protect the backing set against an object with a
-         * nefarious equals function that senses that the equality-candidate is Map.Entry
-         * and calls its setValue method.
+         * This method is overridden to protect the backing set against an object with a nefarious
+         * equals function that senses that the equality-candidate is Map.Entry and calls its
+         * setValue method.
          */
         @Override
         public boolean contains(Object o) {
@@ -191,9 +189,8 @@ public final class CollectionUtils {
         }
 
         /**
-         * The next two methods are overridden to protect against an unscrupulous List
-         * whose contains(Object o) method senses when o is a Map.Entry, and calls
-         * o.setValue.
+         * The next two methods are overridden to protect against an unscrupulous List whose
+         * contains(Object o) method senses when o is a Map.Entry, and calls o.setValue.
          */
         @Override
         public boolean containsAll(Collection<?> coll) {
@@ -298,8 +295,8 @@ public final class CollectionUtils {
 
     /**
      * An Entry maintaining an immutable key and value. This class does not support method
-     * <tt>setValue</tt>. This class may be convenient in methods that return
-     * thread-safe snapshots of key-value mappings.
+     * <tt>setValue</tt>. This class may be convenient in methods that return thread-safe
+     * snapshots of key-value mappings.
      */
     public static class SimpleImmutableEntry<K, V> implements Entry<K, V>, Serializable {
 
@@ -314,7 +311,7 @@ public final class CollectionUtils {
 
         /**
          * Creates an entry representing the same mapping as the specified entry.
-         *
+         * 
          * @param entry
          *            the entry to copy
          */
@@ -324,9 +321,8 @@ public final class CollectionUtils {
         }
 
         /**
-         * Creates an entry representing a mapping from the specified key to the specified
-         * value.
-         *
+         * Creates an entry representing a mapping from the specified key to the specified value.
+         * 
          * @param key
          *            the key represented by this entry
          * @param value

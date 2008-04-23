@@ -10,32 +10,32 @@ public class AttributeMapTest {
 
     @Test
     public void singleton() {
-        Attribute a = new ObjectAttribute("key",Integer.class, 5){};
+        Attribute a = new ObjectAttribute("key", Integer.class, 5) {};
         AttributeMap am = Attributes.singleton(a, 1);
         assertEquals(1, am.size());
         assertEquals(1, am.get(a));
     }
-//    @Test
-//    @Ignore
-//    public void toMapEmpty() {
-//        Map<Integer, AttributeMap> m = Attributes.toMap(Arrays.asList(1, 2, 3, 4));
-//        assertEquals(4, m.size());
-//        assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(1));
-//        assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(2));
-//        assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(3));
-//        assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(4));
-//        assertNull(m.get(5));
-//    }
-////    @Test
-//    public void toMap() {
-//        AttributeMap am = TestUtil.dummy(AttributeMap.class);
-//        Map<Integer, AttributeMap> m = Attributes.toMap(Arrays.asList(1, 2, 3, 4), am);
-//        assertEquals(4, m.size());
-//        assertEquals(am, m.get(1));
-//        assertEquals(am, m.get(2));
-//        assertEquals(am, m.get(3));
-//        assertEquals(am, m.get(4));
-//        assertNull(m.get(5));
-//    }
+    // @Test
+    // @Ignore
+    // public void toMapEmpty() {
+    // Map<Integer, AttributeMap> m = Attributes.toMap(Arrays.asList(1, 2, 3, 4));
+    // assertEquals(4, m.size());
+    // assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(1));
+    // assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(2));
+    // assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(3));
+    // assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(4));
+    // assertNull(m.get(5));
+    // }
+    // // @Test
+    // public void toMap() {
+    // AttributeMap am = TestUtil.dummy(AttributeMap.class);
+    // Map<Integer, AttributeMap> m = Attributes.toMap(Arrays.asList(1, 2, 3, 4), am);
+    // assertEquals(4, m.size());
+    // assertEquals(am, m.get(1));
+    // assertEquals(am, m.get(2));
+    // assertEquals(am, m.get(3));
+    // assertEquals(am, m.get(4));
+    // assertNull(m.get(5));
+    // }
 
 }

@@ -13,25 +13,26 @@ public class TimeFormatterTest {
     private TimeFormatter tf;
 
     @Test
-    public void uptimeFormat() {
-        tf = TimeFormatter.UPTIME_TIME_FORMATTER;
-        assertEquals("11 day(s), 14:25:43 hours", tf.formatNanos(1002343410000000L));
-        assertEquals("11 day(s), 14:25:43 hours", tf.format(1002343, TimeUnit.SECONDS));
-        assertEquals("11 day(s), 14:25:00 hours", tf.format(1002300, TimeUnit.SECONDS));
-        assertEquals("11 day(s), 14:25:00 hours", tf.format(16705 * 60, TimeUnit.SECONDS));
-        assertEquals("11 day(s), 14:00:00 hours", tf.format(278 * 60 * 60, TimeUnit.SECONDS));
+    public void format() {
+        tf = new TestHelper();
+        assertEquals("1000000", tf.format(1 * 24 * 60 * 60, TimeUnit.SECONDS));
+        assertEquals("1493161641000", tf.format(1290061001, TimeUnit.SECONDS));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void formatIAE() {
+        new TimeFormatter() {}.formatNanos(1);
     }
 
     @Test
-    public void shortFormat() {
-        TimeFormatter tf = TimeFormatter.DEFAULT_TIME_FORMATTER;
-        assertTrue(tf.formatNanos(1000L).equals("0,001 ms")
-                || tf.formatNanos(1000L).equals("0.001 ms"));
-        assertTrue(tf.formatNanos(12321033L).equals("12,321 ms")
-                || tf.formatNanos(12321033L).equals("12.321 ms"));
-        assertTrue(tf.formatNanos(12321033000L).equals("12,321 s")
-                || tf.formatNanos(12321033000L).equals("12.321 s"));
-
+    public void formatMillies() {
+        tf = new TestHelper();
+        assertEquals("0000400", tf.formatMillies(4));
+        assertEquals("000099900", tf.formatMillies(999));
+        assertEquals("0001000", tf.formatMillies(1000));
+        assertEquals("0010000", tf.formatMillies(60000));
+        assertEquals("0100000", tf.formatMillies(3600000));
+        assertEquals("1000000", tf.formatMillies(24 * 3600000L));
     }
 
     @Test
@@ -49,35 +50,34 @@ public class TimeFormatterTest {
     }
 
     @Test
-    public void formatMillies() {
-        tf = new TestHelper();
-        assertEquals("0000400", tf.formatMillies(4));
-        assertEquals("000099900", tf.formatMillies(999));
-        assertEquals("0001000", tf.formatMillies(1000));
-        assertEquals("0010000", tf.formatMillies(60000));
-        assertEquals("0100000", tf.formatMillies(3600000));
-        assertEquals("1000000", tf.formatMillies(24 * 3600000L));
-    }
-
-    @Test
-    public void format() {
-        tf = new TestHelper();
-        assertEquals("1000000", tf.format(1 * 24 * 60 * 60, TimeUnit.SECONDS));
-        assertEquals("1493161641000", tf.format(1290061001, TimeUnit.SECONDS));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void formatIAE() {
-        new TimeFormatter() {}.formatNanos(1);
-    }
-
-    @Test
     public void getName() {
         TestHelper th = new TestHelper();
         assertEquals("nanosecond", th.getName(1, TimeUnit.NANOSECONDS));
         assertEquals("nanoseconds", th.getName(2, TimeUnit.NANOSECONDS));
         assertEquals("s", th.getSIName(TimeUnit.SECONDS));
 
+    }
+
+    @Test
+    public void shortFormat() {
+        TimeFormatter tf = TimeFormatter.DEFAULT_TIME_FORMATTER;
+        assertTrue(tf.formatNanos(1000L).equals("0,001 ms")
+                || tf.formatNanos(1000L).equals("0.001 ms"));
+        assertTrue(tf.formatNanos(12321033L).equals("12,321 ms")
+                || tf.formatNanos(12321033L).equals("12.321 ms"));
+        assertTrue(tf.formatNanos(12321033000L).equals("12,321 s")
+                || tf.formatNanos(12321033000L).equals("12.321 s"));
+
+    }
+
+    @Test
+    public void uptimeFormat() {
+        tf = TimeFormatter.UPTIME_TIME_FORMATTER;
+        assertEquals("11 day(s), 14:25:43 hours", tf.formatNanos(1002343410000000L));
+        assertEquals("11 day(s), 14:25:43 hours", tf.format(1002343, TimeUnit.SECONDS));
+        assertEquals("11 day(s), 14:25:00 hours", tf.format(1002300, TimeUnit.SECONDS));
+        assertEquals("11 day(s), 14:25:00 hours", tf.format(16705 * 60, TimeUnit.SECONDS));
+        assertEquals("11 day(s), 14:00:00 hours", tf.format(278 * 60 * 60, TimeUnit.SECONDS));
     }
 
     static class TestHelper extends TimeFormatter {

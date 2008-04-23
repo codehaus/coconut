@@ -23,33 +23,6 @@ import org.junit.Test;
 public class AttributeMaps_EmptyMapTest extends AbstractAttributeMapTest {
 
     @Test
-    public void various() {
-        assertFalse(EMPTY_ATTRIBUTE_MAP.contains(O_2));
-        // assertFalse(EMPTY_ATTRIBUTE_MAP.containsValue(KEY));
-        assertEquals(0, EMPTY_ATTRIBUTE_MAP.entrySet().size());
-        assertEquals(new DefaultAttributeMap(), EMPTY_ATTRIBUTE_MAP);
-        assertEquals(new DefaultAttributeMap().hashCode(), EMPTY_ATTRIBUTE_MAP.hashCode());
-        assertEquals(0, EMPTY_ATTRIBUTE_MAP.size());
-        assertTrue(EMPTY_ATTRIBUTE_MAP.isEmpty());
-        assertEquals(0, EMPTY_ATTRIBUTE_MAP.attributeSet().size());
-        assertEquals(0, EMPTY_ATTRIBUTE_MAP.values().size());
-        assertFalse(EMPTY_ATTRIBUTE_MAP.equals(new HashSet()));
-        map = EMPTY_ATTRIBUTE_MAP;
-        super.noPut();
-        assertEquals(B_TRUE.getDefaultValue(), map.remove(B_TRUE));
-        assertEquals(B_2.getDefaultValue(), map.remove(B_2));
-        assertEquals(C_2.getDefaultValue(), map.remove(C_2));
-        assertEquals(D_2.getDefaultValue(), map.remove(D_2),0);
-        assertEquals(F_2.getDefaultValue(), map.remove(F_2),0);
-        assertEquals(I_2.getDefaultValue(), map.remove(I_2));
-        assertEquals(O_2.getDefaultValue(), map.remove(O_2));
-        assertEquals(L_2.getDefaultValue(), map.remove(L_2));
-        assertEquals(S_2.getDefaultValue(), map.remove(S_2));
-        assertEquals("{}",map.toString());
-        map.clear();//no exceptions
-    }
-
-    @Test
     public void getters() {
         assertEquals("15", EMPTY_ATTRIBUTE_MAP.get(O_2));
         assertEquals("goo", EMPTY_ATTRIBUTE_MAP.get(O_2, "goo"));
@@ -88,5 +61,32 @@ public class AttributeMaps_EmptyMapTest extends AbstractAttributeMapTest {
     public void serialization() throws Exception {
         assertIsSerializable(EMPTY_ATTRIBUTE_MAP);
         assertSame(EMPTY_ATTRIBUTE_MAP, serializeAndUnserialize(EMPTY_ATTRIBUTE_MAP));
+    }
+
+    @Test
+    public void various() {
+        assertFalse(EMPTY_ATTRIBUTE_MAP.contains(O_2));
+        // assertFalse(EMPTY_ATTRIBUTE_MAP.containsValue(KEY));
+        assertEquals(0, EMPTY_ATTRIBUTE_MAP.entrySet().size());
+        assertEquals(new DefaultAttributeMap(), EMPTY_ATTRIBUTE_MAP);
+        assertEquals(new DefaultAttributeMap().hashCode(), EMPTY_ATTRIBUTE_MAP.hashCode());
+        assertEquals(0, EMPTY_ATTRIBUTE_MAP.size());
+        assertTrue(EMPTY_ATTRIBUTE_MAP.isEmpty());
+        assertEquals(0, EMPTY_ATTRIBUTE_MAP.attributeSet().size());
+        assertEquals(0, EMPTY_ATTRIBUTE_MAP.values().size());
+        assertFalse(EMPTY_ATTRIBUTE_MAP.equals(new HashSet()));
+        map = EMPTY_ATTRIBUTE_MAP;
+        super.noPut();
+        assertEquals(B_TRUE.getDefaultValue(), map.remove(B_TRUE));
+        assertEquals(B_2.getDefaultValue(), map.remove(B_2));
+        assertEquals(C_2.getDefaultValue(), map.remove(C_2));
+        assertEquals(D_2.getDefaultValue(), map.remove(D_2), 0);
+        assertEquals(F_2.getDefaultValue(), map.remove(F_2), 0);
+        assertEquals(I_2.getDefaultValue(), map.remove(I_2));
+        assertEquals(O_2.getDefaultValue(), map.remove(O_2));
+        assertEquals(L_2.getDefaultValue(), map.remove(L_2));
+        assertEquals(S_2.getDefaultValue(), map.remove(S_2));
+        assertEquals("{}", map.toString());
+        map.clear();// no exceptions
     }
 }

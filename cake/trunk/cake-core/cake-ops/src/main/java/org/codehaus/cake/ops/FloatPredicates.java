@@ -16,12 +16,14 @@
 package org.codehaus.cake.ops;
 
 import java.io.Serializable;
-import static org.codehaus.cake.ops.Ops.*;
+
+import org.codehaus.cake.ops.Ops.FloatPredicate;
+
 /**
  * Various implementations of {@link FloatPredicate}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: FloatPredicates.java 590 2008-03-14 08:16:12Z kasper $
  */
@@ -33,25 +35,26 @@ public final class FloatPredicates {
     /** A FloatPredicate that always evaluates to <code>true</code>. */
     public static final FloatPredicate TRUE = new TrueFloatPredicate();
 
-    ///CLOVER:OFF
+    // /CLOVER:OFF
     /** Cannot instantiate. */
     private FloatPredicates() {}
-    ///CLOVER:ON
-    
+
+    // /CLOVER:ON
+
     /**
-     * Creates a FloatPredicate that performs a logical AND on two supplied predicates. The
-     * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
-     * if the specified left side predicate evaluates to <code>false</code> the right
-     * side predicate will not be evaluated. More formally
-     *
+     * Creates a FloatPredicate that performs a logical AND on two supplied predicates. The returned
+     * predicate uses short-circuit evaluation (or minimal evaluation). That is, if the specified
+     * left side predicate evaluates to <code>false</code> the right side predicate will not be
+     * evaluated. More formally
+     * 
      * <pre>
      * left.evaluate(element) &amp;&amp; right.evaluate(element);
      * </pre>
-     *
+     * 
      * <p>
-     * If both of the supplied predicates are serializable the returned predicate will
-     * also be serializable.
-     *
+     * If both of the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
      * @param left
      *            the left side FloatPredicate
      * @param right
@@ -63,12 +66,12 @@ public final class FloatPredicates {
     public static FloatPredicate and(FloatPredicate left, FloatPredicate right) {
         return new AndFloatPredicate(left, right);
     }
-    
+
     /**
      * Creates a predicate that accepts any value that is equal to the value specified.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the value of the equals predicate
      * @return a predicate that accepts any value that is equal to the value specified
@@ -76,13 +79,13 @@ public final class FloatPredicates {
     public static FloatPredicate equalsTo(float element) {
         return new EqualsToFloatPredicate(element);
     }
-    
+
     /**
-     * Creates a FloatPredicate that evaluates to <code>true</code> if the element being
-     * tested is greater then the element being used to construct the predicate.
+     * Creates a FloatPredicate that evaluates to <code>true</code> if the element being tested is
+     * greater then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created FloatPredicate
@@ -92,12 +95,11 @@ public final class FloatPredicates {
     }
 
     /**
-     * Creates a FloatPredicate that evaluates to <code>true</code> if the element being
-     * tested is greater then or equals to the element being used to construct the
-     * predicate.
+     * Creates a FloatPredicate that evaluates to <code>true</code> if the element being tested is
+     * greater then or equals to the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created FloatPredicate
@@ -107,11 +109,11 @@ public final class FloatPredicates {
     }
 
     /**
-     * Creates a FloatPredicate that evaluates to <code>true</code> if the element being
-     * tested is less then the element being used to construct the predicate.
+     * Creates a FloatPredicate that evaluates to <code>true</code> if the element being tested is
+     * less then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created FloatPredicate
@@ -121,11 +123,11 @@ public final class FloatPredicates {
     }
 
     /**
-     * Creates a FloatPredicate that evaluates to <code>true</code> if the element being
-     * tested is less then or equals to the element being used to construct the predicate.
+     * Creates a FloatPredicate that evaluates to <code>true</code> if the element being tested is
+     * less then or equals to the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created FloatPredicate
@@ -133,19 +135,18 @@ public final class FloatPredicates {
     public static FloatPredicate lessThenOrEquals(float element) {
         return new LessThenOrEqualsFloatPredicate(element);
     }
-    
+
     /**
-     * Creates a FloatPredicate that performs a logical logical NOT on the supplied
-     * FloatPredicate. More formally
-     *
+     * Creates a FloatPredicate that performs a logical logical NOT on the supplied FloatPredicate.
+     * More formally
+     * 
      * <pre>
      * !predicate.evaluate(value);
      * </pre>
-     *
+     * 
      * <p>
-     * If the specified predicate is serializable the returned predicate will also be
-     * serializable.
-     *
+     * If the specified predicate is serializable the returned predicate will also be serializable.
+     * 
      * @param predicate
      *            the predicate to negate
      * @return the newly created FloatPredicate
@@ -157,19 +158,19 @@ public final class FloatPredicates {
     }
 
     /**
-     * Creates a FloatPredicate that performs a logical OR on two supplied predicates. The
-     * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
-     * if the specified left side predicate evaluates to <code>true</code> the right
-     * side predicate will not be evaluated. More formally
-     *
+     * Creates a FloatPredicate that performs a logical OR on two supplied predicates. The returned
+     * predicate uses short-circuit evaluation (or minimal evaluation). That is, if the specified
+     * left side predicate evaluates to <code>true</code> the right side predicate will not be
+     * evaluated. More formally
+     * 
      * <pre>
      * left.evaluate(element) || right.evaluate(element);
      * </pre>
-     *
+     * 
      * <p>
-     * If both of the supplied predicates are serializable the returned predicate will
-     * also be serializable.
-     *
+     * If both of the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
      * @param left
      *            the left side FloatPredicate
      * @param right
@@ -181,7 +182,7 @@ public final class FloatPredicates {
     public static FloatPredicate or(FloatPredicate left, FloatPredicate right) {
         return new OrFloatPredicate(left, right);
     }
-    
+
     /**
      * A FloatPredicate that performs a logical exclusive AND on two supplied predicates.
      */
@@ -198,7 +199,7 @@ public final class FloatPredicates {
 
         /**
          * Creates a new <code>AndFloatPredicate</code>.
-         *
+         * 
          * @param left
          *            the left side FloatPredicate
          * @param right
@@ -216,14 +217,9 @@ public final class FloatPredicates {
             this.right = right;
         }
 
-        /** {@inheritDoc} */
-        public boolean op(float element) {
-            return left.op(element) && right.op(element);
-        }
-
         /**
          * Returns the left side FloatPredicate.
-         *
+         * 
          * @return the left side FloatPredicate.
          */
         public FloatPredicate getLeft() {
@@ -232,11 +228,16 @@ public final class FloatPredicates {
 
         /**
          * Returns the right side FloatPredicate.
-         *
+         * 
          * @return the right side FloatPredicate.
          */
         public FloatPredicate getRight() {
             return right;
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(float element) {
+            return left.op(element) && right.op(element);
         }
 
         /** {@inheritDoc} */
@@ -245,7 +246,7 @@ public final class FloatPredicates {
             return "(" + left + ") && (" + right + ")";
         }
     }
-    
+
     static class EqualsToFloatPredicate implements FloatPredicate, Serializable {
 
         /** serialVersionUID. */
@@ -259,30 +260,30 @@ public final class FloatPredicates {
         }
 
         /**
-         * Returns <code>true</code> if the specified value is equal to the value that
-         * was used when constructing this predicate, otherwise <code>false</code>.
-         *
-         * @param t
-         *            the value to compare with
-         * @return <code>true</code> if the specified value is equal to the value that
-         *         was used when constructing this predicate, otherwise <code>false</code>.
-         */
-        public boolean op(float t) {
-            return equalsTo == t;
-        }
-
-        /**
          * @return the value we are comparing with
          */
         public float getEqualsTo() {
             return equalsTo;
         }
+
+        /**
+         * Returns <code>true</code> if the specified value is equal to the value that was used
+         * when constructing this predicate, otherwise <code>false</code>.
+         * 
+         * @param t
+         *            the value to compare with
+         * @return <code>true</code> if the specified value is equal to the value that was used
+         *         when constructing this predicate, otherwise <code>false</code>.
+         */
+        public boolean op(float t) {
+            return equalsTo == t;
+        }
     }
-    
-     /**
-     * a FloatPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
-     * get an instance of this FloatPredicate.
-     *
+
+    /**
+     * a FloatPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to get an
+     * instance of this FloatPredicate.
+     * 
      * @see TrueFloatPredicate
      */
     static final class FalseFloatPredicate implements FloatPredicate, Serializable {
@@ -298,18 +299,18 @@ public final class FloatPredicates {
             return false;
         }
 
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return FALSE;
+        }
+
         /** {@inheritDoc} */
         @Override
         public String toString() {
             return Boolean.FALSE.toString();
         }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return FALSE;
-        }
     }
-    
+
     static class GreaterThenFloatPredicate implements FloatPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 7198592614364500859L;
@@ -321,16 +322,16 @@ public final class FloatPredicates {
             this.greaterThen = greaterThen;
         }
 
+        public float getGreaterThen() {
+            return greaterThen;
+        }
+
         /** {@inheritDoc} */
         public boolean op(float t) {
             return greaterThen < t;
         }
-
-        public float getGreaterThen() {
-            return greaterThen;
-        }
     }
-    
+
     static class GreaterThenOrEqualsFloatPredicate implements FloatPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -4681995097900012563L;
@@ -342,16 +343,16 @@ public final class FloatPredicates {
             this.greaterThenOrEquals = greaterThenOrEquals;
         }
 
+        public float getGreaterThenOrEquals() {
+            return greaterThenOrEquals;
+        }
+
         /** {@inheritDoc} */
         public boolean op(float t) {
             return greaterThenOrEquals <= t;
         }
-
-        public float getGreaterThenOrEquals() {
-            return greaterThenOrEquals;
-        }
     }
-    
+
     static class LessThenFloatPredicate implements FloatPredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -9180606923416408020L;
@@ -363,13 +364,13 @@ public final class FloatPredicates {
             this.lessThen = lessThen;
         }
 
+        public float getLessThen() {
+            return lessThen;
+        }
+
         /** {@inheritDoc} */
         public boolean op(float t) {
             return lessThen > t;
-        }
-
-        public float getLessThen() {
-            return lessThen;
         }
     }
 
@@ -384,18 +385,19 @@ public final class FloatPredicates {
             this.lessThenOrEquals = lessThenOrEquals;
         }
 
+        public float getLessThenOrEquals() {
+            return lessThenOrEquals;
+        }
+
         /** {@inheritDoc} */
         public boolean op(float t) {
             return lessThenOrEquals >= t;
         }
-
-        public float getLessThenOrEquals() {
-            return lessThenOrEquals;
-        }
     }
+
     /**
-     * A FloatPredicate that evaluates to true iff the Predicate used for constructing
-     * evaluates to <code>false</code>.
+     * A FloatPredicate that evaluates to true iff the Predicate used for constructing evaluates to
+     * <code>false</code>.
      */
     static final class NotFloatPredicate implements FloatPredicate, Serializable {
 
@@ -407,7 +409,7 @@ public final class FloatPredicates {
 
         /**
          * Creates a new NotFloatPredicate.
-         *
+         * 
          * @param predicate
          *            the predicate to negate.
          * @throws NullPointerException
@@ -421,24 +423,23 @@ public final class FloatPredicates {
         }
 
         /**
-         * Returns a boolean representing the logical NOT value of the supplied
-         * FloatPredicate.
-         *
+         * Returns the predicate that is being negated.
+         * 
+         * @return the predicate that is being negated.
+         */
+        public FloatPredicate getPredicate() {
+            return predicate;
+        }
+
+        /**
+         * Returns a boolean representing the logical NOT value of the supplied FloatPredicate.
+         * 
          * @param element
          *            the element to test
          * @return the logical NOT of the supplied FloatPredicate
          */
         public boolean op(float element) {
             return !predicate.op(element);
-        }
-
-        /**
-         * Returns the predicate that is being negated.
-         *
-         * @return the predicate that is being negated.
-         */
-        public FloatPredicate getPredicate() {
-            return predicate;
         }
 
         /** {@inheritDoc} */
@@ -464,7 +465,7 @@ public final class FloatPredicates {
 
         /**
          * Creates a new <code>OrFloatPredicate</code>.
-         *
+         * 
          * @param left
          *            the left side FloatPredicate
          * @param right
@@ -482,14 +483,9 @@ public final class FloatPredicates {
             this.right = right;
         }
 
-        /** {@inheritDoc} */
-        public boolean op(float element) {
-            return left.op(element) || right.op(element);
-        }
-
         /**
          * Returns the left side FloatPredicate.
-         *
+         * 
          * @return the left side FloatPredicate.
          */
         public FloatPredicate getLeft() {
@@ -498,11 +494,16 @@ public final class FloatPredicates {
 
         /**
          * Returns the right side FloatPredicate.
-         *
+         * 
          * @return the right side FloatPredicate.
          */
         public FloatPredicate getRight() {
             return right;
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(float element) {
+            return left.op(element) || right.op(element);
         }
 
         /** {@inheritDoc} */
@@ -511,11 +512,11 @@ public final class FloatPredicates {
             return "(" + left + ") && (" + right + ")";
         }
     }
-    
+
     /**
-     * A FloatPredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get
-     * an instance of this FloatPredicate.
-     *
+     * A FloatPredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get an
+     * instance of this FloatPredicate.
+     * 
      * @see FalseFloatPredicate
      */
     static final class TrueFloatPredicate implements FloatPredicate, Serializable {
@@ -531,15 +532,15 @@ public final class FloatPredicates {
             return true;
         }
 
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return TRUE;
+        }
+
         /** {@inheritDoc} */
         @Override
         public String toString() {
             return Boolean.TRUE.toString();
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return TRUE;
         }
     }
 }

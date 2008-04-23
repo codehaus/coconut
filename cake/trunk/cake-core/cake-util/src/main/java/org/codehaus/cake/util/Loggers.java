@@ -10,9 +10,8 @@ import org.codehaus.cake.internal.util.LogHelper;
 import org.codehaus.cake.internal.util.LogHelper.AbstractLogger;
 
 /**
- * This class is used for creating {@link Logger} wrappers from popular logging frameworks
- * such as <a
- * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
+ * This class is used for creating {@link Logger} wrappers from popular logging frameworks such as
+ * <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
  * Standard JDK logging </a>, <a href="http://logging.apache.org/log4j/"> Log4j </a> or <a
  * href="http://commons.apache.org/logging/"> commons logging </a>.
  * 
@@ -31,21 +30,21 @@ public final class Loggers {
     // /CLOVER:ON
 
     /**
-     * Returns the name of the specified logger or <code>null</code> if the name could
-     * not be determinded.
+     * Returns the name of the specified logger or <code>null</code> if the name could not be
+     * determinded.
      * 
      * @param logger
      *            the logger for which the name should be returned
-     * @return the name of the specified logger or <code>null</code> if the name could
-     *         not be determinded
+     * @return the name of the specified logger or <code>null</code> if the name could not be
+     *         determinded
      */
     public static String getName(Logger logger) {
         return logger instanceof AbstractLogger ? ((AbstractLogger) logger).getName() : null;
     }
 
     /**
-     * Creates a new Logger that ignores any input below the specified level. Any logging
-     * messages on this level or above it, will be logged to the specified printstream.
+     * Creates a new Logger that ignores any input below the specified level. Any logging messages
+     * on this level or above it, will be logged to the specified printstream.
      * 
      * @param level
      *            the maximum log level to log
@@ -60,8 +59,8 @@ public final class Loggers {
     }
 
     /**
-     * Creates a new Logger that ignores any input below the specified level. Any logging
-     * messages on this level or above it, will be logged to {@link System#err}.
+     * Creates a new Logger that ignores any input below the specified level. Any logging messages
+     * on this level or above it, will be logged to {@link System#err}.
      * 
      * @param level
      *            the maximum log level to log
@@ -72,8 +71,8 @@ public final class Loggers {
     }
 
     /**
-     * Creates a new Logger that ignores any input below the specified level. Any logging
-     * messages on this level or above it, will be logged to {@link System#out}.
+     * Creates a new Logger that ignores any input below the specified level. Any logging messages
+     * on this level or above it, will be logged to {@link System#out}.
      * 
      * @param level
      *            the maximum log level to log
@@ -97,8 +96,8 @@ public final class Loggers {
          * Shorthand for {@link #from(String)}.
          * 
          * @param clazz
-         *            name of clazz will be used as the name of the logger to retrieve.
-         *            See getLogger(String) for more detailed information.
+         *            name of clazz will be used as the name of the logger to retrieve. See
+         *            getLogger(String) for more detailed information.
          * @return returns the logger for the specified class
          */
         public static Logger from(Class<?> clazz) {
@@ -117,8 +116,8 @@ public final class Loggers {
         }
 
         /**
-         * Creates a decorated commons logger from the specified name. The commons log is
-         * created by calling:
+         * Creates a decorated commons logger from the specified name. The commons log is created by
+         * calling:
          * 
          * <pre>
          * org.apache.commons.logging.LogFactory.getLog(name)
@@ -157,160 +156,6 @@ public final class Loggers {
          */
         public static boolean isCommonsLogger(Logger logger) {
             return logger instanceof CommonsLogger;
-        }
-    }
-
-    /**
-     * Used for java.util.logger conversion.
-     */
-    public final static class JDK {
-        // /CLOVER:OFF
-        /** Cannot instantiate. */
-        private JDK() {}
-
-        // /CLOVER:ON
-        /**
-         * Shorthand for {@link #from(String)}.
-         * 
-         * @param clazz
-         *            name of clazz will be used as the name of the logger to retrieve.
-         *            See getLogger(String) for more detailed information.
-         * @return returns the logger for the specified class
-         */
-        public static Logger from(Class<?> clazz) {
-            return from(clazz.getName());
-        }
-
-        /**
-         * Wraps a JDK logger.
-         * 
-         * @param logger
-         *            the JDK logger to wrap
-         * @return a wrapped JDK logger
-         */
-        public static Logger from(java.util.logging.Logger logger) {
-            return new JDKLogger(logger);
-        }
-
-        /**
-         * Creates a decorated Jdk logger from the specified name. The Jdk logger is
-         * created by calling:
-         * 
-         * <pre>
-         * java.util.logging.Logger.getLogger(name)
-         * </pre>
-         * 
-         * @param name
-         *            the name of the logger
-         * @return the decorated Jdk logger
-         */
-        public static Logger from(String name) {
-            return from(java.util.logging.Logger.getLogger(name));
-        }
-
-        /**
-         * Unwraps a wrapped JDK {@link java.util.logging.Logger} that is wrapped in a
-         * {@link Logger}.
-         * 
-         * @param logger
-         *            the logger to unwrap
-         * @return the unwrapped jdk logger
-         * @throws IllegalArgumentException
-         *             if the specified logger is not wrapping a Jdk logger
-         */
-        public static java.util.logging.Logger getAsJDKLogger(Logger logger) {
-            if (!isJDKLogger(logger)) {
-                throw new IllegalArgumentException("Not a JDK Logger");
-            }
-            return ((JDKLogger) logger).logger;
-        }
-
-        /**
-         * Returns whether or not the specified logger encapsulates a JDK logger.
-         * 
-         * @param logger
-         *            the logger to test
-         * @return true is the encapsulated logger is a JDK logger
-         */
-        public static boolean isJDKLogger(Logger logger) {
-            return logger instanceof JDKLogger;
-        }
-    }
-
-    /**
-     * Used for Log4J logging conversion.
-     */
-    public final static class Log4j {
-        // /CLOVER:OFF
-        /** Cannot instantiate. */
-        private Log4j() {}
-
-        // /CLOVER:ON
-        /**
-         * Shorthand for {@link #from(String)}.
-         * 
-         * @param clazz
-         *            name of clazz will be used as the name of the logger to retrieve.
-         *            See getLogger(String) for more detailed information.
-         * @return returns the logger for the specified class
-         */
-        public static Logger from(Class<?> clazz) {
-            return from(org.apache.log4j.Logger.getLogger(clazz));
-        }
-
-        /**
-         * Wraps a Log4j logger.
-         * 
-         * @param logger
-         *            the Log4j logger to wrap
-         * @return a wrapped Log4j logger
-         */
-        public static Logger from(org.apache.log4j.Logger logger) {
-            return new Log4JLogger(logger);
-        }
-
-        /**
-         * Creates a decorated Log4J logger from the specified name. The Log4J logger is
-         * created by calling:
-         * 
-         * <pre>
-         * org.apache.log4j.Logger.getLogger(name)
-         * </pre>
-         * 
-         * @param name
-         *            the name of the logger
-         * @return the decorated Log4J logger
-         */
-        public static Logger from(String name) {
-            return from(org.apache.log4j.Logger.getLogger(name));
-        }
-
-        /**
-         * Unwraps a wrapped Log4J {@link org.apache.log4j.Logger} that is wrapped in a
-         * {@link Logger}.
-         * 
-         * @param logger
-         *            the logger to unwrap
-         * @return the unwrapped Log4J log
-         * @throws IllegalArgumentException
-         *             if the specified logger is not wrapping a Log4J log
-         */
-        public static org.apache.log4j.Logger getAsLog4jLogger(Logger logger) {
-            if (!isLog4jLogger(logger)) {
-                throw new IllegalArgumentException("Not a JDK Logger");
-            }
-            return ((Log4JLogger) logger).logger;
-        }
-
-        /**
-         * Returns whether or not the specified logger encapsulates a Log4J logger.
-         * 
-         * @param logger
-         *            the logger to test
-         * @return true is the encapsulated logger is a Log4J logger
-         */
-        public static boolean isLog4jLogger(Logger logger) {
-            return logger instanceof Log4JLogger;
         }
     }
 
@@ -367,19 +212,19 @@ public final class Loggers {
             switch (level) {
             case Debug:
                 log.debug(message);
-            break;
+                break;
             case Error:
                 log.error(message);
-            break;
+                break;
             case Fatal:
                 log.fatal(message);
-            break;
+                break;
             case Info:
                 log.info(message);
-            break;
+                break;
             case Trace:
                 log.trace(message);
-            break;
+                break;
             default /* Warn */:
                 log.warn(message);
             }
@@ -390,22 +235,99 @@ public final class Loggers {
             switch (level) {
             case Debug:
                 log.debug(message, cause);
-            break;
+                break;
             case Error:
                 log.error(message, cause);
-            break;
+                break;
             case Fatal:
                 log.fatal(message, cause);
-            break;
+                break;
             case Info:
                 log.info(message, cause);
-            break;
+                break;
             case Trace:
                 log.trace(message, cause);
-            break;
+                break;
             default /* Warn */:
                 log.warn(message, cause);
             }
+        }
+    }
+
+    /**
+     * Used for java.util.logger conversion.
+     */
+    public final static class JDK {
+        // /CLOVER:OFF
+        /** Cannot instantiate. */
+        private JDK() {}
+
+        // /CLOVER:ON
+        /**
+         * Shorthand for {@link #from(String)}.
+         * 
+         * @param clazz
+         *            name of clazz will be used as the name of the logger to retrieve. See
+         *            getLogger(String) for more detailed information.
+         * @return returns the logger for the specified class
+         */
+        public static Logger from(Class<?> clazz) {
+            return from(clazz.getName());
+        }
+
+        /**
+         * Wraps a JDK logger.
+         * 
+         * @param logger
+         *            the JDK logger to wrap
+         * @return a wrapped JDK logger
+         */
+        public static Logger from(java.util.logging.Logger logger) {
+            return new JDKLogger(logger);
+        }
+
+        /**
+         * Creates a decorated Jdk logger from the specified name. The Jdk logger is created by
+         * calling:
+         * 
+         * <pre>
+         * java.util.logging.Logger.getLogger(name)
+         * </pre>
+         * 
+         * @param name
+         *            the name of the logger
+         * @return the decorated Jdk logger
+         */
+        public static Logger from(String name) {
+            return from(java.util.logging.Logger.getLogger(name));
+        }
+
+        /**
+         * Unwraps a wrapped JDK {@link java.util.logging.Logger} that is wrapped in a
+         * {@link Logger}.
+         * 
+         * @param logger
+         *            the logger to unwrap
+         * @return the unwrapped jdk logger
+         * @throws IllegalArgumentException
+         *             if the specified logger is not wrapping a Jdk logger
+         */
+        public static java.util.logging.Logger getAsJDKLogger(Logger logger) {
+            if (!isJDKLogger(logger)) {
+                throw new IllegalArgumentException("Not a JDK Logger");
+            }
+            return ((JDKLogger) logger).logger;
+        }
+
+        /**
+         * Returns whether or not the specified logger encapsulates a JDK logger.
+         * 
+         * @param logger
+         *            the logger to test
+         * @return true is the encapsulated logger is a JDK logger
+         */
+        public static boolean isJDKLogger(Logger logger) {
+            return logger instanceof JDKLogger;
         }
     }
 
@@ -447,6 +369,83 @@ public final class Loggers {
         /** {@inheritDoc} */
         public void log(Logger.Level level, String message, Throwable cause) {
             logger.log(LogHelper.toJdkLevel(level), message, cause);
+        }
+    }
+
+    /**
+     * Used for Log4J logging conversion.
+     */
+    public final static class Log4j {
+        // /CLOVER:OFF
+        /** Cannot instantiate. */
+        private Log4j() {}
+
+        // /CLOVER:ON
+        /**
+         * Shorthand for {@link #from(String)}.
+         * 
+         * @param clazz
+         *            name of clazz will be used as the name of the logger to retrieve. See
+         *            getLogger(String) for more detailed information.
+         * @return returns the logger for the specified class
+         */
+        public static Logger from(Class<?> clazz) {
+            return from(org.apache.log4j.Logger.getLogger(clazz));
+        }
+
+        /**
+         * Wraps a Log4j logger.
+         * 
+         * @param logger
+         *            the Log4j logger to wrap
+         * @return a wrapped Log4j logger
+         */
+        public static Logger from(org.apache.log4j.Logger logger) {
+            return new Log4JLogger(logger);
+        }
+
+        /**
+         * Creates a decorated Log4J logger from the specified name. The Log4J logger is created by
+         * calling:
+         * 
+         * <pre>
+         * org.apache.log4j.Logger.getLogger(name)
+         * </pre>
+         * 
+         * @param name
+         *            the name of the logger
+         * @return the decorated Log4J logger
+         */
+        public static Logger from(String name) {
+            return from(org.apache.log4j.Logger.getLogger(name));
+        }
+
+        /**
+         * Unwraps a wrapped Log4J {@link org.apache.log4j.Logger} that is wrapped in a
+         * {@link Logger}.
+         * 
+         * @param logger
+         *            the logger to unwrap
+         * @return the unwrapped Log4J log
+         * @throws IllegalArgumentException
+         *             if the specified logger is not wrapping a Log4J log
+         */
+        public static org.apache.log4j.Logger getAsLog4jLogger(Logger logger) {
+            if (!isLog4jLogger(logger)) {
+                throw new IllegalArgumentException("Not a JDK Logger");
+            }
+            return ((Log4JLogger) logger).logger;
+        }
+
+        /**
+         * Returns whether or not the specified logger encapsulates a Log4J logger.
+         * 
+         * @param logger
+         *            the logger to test
+         * @return true is the encapsulated logger is a Log4J logger
+         */
+        public static boolean isLog4jLogger(Logger logger) {
+            return logger instanceof Log4JLogger;
         }
     }
 
@@ -556,8 +555,8 @@ public final class Loggers {
         private final PrintStream stream;
 
         /**
-         * Creates a new SimpleLogger that logs to the specified print stream at the
-         * specified level.
+         * Creates a new SimpleLogger that logs to the specified print stream at the specified
+         * level.
          * 
          * @param level
          *            the level to log at

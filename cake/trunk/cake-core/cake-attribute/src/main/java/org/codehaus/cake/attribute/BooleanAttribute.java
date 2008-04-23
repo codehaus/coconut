@@ -16,21 +16,23 @@
 package org.codehaus.cake.attribute;
 
 import java.util.Comparator;
+
 /**
- * An implementation of an {@link Attribute} mapping to a boolean. This implementation adds a number of
- * methods that works on primitive booleans instead of their object counterpart.
+ * An implementation of an {@link Attribute} mapping to a boolean. This implementation adds a number
+ * of methods that works on primitive booleans instead of their object counterpart.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: BooleanAttribute.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class BooleanAttribute extends Attribute<Boolean> implements
-         Comparator<WithAttributes> {
-         
+        Comparator<WithAttributes> {
+
     /** The default value of this attribute. */
     private final transient boolean defaultValue;
 
     /**
-     * Creates a new BooleanAttribute with a generated name and a default value of <tt>$defaultValueNoCast</tt>.
+     * Creates a new BooleanAttribute with a generated name and a default value of
+     * <tt>$defaultValueNoCast</tt>.
      * 
      * @throws IllegalArgumentException
      *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(int)}
@@ -61,7 +63,8 @@ public abstract class BooleanAttribute extends Attribute<Boolean> implements
      * @throws NullPointerException
      *             if the specified name is <code>null</code>
      * @throws IllegalArgumentException
-     *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(boolean)}
+     *             if $defaultValueNoCast is not a valid value according to
+     *             {@link #checkValid(boolean)}
      */
     public BooleanAttribute(String name) {
         this(name, false);
@@ -84,13 +87,13 @@ public abstract class BooleanAttribute extends Attribute<Boolean> implements
         super(name, Boolean.TYPE, defaultValue);
         this.defaultValue = defaultValue;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void checkValid(Boolean o) {
         checkValid(o.booleanValue());
     }
-    
+
     /**
      * Analogous to {@link #checkValid(Boolean)} except taking a primitive boolean.
      * 
@@ -105,16 +108,15 @@ public abstract class BooleanAttribute extends Attribute<Boolean> implements
                     + ", type = " + getClass() + ", value = " + value + "]");
         }
     }
-    
+
     /** {@inheritDoc} */
     public int compare(WithAttributes w1, WithAttributes w2) {
         boolean thisVal = get(w1);
         boolean anotherVal = get(w2);
-        //fix this to something smarter
+        // fix this to something smarter
         return (thisVal && !anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
     }
-    
-    
+
     /**
      * Creates a value instance of this attribute from the specified string.
      * 
@@ -128,16 +130,6 @@ public abstract class BooleanAttribute extends Attribute<Boolean> implements
         return Boolean.parseBoolean(str);
     }
 
-    /**
-     * Returns the default scalar value of this attribute. This is equivalent to calling
-     * {@link #getDefault()}, but returning a primitive int instead.
-     * 
-     * @return the default value of this attribute
-     */
-    public boolean getDefaultValue() {
-        return defaultValue;
-    }
-    
     /**
      * Analogous to {@link #get(WithAttributes)} except returning a primitive <tt>boolean</tt>.
      * 
@@ -164,8 +156,23 @@ public abstract class BooleanAttribute extends Attribute<Boolean> implements
         return attributes.getAttributes().get(this, defaultValue);
     }
 
+    /**
+     * Returns the default scalar value of this attribute. This is equivalent to calling
+     * {@link #getDefault()}, but returning a primitive int instead.
+     * 
+     * @return the default value of this attribute
+     */
+    public boolean getDefaultValue() {
+        return defaultValue;
+    }
 
-   /**
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isValid(Boolean value) {
+        return isValid(value.booleanValue());
+    }
+
+    /**
      * Analogous to {@link Attribute#isValid(Object)} except taking a primitive boolean as
      * parameter.
      * <p>
@@ -178,14 +185,10 @@ public abstract class BooleanAttribute extends Attribute<Boolean> implements
     public boolean isValid(boolean value) {
         return true;
     }
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isValid(Boolean value) {
-        return isValid(value.booleanValue());
-    }
 
     /**
-     * Analogous to {@link #set(AttributeMap, Boolean)} except taking a primitive boolean as parameter.
+     * Analogous to {@link #set(AttributeMap, Boolean)} except taking a primitive boolean as
+     * parameter.
      * 
      * @param attributes
      *            the attribute map to set the value in.

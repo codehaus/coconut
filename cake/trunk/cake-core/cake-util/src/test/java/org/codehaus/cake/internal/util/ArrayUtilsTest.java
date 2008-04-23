@@ -13,6 +13,16 @@ import org.junit.Test;
 public class ArrayUtilsTest {
 
     @Test
+    public void reverse() {
+        Integer[] i3 = new Integer[] { 1, 2, 3 };
+        Integer[] i4 = new Integer[] { 1, 2, 3, 4 };
+        ArrayUtils.reverse(i3);
+        ArrayUtils.reverse(i4);
+        assertTrue(i3[0] == 3 && i3[1] == 2 && i3[2] == 1);
+        assertTrue(i4[0] == 4 && i4[1] == 3 && i4[2] == 2 && i4[3] == 1);
+    }
+
+    @Test
     public void test() {
         Integer[] i = new Integer[] { 1, 2, 3 };
         Integer[] i2 = ArrayUtils.copyOf(i);
@@ -48,15 +58,5 @@ public class ArrayUtilsTest {
         Integer[] i = new Integer[] { 1, 2, 3 };
         Integer[] i2 = ArrayUtils.copyOf(i, 3, Integer[].class);
         assertTrue(Arrays.equals(i, i2));
-    }
-
-    @Test
-    public void reverse() {
-        Integer[] i3 = new Integer[] { 1, 2, 3 };
-        Integer[] i4 = new Integer[] { 1, 2, 3, 4 };
-        ArrayUtils.reverse(i3);
-        ArrayUtils.reverse(i4);
-        assertTrue(i3[0] == 3 && i3[1] == 2 && i3[2] == 1);
-        assertTrue(i4[0] == 4 && i4[1] == 3 && i4[2] == 2 && i4[3] == 1);
     }
 }

@@ -17,26 +17,43 @@ public final class LogHelper {
     public final static String LOG_LEVEL_ATRB = "level";
 
     public final static String LOG_TYPE_ATRB = "type";
-/*
-    private final static String COMMONS_LOGGING = "commons";
 
-    private final static String JDK_LOGGING = "jul";
-
-    private final static String LOG4J = "log4j";
-
-    private final static String NULL_LOGGER = "null-logger";
-
-    private final static String SYSTEM_ERR_LOGGER = "system.err-logger";
-
-    private final static String SYSTEM_OUT_LOGGER = "system.out-logger";
-*/
+    /*
+     * private final static String COMMONS_LOGGING = "commons";
+     * 
+     * private final static String JDK_LOGGING = "jul";
+     * 
+     * private final static String LOG4J = "log4j";
+     * 
+     * private final static String NULL_LOGGER = "null-logger";
+     * 
+     * private final static String SYSTEM_ERR_LOGGER = "system.err-logger";
+     * 
+     * private final static String SYSTEM_OUT_LOGGER = "system.out-logger";
+     */
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private LogHelper() {}
 
     // /CLOVER:ON
 
- 
+    static Level getLogLevel(Logger logger) {
+        if (!logger.isFatalEnabled()) {
+            return Level.Off;
+        } else if (!logger.isErrorEnabled()) {
+            return Level.Fatal;
+        } else if (!logger.isWarnEnabled()) {
+            return Level.Error;
+        } else if (!logger.isInfoEnabled()) {
+            return Level.Warn;
+        } else if (!logger.isDebugEnabled()) {
+            return Level.Info;
+        } else if (!logger.isTraceEnabled()) {
+            return Level.Debug;
+        } else {
+            return Level.Trace;
+        }
+    }
 
     /**
      * Converts from a {@link Level} to a {@link java.util.logging.Level}.
@@ -59,24 +76,6 @@ public final class LogHelper {
             return java.util.logging.Level.INFO;
         default /* Warn */:
             return java.util.logging.Level.WARNING;
-        }
-    }
-
-    static Level getLogLevel(Logger logger) {
-        if (!logger.isFatalEnabled()) {
-            return Level.Off;
-        } else if (!logger.isErrorEnabled()) {
-            return Level.Fatal;
-        } else if (!logger.isWarnEnabled()) {
-            return Level.Error;
-        } else if (!logger.isInfoEnabled()) {
-            return Level.Warn;
-        } else if (!logger.isDebugEnabled()) {
-            return Level.Info;
-        } else if (!logger.isTraceEnabled()) {
-            return Level.Debug;
-        } else {
-            return Level.Trace;
         }
     }
 

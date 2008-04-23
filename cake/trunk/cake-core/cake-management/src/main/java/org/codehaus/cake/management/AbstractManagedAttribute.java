@@ -49,15 +49,6 @@ abstract class AbstractManagedAttribute {
     }
 
     /**
-     * Returns the name of this attribute.
-     * 
-     * @return the name of this attribute
-     */
-    String getName() {
-        return name;
-    }
-
-    /**
      * Returns the MBeanAttributeInfo for this attribute.
      * 
      * @return the MBeanAttributeInfo for this attribute
@@ -67,8 +58,17 @@ abstract class AbstractManagedAttribute {
     abstract MBeanAttributeInfo getInfo() throws IntrospectionException;
 
     /**
+     * Returns the name of this attribute.
+     * 
+     * @return the name of this attribute
+     */
+    String getName() {
+        return name;
+    }
+
+    /**
      * Returns the value of the attribute.
-     *
+     * 
      * @return the value of the attribute
      * @throws ReflectionException
      *             could not get the value of the attribute

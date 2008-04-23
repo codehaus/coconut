@@ -17,14 +17,6 @@ public class DurationAttributeTest {
     static final DurationAttribute DA = new DurationAttribute("foo") {};
 
     @Test
-    public void isValid() {
-        assertFalse(DA.isValid(Long.MIN_VALUE));
-        assertFalse(DA.isValid(0));
-        assertTrue(DA.isValid(1));
-        assertTrue(DA.isValid(Long.MAX_VALUE));
-    }
-
-    @Test
     public void checkValid() {
         assertTrue(DA.isValid(1));
         assertTrue(DA.isValid(Long.MAX_VALUE));
@@ -73,13 +65,24 @@ public class DurationAttributeTest {
     }
 
     @Test
+    public void isValid() {
+        assertFalse(DA.isValid(Long.MIN_VALUE));
+        assertFalse(DA.isValid(0));
+        assertTrue(DA.isValid(1));
+        assertTrue(DA.isValid(Long.MAX_VALUE));
+    }
+
+    protected AttributeMap newMap() {
+        return new DefaultAttributeMap();
+    }
+
+    @Test
     public void set() {
         AttributeMap am = newMap();
         assertEquals(10l, DA.set(am, 10l, TimeUnit.NANOSECONDS).get(DA));
         assertEquals(10000l, DA.set(am, 10l, TimeUnit.MICROSECONDS).get(DA));
         assertEquals(10000l, DA.set(am, Long.valueOf(10), TimeUnit.MICROSECONDS).get(DA));
-        assertEquals(Long.MAX_VALUE, DA.set(am, Long.MAX_VALUE, TimeUnit.MICROSECONDS)
-                .get(DA));
+        assertEquals(Long.MAX_VALUE, DA.set(am, Long.MAX_VALUE, TimeUnit.MICROSECONDS).get(DA));
     }
 
     @Test
@@ -92,9 +95,5 @@ public class DurationAttributeTest {
     @Test(expected = IllegalArgumentException.class)
     public void toSingletonIAE() {
         DA.singleton(-10, TimeUnit.NANOSECONDS);
-    }
-
-    protected AttributeMap newMap() {
-        return new DefaultAttributeMap();
     }
 }

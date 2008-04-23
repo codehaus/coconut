@@ -235,7 +235,6 @@ public class CollectionOpsTest {
         processor.op(-1);
         assertIsSerializable(CollectionOps.offerToQueue(new ArrayBlockingQueue(1)));
     }
-    
 
     @Test(expected = NullPointerException.class)
     public void offerToQueue_NPE() {
@@ -244,7 +243,7 @@ public class CollectionOpsTest {
 
     @Test
     public void retain() {
-        Predicate<Number> p = Predicates.<Number>anyEquals(2, 3);
+        Predicate<Number> p = Predicates.<Number> anyEquals(2, 3);
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4));
         CollectionOps.retain(list, p);
         assertEquals(2, list.size());

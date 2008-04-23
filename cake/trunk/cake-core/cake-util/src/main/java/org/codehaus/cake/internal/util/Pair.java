@@ -49,6 +49,26 @@ public final class Pair<T1, T2> implements java.io.Serializable {
     }
 
     /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof Pair && equals((Pair) other);
+    }
+
+    /**
+     * Compare two pairs.
+     * 
+     * @param other
+     *            the other Pair to compare with
+     * @return true if the pairs are equal
+     */
+    public boolean equals(Pair other) {
+        return other != null && CollectionUtils.eq(instance1, other.instance1)
+                && CollectionUtils.eq(instance2, other.instance2);
+    }
+
+    /**
      * Returns the first item in the Pair.
      * 
      * @return the first item in the Pair
@@ -75,26 +95,6 @@ public final class Pair<T1, T2> implements java.io.Serializable {
         // if we keept the hashCode the hashCode/equals contract might fail.
         return (instance1 == null ? 0 : instance1.hashCode())
                 ^ (instance2 == null ? 0 : instance2.hashCode());
-    }
-
-    /**
-     * Compare two pairs.
-     * 
-     * @param other
-     *            the other Pair to compare with
-     * @return true if the pairs are equal
-     */
-    public boolean equals(Pair other) {
-        return other != null && CollectionUtils.eq(instance1, other.instance1)
-                && CollectionUtils.eq(instance2, other.instance2);
-    }
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object other) {
-        return other instanceof Pair && equals((Pair) other);
     }
 
     /** {@inheritDoc} */

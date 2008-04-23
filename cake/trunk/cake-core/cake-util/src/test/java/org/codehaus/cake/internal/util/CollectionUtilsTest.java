@@ -24,7 +24,7 @@ import org.junit.Test;
 
 /**
  * Various String utils.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -73,48 +73,64 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    public void simpleImmutableEntry() {
+    public void immutableCollection() {
+        Collection<Integer> col = new ArrayList(Arrays.asList(1, 2, 3, 4));
+        Collection<Integer> i = new CollectionUtils.ImmutableCollection(col);
 
-        Map.Entry<Integer, Integer> me = new CollectionUtils.SimpleImmutableEntry(0, 1);
-        assertEquals(0, me.getKey().intValue());
-        assertEquals(me.getKey(), new CollectionUtils.SimpleImmutableEntry(me).getKey());
-        assertEquals(1, me.getValue().intValue());
-        assertEquals(me.getValue(), new CollectionUtils.SimpleImmutableEntry(me).getValue());
-        assertEquals("0=1", me.toString());
+        assertTrue(i.contains(4));
+        assertFalse(i.contains(5));
+        assertTrue(i.containsAll(Arrays.asList(2, 3, 4)));
+        assertFalse(i.containsAll(Arrays.asList(2, 3, 5)));
+        assertFalse(i.isEmpty());
+        assertTrue(new CollectionUtils.ImmutableCollection(new HashSet()).isEmpty());
+        assertEquals(col.size(), i.size());
+
+        assertEquals(col.toArray(), i.toArray());
+        assertEquals(col.toArray(new Integer[3]), i.toArray(new Integer[3]));
+        assertEquals(col.toString(), i.toString());
+        assertEquals(col.toString(), i.toString());
+        try {
+            i.add(2);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            i.addAll(Arrays.asList(1, 2));
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            i.clear();
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            i.remove(2);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            i.removeAll(Arrays.asList(1, 2));
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            i.retainAll(Arrays.asList(1, 2));
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
+        try {
+            Iterator<Integer> iter = i.iterator();
+            iter.next();
+            iter.remove();
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void simpleImmutableEntrySetValueUOE() {
-        new CollectionUtils.SimpleImmutableEntry(0, 1).setValue(2);
-    }
-
-    @Test
-    public void simpleImmutableEntryHashcode() {
-        assertEquals(0, new CollectionUtils.SimpleImmutableEntry(null, null).hashCode());
-        assertEquals(100 ^ 200, new CollectionUtils.SimpleImmutableEntry(100, 200).hashCode());
-    }
-
-    @Test
-    public void simpleImmutableEntryEquals() {
-        Map.Entry me = new CollectionUtils.SimpleImmutableEntry(0, 1);
-        assertFalse(me.equals(null));
-        assertFalse(me.equals(new Object()));
-        assertTrue(me.equals(me));
-        assertFalse(me.equals(new CollectionUtils.SimpleImmutableEntry(0, 0)));
-        assertFalse(me.equals(new CollectionUtils.SimpleImmutableEntry(0, null)));
-        assertFalse(me.equals(new CollectionUtils.SimpleImmutableEntry(1, 1)));
-        assertFalse(me.equals(new CollectionUtils.SimpleImmutableEntry(null, 1)));
-        assertTrue(me.equals(new CollectionUtils.SimpleImmutableEntry(0, 1)));
-    }
-
-    @Test
-    public void immutableSet() {
-        Set<Integer> col = new HashSet(Arrays.asList(1, 2, 3, 4));
-        Set<Integer> i = new CollectionUtils.ImmutableSet(col);
-        assertEquals(col, i);
-        assertEquals(i, col);
-        assertEquals(i, i);
-        assertEquals(col.hashCode(), i.hashCode());
+    @Test(expected = NullPointerException.class)
+    public void immutableCollectionNPE() {
+        new CollectionUtils.ImmutableCollection(null);
     }
 
     @Test
@@ -147,56 +163,18 @@ public class CollectionUtilsTest {
             iter.next();
             iter.remove();
             fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
+        } catch (UnsupportedOperationException ok) {/* ok */
+        }
     }
 
     @Test
-    public void immutableCollection() {
-        Collection<Integer> col = new ArrayList(Arrays.asList(1, 2, 3, 4));
-        Collection<Integer> i = new CollectionUtils.ImmutableCollection(col);
-
-        assertTrue(i.contains(4));
-        assertFalse(i.contains(5));
-        assertTrue(i.containsAll(Arrays.asList(2, 3, 4)));
-        assertFalse(i.containsAll(Arrays.asList(2, 3, 5)));
-        assertFalse(i.isEmpty());
-        assertTrue(new CollectionUtils.ImmutableCollection(new HashSet()).isEmpty());
-        assertEquals(col.size(), i.size());
-
-        assertEquals(col.toArray(), i.toArray());
-        assertEquals(col.toArray(new Integer[3]), i.toArray(new Integer[3]));
-        assertEquals(col.toString(), i.toString());
-        assertEquals(col.toString(), i.toString());
-        try {
-            i.add(2);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            i.addAll(Arrays.asList(1, 2));
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            i.clear();
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            i.remove(2);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            i.removeAll(Arrays.asList(1, 2));
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            i.retainAll(Arrays.asList(1, 2));
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            Iterator<Integer> iter = i.iterator();
-            iter.next();
-            iter.remove();
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
+    public void immutableSet() {
+        Set<Integer> col = new HashSet(Arrays.asList(1, 2, 3, 4));
+        Set<Integer> i = new CollectionUtils.ImmutableSet(col);
+        assertEquals(col, i);
+        assertEquals(i, col);
+        assertEquals(i, i);
+        assertEquals(col.hashCode(), i.hashCode());
     }
 
     @Test(expected = NullPointerException.class)
@@ -204,8 +182,38 @@ public class CollectionUtilsTest {
         new CollectionUtils.ImmutableSet(null);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void immutableCollectionNPE() {
-        new CollectionUtils.ImmutableCollection(null);
+    @Test
+    public void simpleImmutableEntry() {
+
+        Map.Entry<Integer, Integer> me = new CollectionUtils.SimpleImmutableEntry(0, 1);
+        assertEquals(0, me.getKey().intValue());
+        assertEquals(me.getKey(), new CollectionUtils.SimpleImmutableEntry(me).getKey());
+        assertEquals(1, me.getValue().intValue());
+        assertEquals(me.getValue(), new CollectionUtils.SimpleImmutableEntry(me).getValue());
+        assertEquals("0=1", me.toString());
+    }
+
+    @Test
+    public void simpleImmutableEntryEquals() {
+        Map.Entry me = new CollectionUtils.SimpleImmutableEntry(0, 1);
+        assertFalse(me.equals(null));
+        assertFalse(me.equals(new Object()));
+        assertTrue(me.equals(me));
+        assertFalse(me.equals(new CollectionUtils.SimpleImmutableEntry(0, 0)));
+        assertFalse(me.equals(new CollectionUtils.SimpleImmutableEntry(0, null)));
+        assertFalse(me.equals(new CollectionUtils.SimpleImmutableEntry(1, 1)));
+        assertFalse(me.equals(new CollectionUtils.SimpleImmutableEntry(null, 1)));
+        assertTrue(me.equals(new CollectionUtils.SimpleImmutableEntry(0, 1)));
+    }
+
+    @Test
+    public void simpleImmutableEntryHashcode() {
+        assertEquals(0, new CollectionUtils.SimpleImmutableEntry(null, null).hashCode());
+        assertEquals(100 ^ 200, new CollectionUtils.SimpleImmutableEntry(100, 200).hashCode());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void simpleImmutableEntrySetValueUOE() {
+        new CollectionUtils.SimpleImmutableEntry(0, 1).setValue(2);
     }
 }

@@ -16,12 +16,14 @@
 package org.codehaus.cake.ops;
 
 import java.io.Serializable;
-import static org.codehaus.cake.ops.Ops.*;
+
+import org.codehaus.cake.ops.Ops.DoublePredicate;
+
 /**
  * Various implementations of {@link DoublePredicate}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: DoublePredicates.java 590 2008-03-14 08:16:12Z kasper $
  */
@@ -33,25 +35,26 @@ public final class DoublePredicates {
     /** A DoublePredicate that always evaluates to <code>true</code>. */
     public static final DoublePredicate TRUE = new TrueDoublePredicate();
 
-    ///CLOVER:OFF
+    // /CLOVER:OFF
     /** Cannot instantiate. */
     private DoublePredicates() {}
-    ///CLOVER:ON
-    
+
+    // /CLOVER:ON
+
     /**
      * Creates a DoublePredicate that performs a logical AND on two supplied predicates. The
-     * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
-     * if the specified left side predicate evaluates to <code>false</code> the right
-     * side predicate will not be evaluated. More formally
-     *
+     * returned predicate uses short-circuit evaluation (or minimal evaluation). That is, if the
+     * specified left side predicate evaluates to <code>false</code> the right side predicate will
+     * not be evaluated. More formally
+     * 
      * <pre>
      * left.evaluate(element) &amp;&amp; right.evaluate(element);
      * </pre>
-     *
+     * 
      * <p>
-     * If both of the supplied predicates are serializable the returned predicate will
-     * also be serializable.
-     *
+     * If both of the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
      * @param left
      *            the left side DoublePredicate
      * @param right
@@ -63,12 +66,12 @@ public final class DoublePredicates {
     public static DoublePredicate and(DoublePredicate left, DoublePredicate right) {
         return new AndDoublePredicate(left, right);
     }
-    
+
     /**
      * Creates a predicate that accepts any value that is equal to the value specified.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the value of the equals predicate
      * @return a predicate that accepts any value that is equal to the value specified
@@ -76,13 +79,13 @@ public final class DoublePredicates {
     public static DoublePredicate equalsTo(double element) {
         return new EqualsToDoublePredicate(element);
     }
-    
+
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
-     * tested is greater then the element being used to construct the predicate.
+     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being tested
+     * is greater then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created DoublePredicate
@@ -92,12 +95,11 @@ public final class DoublePredicates {
     }
 
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
-     * tested is greater then or equals to the element being used to construct the
-     * predicate.
+     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being tested
+     * is greater then or equals to the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created DoublePredicate
@@ -107,11 +109,11 @@ public final class DoublePredicates {
     }
 
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
-     * tested is less then the element being used to construct the predicate.
+     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being tested
+     * is less then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created DoublePredicate
@@ -121,11 +123,11 @@ public final class DoublePredicates {
     }
 
     /**
-     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being
-     * tested is less then or equals to the element being used to construct the predicate.
+     * Creates a DoublePredicate that evaluates to <code>true</code> if the element being tested
+     * is less then or equals to the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     *
+     * 
      * @param element
      *            the element to compare with
      * @return the newly created DoublePredicate
@@ -133,19 +135,18 @@ public final class DoublePredicates {
     public static DoublePredicate lessThenOrEquals(double element) {
         return new LessThenOrEqualsDoublePredicate(element);
     }
-    
+
     /**
      * Creates a DoublePredicate that performs a logical logical NOT on the supplied
      * DoublePredicate. More formally
-     *
+     * 
      * <pre>
      * !predicate.evaluate(value);
      * </pre>
-     *
+     * 
      * <p>
-     * If the specified predicate is serializable the returned predicate will also be
-     * serializable.
-     *
+     * If the specified predicate is serializable the returned predicate will also be serializable.
+     * 
      * @param predicate
      *            the predicate to negate
      * @return the newly created DoublePredicate
@@ -157,19 +158,19 @@ public final class DoublePredicates {
     }
 
     /**
-     * Creates a DoublePredicate that performs a logical OR on two supplied predicates. The
-     * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
-     * if the specified left side predicate evaluates to <code>true</code> the right
-     * side predicate will not be evaluated. More formally
-     *
+     * Creates a DoublePredicate that performs a logical OR on two supplied predicates. The returned
+     * predicate uses short-circuit evaluation (or minimal evaluation). That is, if the specified
+     * left side predicate evaluates to <code>true</code> the right side predicate will not be
+     * evaluated. More formally
+     * 
      * <pre>
      * left.evaluate(element) || right.evaluate(element);
      * </pre>
-     *
+     * 
      * <p>
-     * If both of the supplied predicates are serializable the returned predicate will
-     * also be serializable.
-     *
+     * If both of the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
      * @param left
      *            the left side DoublePredicate
      * @param right
@@ -181,7 +182,7 @@ public final class DoublePredicates {
     public static DoublePredicate or(DoublePredicate left, DoublePredicate right) {
         return new OrDoublePredicate(left, right);
     }
-    
+
     /**
      * A DoublePredicate that performs a logical exclusive AND on two supplied predicates.
      */
@@ -198,7 +199,7 @@ public final class DoublePredicates {
 
         /**
          * Creates a new <code>AndDoublePredicate</code>.
-         *
+         * 
          * @param left
          *            the left side DoublePredicate
          * @param right
@@ -216,14 +217,9 @@ public final class DoublePredicates {
             this.right = right;
         }
 
-        /** {@inheritDoc} */
-        public boolean op(double element) {
-            return left.op(element) && right.op(element);
-        }
-
         /**
          * Returns the left side DoublePredicate.
-         *
+         * 
          * @return the left side DoublePredicate.
          */
         public DoublePredicate getLeft() {
@@ -232,11 +228,16 @@ public final class DoublePredicates {
 
         /**
          * Returns the right side DoublePredicate.
-         *
+         * 
          * @return the right side DoublePredicate.
          */
         public DoublePredicate getRight() {
             return right;
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(double element) {
+            return left.op(element) && right.op(element);
         }
 
         /** {@inheritDoc} */
@@ -245,7 +246,7 @@ public final class DoublePredicates {
             return "(" + left + ") && (" + right + ")";
         }
     }
-    
+
     static class EqualsToDoublePredicate implements DoublePredicate, Serializable {
 
         /** serialVersionUID. */
@@ -259,30 +260,30 @@ public final class DoublePredicates {
         }
 
         /**
-         * Returns <code>true</code> if the specified value is equal to the value that
-         * was used when constructing this predicate, otherwise <code>false</code>.
-         *
-         * @param t
-         *            the value to compare with
-         * @return <code>true</code> if the specified value is equal to the value that
-         *         was used when constructing this predicate, otherwise <code>false</code>.
-         */
-        public boolean op(double t) {
-            return equalsTo == t;
-        }
-
-        /**
          * @return the value we are comparing with
          */
         public double getEqualsTo() {
             return equalsTo;
         }
+
+        /**
+         * Returns <code>true</code> if the specified value is equal to the value that was used
+         * when constructing this predicate, otherwise <code>false</code>.
+         * 
+         * @param t
+         *            the value to compare with
+         * @return <code>true</code> if the specified value is equal to the value that was used
+         *         when constructing this predicate, otherwise <code>false</code>.
+         */
+        public boolean op(double t) {
+            return equalsTo == t;
+        }
     }
-    
-     /**
-     * a DoublePredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
-     * get an instance of this DoublePredicate.
-     *
+
+    /**
+     * a DoublePredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to get an
+     * instance of this DoublePredicate.
+     * 
      * @see TrueDoublePredicate
      */
     static final class FalseDoublePredicate implements DoublePredicate, Serializable {
@@ -298,18 +299,18 @@ public final class DoublePredicates {
             return false;
         }
 
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return FALSE;
+        }
+
         /** {@inheritDoc} */
         @Override
         public String toString() {
             return Boolean.FALSE.toString();
         }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return FALSE;
-        }
     }
-    
+
     static class GreaterThenDoublePredicate implements DoublePredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 7198592614364500859L;
@@ -321,16 +322,16 @@ public final class DoublePredicates {
             this.greaterThen = greaterThen;
         }
 
+        public double getGreaterThen() {
+            return greaterThen;
+        }
+
         /** {@inheritDoc} */
         public boolean op(double t) {
             return greaterThen < t;
         }
-
-        public double getGreaterThen() {
-            return greaterThen;
-        }
     }
-    
+
     static class GreaterThenOrEqualsDoublePredicate implements DoublePredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -4681995097900012563L;
@@ -342,16 +343,16 @@ public final class DoublePredicates {
             this.greaterThenOrEquals = greaterThenOrEquals;
         }
 
+        public double getGreaterThenOrEquals() {
+            return greaterThenOrEquals;
+        }
+
         /** {@inheritDoc} */
         public boolean op(double t) {
             return greaterThenOrEquals <= t;
         }
-
-        public double getGreaterThenOrEquals() {
-            return greaterThenOrEquals;
-        }
     }
-    
+
     static class LessThenDoublePredicate implements DoublePredicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -9180606923416408020L;
@@ -363,13 +364,13 @@ public final class DoublePredicates {
             this.lessThen = lessThen;
         }
 
+        public double getLessThen() {
+            return lessThen;
+        }
+
         /** {@inheritDoc} */
         public boolean op(double t) {
             return lessThen > t;
-        }
-
-        public double getLessThen() {
-            return lessThen;
         }
     }
 
@@ -384,18 +385,19 @@ public final class DoublePredicates {
             this.lessThenOrEquals = lessThenOrEquals;
         }
 
+        public double getLessThenOrEquals() {
+            return lessThenOrEquals;
+        }
+
         /** {@inheritDoc} */
         public boolean op(double t) {
             return lessThenOrEquals >= t;
         }
-
-        public double getLessThenOrEquals() {
-            return lessThenOrEquals;
-        }
     }
+
     /**
-     * A DoublePredicate that evaluates to true iff the Predicate used for constructing
-     * evaluates to <code>false</code>.
+     * A DoublePredicate that evaluates to true iff the Predicate used for constructing evaluates to
+     * <code>false</code>.
      */
     static final class NotDoublePredicate implements DoublePredicate, Serializable {
 
@@ -407,7 +409,7 @@ public final class DoublePredicates {
 
         /**
          * Creates a new NotDoublePredicate.
-         *
+         * 
          * @param predicate
          *            the predicate to negate.
          * @throws NullPointerException
@@ -421,24 +423,23 @@ public final class DoublePredicates {
         }
 
         /**
-         * Returns a boolean representing the logical NOT value of the supplied
-         * DoublePredicate.
-         *
+         * Returns the predicate that is being negated.
+         * 
+         * @return the predicate that is being negated.
+         */
+        public DoublePredicate getPredicate() {
+            return predicate;
+        }
+
+        /**
+         * Returns a boolean representing the logical NOT value of the supplied DoublePredicate.
+         * 
          * @param element
          *            the element to test
          * @return the logical NOT of the supplied DoublePredicate
          */
         public boolean op(double element) {
             return !predicate.op(element);
-        }
-
-        /**
-         * Returns the predicate that is being negated.
-         *
-         * @return the predicate that is being negated.
-         */
-        public DoublePredicate getPredicate() {
-            return predicate;
         }
 
         /** {@inheritDoc} */
@@ -464,7 +465,7 @@ public final class DoublePredicates {
 
         /**
          * Creates a new <code>OrDoublePredicate</code>.
-         *
+         * 
          * @param left
          *            the left side DoublePredicate
          * @param right
@@ -482,14 +483,9 @@ public final class DoublePredicates {
             this.right = right;
         }
 
-        /** {@inheritDoc} */
-        public boolean op(double element) {
-            return left.op(element) || right.op(element);
-        }
-
         /**
          * Returns the left side DoublePredicate.
-         *
+         * 
          * @return the left side DoublePredicate.
          */
         public DoublePredicate getLeft() {
@@ -498,11 +494,16 @@ public final class DoublePredicates {
 
         /**
          * Returns the right side DoublePredicate.
-         *
+         * 
          * @return the right side DoublePredicate.
          */
         public DoublePredicate getRight() {
             return right;
+        }
+
+        /** {@inheritDoc} */
+        public boolean op(double element) {
+            return left.op(element) || right.op(element);
         }
 
         /** {@inheritDoc} */
@@ -511,11 +512,11 @@ public final class DoublePredicates {
             return "(" + left + ") && (" + right + ")";
         }
     }
-    
+
     /**
-     * A DoublePredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get
-     * an instance of this DoublePredicate.
-     *
+     * A DoublePredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get an
+     * instance of this DoublePredicate.
+     * 
      * @see FalseDoublePredicate
      */
     static final class TrueDoublePredicate implements DoublePredicate, Serializable {
@@ -531,15 +532,15 @@ public final class DoublePredicates {
             return true;
         }
 
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return TRUE;
+        }
+
         /** {@inheritDoc} */
         @Override
         public String toString() {
             return Boolean.TRUE.toString();
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return TRUE;
         }
     }
 }

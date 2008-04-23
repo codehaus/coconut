@@ -113,8 +113,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#allTrue(Predicate...)} throws a
-     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#allTrue(Predicate...)} throws a {@link NullPointerException}
+     * when invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void allArrayNPE() {
@@ -122,9 +122,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#allTrue(Predicate...)} throws a
-     * {@link NullPointerException} when invoked with an array containing a
-     * <code>null</code> element.
+     * Tests that {@link Predicates#allTrue(Predicate...)} throws a {@link NullPointerException}
+     * when invoked with an array containing a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void allArrayNPE1() {
@@ -164,13 +163,13 @@ public class PredicatesTest {
         Predicates.allTrue((Iterable) Arrays.asList(TRUE)).toString();
 
         // shortcircuted evaluation
-        Predicates.allTrue((Iterable) Arrays.asList(TRUE, FALSE, TestUtil.dummy(Predicate.class))).op(
-                null);
+        Predicates.allTrue((Iterable) Arrays.asList(TRUE, FALSE, TestUtil.dummy(Predicate.class)))
+                .op(null);
     }
 
     /**
-     * Tests that {@link Predicates#allTrue(Iterable)} throws a {@link NullPointerException}
-     * when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#allTrue(Iterable)} throws a {@link NullPointerException} when
+     * invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void allIterableNPE() {
@@ -178,8 +177,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#allTrue(Iterable)} throws a {@link NullPointerException}
-     * when invoked with an iterable containing a <code>null</code> element.
+     * Tests that {@link Predicates#allTrue(Iterable)} throws a {@link NullPointerException} when
+     * invoked with an iterable containing a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void allIterableNPE1() {
@@ -207,9 +206,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#and(Predicate, Predicate)} throws a
-     * {@link NullPointerException} when invoked with a left side <code>null</code>
-     * argument.
+     * Tests that {@link Predicates#and(Predicate, Predicate)} throws a {@link NullPointerException}
+     * when invoked with a left side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE() {
@@ -217,9 +215,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#and(Predicate, Predicate)} throws a
-     * {@link NullPointerException} when invoked with a right side <code>null</code>
-     * argument.
+     * Tests that {@link Predicates#and(Predicate, Predicate)} throws a {@link NullPointerException}
+     * when invoked with a right side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void andNPE1() {
@@ -266,8 +263,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyTrue(Predicate...)} throws a
-     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#anyTrue(Predicate...)} throws a {@link NullPointerException}
+     * when invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyArrayNPE() {
@@ -275,9 +272,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyTrue(Predicate...)} throws a
-     * {@link NullPointerException} when invoked with an array containing a
-     * <code>null</code> element.
+     * Tests that {@link Predicates#anyTrue(Predicate...)} throws a {@link NullPointerException}
+     * when invoked with an array containing a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyArrayNPE1() {
@@ -310,8 +306,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyEquals(Object...)} throws a
-     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#anyEquals(Object...)} throws a {@link NullPointerException} when
+     * invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyEqualsArrayNPE() {
@@ -319,9 +315,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyEquals(Object...)} throws a
-     * {@link NullPointerException} when invoked with an array containing a
-     * <code>null</code> element.
+     * Tests that {@link Predicates#anyEquals(Object...)} throws a {@link NullPointerException} when
+     * invoked with an array containing a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyEqualsArrayNPE1() {
@@ -350,8 +345,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyEquals(Iterable)} throws a
-     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#anyEquals(Iterable)} throws a {@link NullPointerException} when
+     * invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyEqualsIterableNPE() {
@@ -359,9 +354,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyEquals(Iterable)} throws a
-     * {@link NullPointerException} when invoked with an iterable containing a
-     * <code>null</code> element.
+     * Tests that {@link Predicates#anyEquals(Iterable)} throws a {@link NullPointerException} when
+     * invoked with an iterable containing a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyEqualsIterableNPE1() {
@@ -401,13 +395,13 @@ public class PredicatesTest {
         Predicates.anyTrue((Iterable) Arrays.asList(TRUE)).toString();
 
         // shortcircuted evaluation
-        Predicates.anyTrue((Iterable) Arrays.asList(FALSE, TRUE, TestUtil.dummy(Predicate.class))).op(
-                null);
+        Predicates.anyTrue((Iterable) Arrays.asList(FALSE, TRUE, TestUtil.dummy(Predicate.class)))
+                .op(null);
     }
 
     /**
-     * Tests that {@link Predicates#anyTrue(Iterable)} throws a {@link NullPointerException}
-     * when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#anyTrue(Iterable)} throws a {@link NullPointerException} when
+     * invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyIterableNPE() {
@@ -415,8 +409,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyTrue(Iterable)} throws a {@link NullPointerException}
-     * when invoked with an iterable containing a <code>null</code> element.
+     * Tests that {@link Predicates#anyTrue(Iterable)} throws a {@link NullPointerException} when
+     * invoked with an iterable containing a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyIterableNPE1() {
@@ -451,8 +445,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyType(Class...)} throws a
-     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#anyType(Class...)} throws a {@link NullPointerException} when
+     * invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyTypeArrayNPE() {
@@ -460,9 +454,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyType(Class...)} throws a
-     * {@link NullPointerException} when invoked with an array containing a
-     * <code>null</code> element.
+     * Tests that {@link Predicates#anyType(Class...)} throws a {@link NullPointerException} when
+     * invoked with an array containing a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyTypeArrayNPE1() {
@@ -498,8 +491,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyType(Iterable)} throws a
-     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#anyType(Iterable)} throws a {@link NullPointerException} when
+     * invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyTypeIterableNPE() {
@@ -507,9 +500,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#anyType(Iterable)} throws a
-     * {@link NullPointerException} when invoked with an iterable containing a
-     * <code>null</code> element.
+     * Tests that {@link Predicates#anyType(Iterable)} throws a {@link NullPointerException} when
+     * invoked with an iterable containing a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void anyTypeIterableNPE1() {
@@ -684,8 +676,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#equalsTo(Object)} throws a
-     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#equalsTo(Object)} throws a {@link NullPointerException} when
+     * invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void isEqualsNPE() {
@@ -737,8 +729,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#sameAs(Object)} throws a {@link NullPointerException}
-     * when invoked with a <code>null</code> element.
+     * Tests that {@link Predicates#sameAs(Object)} throws a {@link NullPointerException} when
+     * invoked with a <code>null</code> element.
      */
     @Test(expected = NullPointerException.class)
     public void isSameNPE() {
@@ -767,8 +759,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#isTypeOf(Class)} throws a
-     * {@link IllegalArgumentException} when invoked with a pritimive type.
+     * Tests that {@link Predicates#isTypeOf(Class)} throws a {@link IllegalArgumentException} when
+     * invoked with a pritimive type.
      */
     @Test(expected = IllegalArgumentException.class)
     public void isTypeIAE() {
@@ -776,8 +768,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#isTypeOf(Class)} throws a {@link NullPointerException}
-     * when invoked with a right side <code>null</code> argument.
+     * Tests that {@link Predicates#isTypeOf(Class)} throws a {@link NullPointerException} when
+     * invoked with a right side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void isTypeNPE() {
@@ -870,6 +862,34 @@ public class PredicatesTest {
         lessThenOrEqual(2, null);
     }
 
+    @Test
+    public void mapperPredicate() {
+        Predicate<Number> p = (Predicate) Predicates.anyEquals(4, 16);
+        Op<Integer, Integer> m = new Op<Integer, Integer>() {
+            public Integer op(Integer from) {
+                return from.intValue() * from.intValue();
+            }
+        };
+        Predicate mapped = Predicates.mapAndEvaluate(m, p);
+        assertTrue(mapped.op(2));
+        assertFalse(mapped.op(3));
+        assertTrue(mapped.op(4));
+
+        assertSame(p, ((Predicates.MapAndEvaluatePredicate) mapped).getPredicate());
+        assertSame(m, ((Predicates.MapAndEvaluatePredicate) mapped).getMapper());
+        mapped.toString();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mapperPredicateNPE1() {
+        Predicates.mapAndEvaluate(null, TestUtil.dummy(Predicate.class));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mapperPredicateNPE2() {
+        Predicates.mapAndEvaluate(TestUtil.dummy(Op.class), null);
+    }
+
     /**
      * Tests {@link Predicates#not(Predicate)}.
      */
@@ -885,8 +905,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#not(Predicate)} throws a {@link NullPointerException}
-     * when invoked with a <code>null</code> argument.
+     * Tests that {@link Predicates#not(Predicate)} throws a {@link NullPointerException} when
+     * invoked with a <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void notNPE() {
@@ -907,8 +927,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#notNullAnd(Predicate)} throws a
-     * {@link NullPointerException} when invoked with a <code>null</code> argument.
+     * Tests that {@link Predicates#notNullAnd(Predicate)} throws a {@link NullPointerException}
+     * when invoked with a <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void notNullAndNPE() {
@@ -936,9 +956,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#or(Predicate, Predicate)} throws a
-     * {@link NullPointerException} when invoked with a left side <code>null</code>
-     * argument.
+     * Tests that {@link Predicates#or(Predicate, Predicate)} throws a {@link NullPointerException}
+     * when invoked with a left side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE() {
@@ -946,9 +965,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#or(Predicate, Predicate)} throws a
-     * {@link NullPointerException} when invoked with a right side <code>null</code>
-     * argument.
+     * Tests that {@link Predicates#or(Predicate, Predicate)} throws a {@link NullPointerException}
+     * when invoked with a right side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void orNPE1() {
@@ -986,9 +1004,8 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#xor(Predicate, Predicate)} throws a
-     * {@link NullPointerException} when invoked with a left side <code>null</code>
-     * argument.
+     * Tests that {@link Predicates#xor(Predicate, Predicate)} throws a {@link NullPointerException}
+     * when invoked with a left side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void xorNPE() {
@@ -996,40 +1013,11 @@ public class PredicatesTest {
     }
 
     /**
-     * Tests that {@link Predicates#xor(Predicate, Predicate)} throws a
-     * {@link NullPointerException} when invoked with a right side <code>null</code>
-     * argument.
+     * Tests that {@link Predicates#xor(Predicate, Predicate)} throws a {@link NullPointerException}
+     * when invoked with a right side <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void xorNPE1() {
         Predicates.xor(TRUE, null);
-    }
-
-    @Test
-    public void mapperPredicate() {
-        Predicate<Number> p = (Predicate) Predicates.anyEquals(4, 16);
-        Op<Integer, Integer> m = new Op<Integer, Integer>() {
-            public Integer op(Integer from) {
-                return from.intValue() * from.intValue();
-            }
-        };
-        Predicate mapped = Predicates.mapAndEvaluate(m, p);
-        assertTrue(mapped.op(2));
-        assertFalse(mapped.op(3));
-        assertTrue(mapped.op(4));
-
-        assertSame(p, ((Predicates.MapAndEvaluatePredicate) mapped).getPredicate());
-        assertSame(m, ((Predicates.MapAndEvaluatePredicate) mapped).getMapper());
-        mapped.toString();
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void mapperPredicateNPE1() {
-        Predicates.mapAndEvaluate(null, TestUtil.dummy(Predicate.class));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void mapperPredicateNPE2() {
-        Predicates.mapAndEvaluate(TestUtil.dummy(Op.class), null);
     }
 }

@@ -33,78 +33,24 @@ public final class ObjectOps {
     /** An Op that returns the specified argument. */
     public static final Op CONSTANT_OP = new ConstantOp();
 
-
     /**
-     * A reducer returning the maximum of two Comparable elements, treating null as less
-     * than any non-null element. The Reducer is serializable
+     * A reducer returning the maximum of two Comparable elements, treating null as less than any
+     * non-null element. The Reducer is serializable
      */
     public static final Reducer MAX_REDUCER = new NaturalMaxReducer();
 
     /**
-     * A reducer returning the minimum of two Comparable elements, treating null as less
-     * than any non-null element. The Reducer is serializable
+     * A reducer returning the minimum of two Comparable elements, treating null as less than any
+     * non-null element. The Reducer is serializable
      */
     public static final Reducer MIN_REDUCER = new NaturalMinReducer();
 
-    
     /** Cannot instantiate. */
     private ObjectOps() {}
 
     /**
-     * Returns a reducer returning the maximum of two Comparable elements, treating null
-     * as less than any non-null element.
-     *
-     * @return a maximum reducer
-     * @param <T>
-     *            the types of elements accepted by the Reducer
-     */
-    public static <T extends Comparable<? super T>> Reducer<T> maxReducer() {
-        return MAX_REDUCER;
-    }
-
-    /**
-     * A reducer returning the maximum of two elements, using the given comparator, and
-     * treating null as less than any non-null element.
-     *
-     * @param comparator
-     *            the comparator to use when comparing elements
-     * @return the newly created Reducer
-     * @param <T>
-     *            the types of elements accepted by the Reducer
-     */
-    public static <T> Reducer<T> maxReducer(Comparator<? super T> comparator) {
-        return new MaxReducer(comparator);
-    }
-
-    /**
-     * Returns a reducer that returns the minimum of two Comparable elements, treating
-     * null as less than any non-null element.
-     *
-     * @return a minimum reducer
-     * @param <T>
-     *            the types of elements accepted by the Reducer
-     */
-    public static <T extends Comparable<? super T>> Reducer<T> minReducer() {
-        return MIN_REDUCER;
-    }
-
-    /**
-     * A reducer returning the minimum of two elements, using the given comparator, and
-     * treating null as greater than any non-null element.
-     *
-     * @param comparator
-     *            the comparator to use when comparing elements
-     * @return the newly created Reducer
-     * @param <T>
-     *            the types of elements accepted by the Reducer
-     */
-    public static <T> Reducer<T> minReducer(Comparator<? super T> comparator) {
-        return new MinReducer(comparator);
-    }
-
-    /**
-     * Creates a composite mapper that applies a second mapper to the results of applying
-     * the first one.
+     * Creates a composite mapper that applies a second mapper to the results of applying the first
+     * one.
      */
     public static <T, U, V> Op<T, V> compoundMapper(Op<? super T, ? extends U> first,
             Op<? super U, ? extends V> second) {
@@ -116,8 +62,59 @@ public final class ObjectOps {
     }
 
     /**
-     * A composite mapper that applies a second mapper to the results of applying the
-     * first one.
+     * Returns a reducer returning the maximum of two Comparable elements, treating null as less
+     * than any non-null element.
+     * 
+     * @return a maximum reducer
+     * @param <T>
+     *            the types of elements accepted by the Reducer
+     */
+    public static <T extends Comparable<? super T>> Reducer<T> maxReducer() {
+        return MAX_REDUCER;
+    }
+
+    /**
+     * A reducer returning the maximum of two elements, using the given comparator, and treating
+     * null as less than any non-null element.
+     * 
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created Reducer
+     * @param <T>
+     *            the types of elements accepted by the Reducer
+     */
+    public static <T> Reducer<T> maxReducer(Comparator<? super T> comparator) {
+        return new MaxReducer(comparator);
+    }
+
+    /**
+     * Returns a reducer that returns the minimum of two Comparable elements, treating null as less
+     * than any non-null element.
+     * 
+     * @return a minimum reducer
+     * @param <T>
+     *            the types of elements accepted by the Reducer
+     */
+    public static <T extends Comparable<? super T>> Reducer<T> minReducer() {
+        return MIN_REDUCER;
+    }
+
+    /**
+     * A reducer returning the minimum of two elements, using the given comparator, and treating
+     * null as greater than any non-null element.
+     * 
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created Reducer
+     * @param <T>
+     *            the types of elements accepted by the Reducer
+     */
+    public static <T> Reducer<T> minReducer(Comparator<? super T> comparator) {
+        return new MinReducer(comparator);
+    }
+
+    /**
+     * A composite mapper that applies a second mapper to the results of applying the first one.
      */
     static final class CompoundMapper<T, U, V> implements Op<T, V>, Serializable {
         /** serialVersionUID. */
@@ -144,8 +141,7 @@ public final class ObjectOps {
     }
 
     /**
-     * An Op that returns the same object being provided to the {@link #op(Object)}
-     * method.
+     * An Op that returns the same object being provided to the {@link #op(Object)} method.
      * 
      * @param <T>
      *            the type of objects accepted by the Mapper
@@ -166,19 +162,19 @@ public final class ObjectOps {
     }
 
     /**
-     * A reducer returning the maximum of two elements, using the given comparator, and
-     * treating null as less than any non-null element.
+     * A reducer returning the maximum of two elements, using the given comparator, and treating
+     * null as less than any non-null element.
      */
     static final class MaxReducer<T> implements Reducer<T>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -5456282180421493663L;
-    
+
         /** Comparator used when reducing. */
         private final Comparator<? super T> comparator;
-    
+
         /**
          * Creates a MaxReducer.
-         *
+         * 
          * @param comparator
          *            the Comparator to use
          */
@@ -188,7 +184,7 @@ public final class ObjectOps {
             }
             this.comparator = comparator;
         }
-    
+
         /** {@inheritDoc} */
         public T op(T a, T b) {
             return a != null && (b == null || comparator.compare(a, b) >= 0) ? a : b;
@@ -196,19 +192,19 @@ public final class ObjectOps {
     }
 
     /**
-     * A reducer returning the minimum of two elements, using the given comparator, and
-     * treating null as greater than any non-null element.
+     * A reducer returning the minimum of two elements, using the given comparator, and treating
+     * null as greater than any non-null element.
      */
     static final class MinReducer<T> implements Reducer<T>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 223676769245813970L;
-    
+
         /** Comparator used when reducing. */
         private final Comparator<? super T> comparator;
-    
+
         /**
          * Creates a MinReducer.
-         *
+         * 
          * @param comparator
          *            the Comparator to use
          */
@@ -218,7 +214,7 @@ public final class ObjectOps {
             }
             this.comparator = comparator;
         }
-    
+
         /** {@inheritDoc} */
         public T op(T a, T b) {
             return a != null && (b == null || comparator.compare(a, b) <= 0) ? a : b;
@@ -226,19 +222,19 @@ public final class ObjectOps {
     }
 
     /**
-     * A reducer returning the maximum of two Comparable elements, treating null as less
-     * than any non-null element.
+     * A reducer returning the maximum of two Comparable elements, treating null as less than any
+     * non-null element.
      */
     static final class NaturalMaxReducer<T extends Comparable<? super T>> implements Reducer<T>,
             Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 5079675958818175983L;
-    
+
         /** {@inheritDoc} */
         public T op(T a, T b) {
             return a != null && (b == null || a.compareTo(b) >= 0) ? a : b;
         }
-    
+
         /** @return Preserves singleton property */
         private Object readResolve() {
             return MAX_REDUCER;
@@ -246,19 +242,19 @@ public final class ObjectOps {
     }
 
     /**
-     * A reducer returning the minimum of two Comparable elements, treating null as less
-     * than any non-null element.
+     * A reducer returning the minimum of two Comparable elements, treating null as less than any
+     * non-null element.
      */
     static final class NaturalMinReducer<T extends Comparable<? super T>> implements Reducer<T>,
             Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -6750364835779757657L;
-    
+
         /** {@inheritDoc} */
         public T op(T a, T b) {
             return a != null && (b == null || a.compareTo(b) <= 0) ? a : b;
         }
-    
+
         /** @return Preserves singleton property */
         private Object readResolve() {
             return MIN_REDUCER;

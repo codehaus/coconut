@@ -16,21 +16,31 @@ public class AttributeMaps_ImmutableMapTest extends AbstractAttributeMapTest {
 
     private AttributeMap realMap;
 
-    @Before
-    public void setup() {
-        realMap = new DefaultAttributeMap();
-        realMap.put(KEY, VALUE);
-        map = Attributes.unmodifiableAttributeMap(realMap);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void unmodifiableAttributeMapNPE() {
-        Attributes.unmodifiableAttributeMap(null);
+    protected AttributeMap create() {
+        return new DefaultAttributeMap();
     }
 
     @Test
     public void noPutClearRemove() {
         super.assertImmutable();
+    }
+
+    /**
+     * Tests that ImmutableAttributeMap map is serializable
+     * 
+     * @throws Exception
+     *             something went wrong
+     */
+    @Test
+    public void serialization() throws Exception {
+        assertIsSerializable(new Attributes.ImmutableAttributeMap(Attributes.singleton(KEY, 123)));
+    }
+
+    @Before
+    public void setup() {
+        realMap = new DefaultAttributeMap();
+        realMap.put(KEY, VALUE);
+        map = Attributes.unmodifiableAttributeMap(realMap);
     }
 
     @Test
@@ -92,18 +102,8 @@ public class AttributeMaps_ImmutableMapTest extends AbstractAttributeMapTest {
         // }
     }
 
-    protected AttributeMap create() {
-        return new DefaultAttributeMap();
-    }
-
-    /**
-     * Tests that ImmutableAttributeMap map is serializable
-     * 
-     * @throws Exception
-     *             something went wrong
-     */
-    @Test
-    public void serialization() throws Exception {
-        assertIsSerializable(new Attributes.ImmutableAttributeMap(Attributes.singleton(KEY, 123)));
+    @Test(expected = NullPointerException.class)
+    public void unmodifiableAttributeMapNPE() {
+        Attributes.unmodifiableAttributeMap(null);
     }
 }

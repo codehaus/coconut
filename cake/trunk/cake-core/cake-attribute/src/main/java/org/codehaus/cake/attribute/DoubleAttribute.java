@@ -16,21 +16,23 @@
 package org.codehaus.cake.attribute;
 
 import java.util.Comparator;
+
 /**
- * An implementation of an {@link Attribute} mapping to a double. This implementation adds a number of
- * methods that works on primitive doubles instead of their object counterpart.
+ * An implementation of an {@link Attribute} mapping to a double. This implementation adds a number
+ * of methods that works on primitive doubles instead of their object counterpart.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: DoubleAttribute.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class DoubleAttribute extends Attribute<Double> implements
-         Comparator<WithAttributes> {
-         
+        Comparator<WithAttributes> {
+
     /** The default value of this attribute. */
     private final transient double defaultValue;
 
     /**
-     * Creates a new DoubleAttribute with a generated name and a default value of <tt>$defaultValueNoCast</tt>.
+     * Creates a new DoubleAttribute with a generated name and a default value of
+     * <tt>$defaultValueNoCast</tt>.
      * 
      * @throws IllegalArgumentException
      *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(int)}
@@ -61,7 +63,8 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
      * @throws NullPointerException
      *             if the specified name is <code>null</code>
      * @throws IllegalArgumentException
-     *             if $defaultValueNoCast is not a valid value according to {@link #checkValid(double)}
+     *             if $defaultValueNoCast is not a valid value according to
+     *             {@link #checkValid(double)}
      */
     public DoubleAttribute(String name) {
         this(name, 0D);
@@ -84,13 +87,13 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
         super(name, Double.TYPE, defaultValue);
         this.defaultValue = defaultValue;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void checkValid(Double o) {
         checkValid(o.doubleValue());
     }
-    
+
     /**
      * Analogous to {@link #checkValid(Double)} except taking a primitive double.
      * <p>
@@ -108,15 +111,14 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
                     + ", type = " + getClass() + ", value = " + value + "]");
         }
     }
-    
+
     /** {@inheritDoc} */
     public int compare(WithAttributes w1, WithAttributes w2) {
         double thisVal = get(w1);
         double anotherVal = get(w2);
         return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
     }
-    
-    
+
     /**
      * Creates a value instance of this attribute from the specified string.
      * 
@@ -130,16 +132,6 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
         return Double.parseDouble(str);
     }
 
-    /**
-     * Returns the default scalar value of this attribute. This is equivalent to calling
-     * {@link #getDefault()}, but returning a primitive int instead.
-     * 
-     * @return the default value of this attribute
-     */
-    public double getDefaultValue() {
-        return defaultValue;
-    }
-    
     /**
      * Analogous to {@link #get(WithAttributes)} except returning a primitive <tt>double</tt>.
      * 
@@ -167,6 +159,34 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
     }
 
     /**
+     * Returns the default scalar value of this attribute. This is equivalent to calling
+     * {@link #getDefault()}, but returning a primitive int instead.
+     * 
+     * @return the default value of this attribute
+     */
+    public double getDefaultValue() {
+        return defaultValue;
+    }
+
+    /**
+     * Returns <code>true</code> if the specified value is either {@link Double#NEGATIVE_INFINITY},
+     * {@link Double#POSITIVE_INFINITY} or {@link Double#NaN}. Otherwise, false
+     * 
+     * @param value
+     *            the value to check
+     * @return whether or not the specified value is Infinity or NaN
+     */
+    protected boolean isNaNInfinity(double value) {
+        return Double.isNaN(value) || Double.isInfinite(value);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isValid(Double value) {
+        return isValid(value.doubleValue());
+    }
+
+    /**
      * Works as {@link Attribute#isValid(Object)} except taking a primitive double. The default
      * implementation returns <code>false</code> for {@link Double#NEGATIVE_INFINITY},
      * {@link Double#POSITIVE_INFINITY} and {@link Double#NaN}.
@@ -178,14 +198,10 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
     public boolean isValid(double value) {
         return !isNaNInfinity(value);
     }
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isValid(Double value) {
-        return isValid(value.doubleValue());
-    }
 
     /**
-     * Analogous to {@link #set(AttributeMap, Double)} except taking a primitive double as parameter.
+     * Analogous to {@link #set(AttributeMap, Double)} except taking a primitive double as
+     * parameter.
      * 
      * @param attributes
      *            the attribute map to set the value in.
@@ -217,17 +233,5 @@ public abstract class DoubleAttribute extends Attribute<Double> implements
      */
     public AttributeMap singleton(double value) {
         return super.singleton(value);
-    }
-  
-    /**
-     * Returns <code>true</code> if the specified value is either {@link Double#NEGATIVE_INFINITY},
-     * {@link Double#POSITIVE_INFINITY} or {@link Double#NaN}. Otherwise, false
-     * 
-     * @param value
-     *            the value to check
-     * @return whether or not the specified value is Infinity or NaN
-     */
-    protected boolean isNaNInfinity(double value) {
-        return Double.isNaN(value) || Double.isInfinite(value);
     }
 }

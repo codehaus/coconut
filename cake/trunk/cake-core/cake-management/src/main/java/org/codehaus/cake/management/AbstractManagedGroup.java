@@ -13,7 +13,6 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-
 /**
  * An abstract implementation of AbstractManagedGroup.
  * 
@@ -46,23 +45,6 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     /** The MBeanServer this group is registered with. */
     private volatile MBeanServer server;
 
-    /**
-     * Creates a new AbstractManagedGroup with the specified name and description.
-     * 
-     * @param name
-     *            the name of the group
-     * @param description
-     *            the description of the group
-     * @throws NullPointerException
-     *             if the specified name or description is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified name does not follow the naming standard of managed
-     *             groups
-     */
-    AbstractManagedGroup(String name, String description) {
-        this(null, name, description);
-    }
-
     AbstractManagedGroup(AbstractManagedGroup parent, String name, String description) {
         if (name == null) {
             throw new NullPointerException("name is null");
@@ -88,8 +70,32 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
         }
     }
 
-    protected Lock getLock() {
-        return mainLock;
+    /**
+     * Creates a new AbstractManagedGroup with the specified name and description.
+     * 
+     * @param name
+     *            the name of the group
+     * @param description
+     *            the description of the group
+     * @throws NullPointerException
+     *             if the specified name or description is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified name does not follow the naming standard of managed groups
+     */
+    AbstractManagedGroup(String name, String description) {
+        this(null, name, description);
+    }
+
+    protected void beforeMutableOperation() {
+
+    }
+
+    void beforeMutableOperationInner() {
+        if (parent != null) {
+            parent.beforeMutableOperationInner();
+        } else {
+            beforeMutableOperation();
+        }
     }
 
     /** {@inheritDoc} */
@@ -100,6 +106,10 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     /** {@inheritDoc} */
     public String getDescription() {
         return description;
+    }
+
+    protected Lock getLock() {
+        return mainLock;
     }
 
     /** {@inheritDoc} */
@@ -116,6 +126,8 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     public ManagedGroup getParent() {
         return parent;
     }
+
+    abstract Object getRegistrant();
 
     /** {@inheritDoc} */
     public MBeanServer getServer() {
@@ -147,16 +159,6 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
             this.objectName = objectName;
         } finally {
             mainLock.unlock();
-        }
-    }
-    protected void beforeMutableOperation() {
-        
-    }
-    void beforeMutableOperationInner() {
-        if (parent != null) {
-            parent.beforeMutableOperationInner();
-        } else {
-            beforeMutableOperation();
         }
     }
 
@@ -194,6 +196,4 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
             mainLock.unlock();
         }
     }
-
-    abstract Object getRegistrant();
 }

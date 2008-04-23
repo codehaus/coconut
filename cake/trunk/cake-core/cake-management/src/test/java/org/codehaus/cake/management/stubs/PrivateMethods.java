@@ -3,7 +3,11 @@
 package org.codehaus.cake.management.stubs;
 
 public class PrivateMethods {
-    private String getIllegal() {return null;};
-    private void setIllegal(String parameter) {};
+    private String getIllegal() {
+        return null;
+    };
+
     private void illegal() {};
+
+    private void setIllegal(String parameter) {};
 }

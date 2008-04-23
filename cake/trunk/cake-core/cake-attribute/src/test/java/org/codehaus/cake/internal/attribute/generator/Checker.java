@@ -44,6 +44,194 @@ public class Checker {
         this.params = m;
     }
 
+    void check(DefaultAttributeConfiguration i, BooleanAttribute la, boolean l) {
+        assertEquals(l, map.get(la, false));
+        assertEquals(l, map.get(la, true));
+        assertEquals(l, map.get(la));
+        assertEquals(false, map.get(new BooleanAttribute("ff", false) {}, false));
+        assertEquals(true, map.get(new BooleanAttribute("ff", false) {}, true));
+        assertEquals(false, map.get(new BooleanAttribute("ff", true) {}, false));
+        assertEquals(true, map.get(new BooleanAttribute("ff", true) {}, true));
+        assertEquals(false, map.get(new BooleanAttribute("ff", false) {}));
+        assertEquals(true, map.get(new BooleanAttribute("ff", true) {}));
+    }
+
+    void check(DefaultAttributeConfiguration i, ByteAttribute la, byte l) {
+        assertEquals(l, map.get(la, (byte) -56));
+        assertEquals(l, map.get(la, l));
+        assertEquals((byte) 34, map.get(new ByteAttribute("ff", (byte) 44) {}, (byte) 34));
+        assertEquals(Byte.MIN_VALUE, map.get(new ByteAttribute("ff", (byte) 44) {}, Byte.MIN_VALUE));
+        assertEquals(l, map.get(la));
+        assertEquals((byte) 44, map.get(new ByteAttribute("ff", (byte) 44) {}));
+
+        // put
+        if (i.isMutable()) {
+            assertEquals(l, map.put(la, (byte) 111));
+            assertEquals((byte) 111, map.get(la));
+            assertEquals((byte) 111, map.get(la, (byte) 34));
+        } else {
+            try {
+                map.put(la, (byte) 34);
+                throw new AssertionError("should fail");
+            } catch (UnsupportedOperationException ok) {
+            }
+        }
+        try {
+            map.remove(la);
+            throw new AssertionError("should fail");
+        } catch (UnsupportedOperationException ok) {
+        }
+
+        initMap();
+    }
+
+    void check(DefaultAttributeConfiguration i, CharAttribute la, char l) {
+        assertEquals(l, map.get(la, (char) -56));
+        assertEquals(l, map.get(la, l));
+        assertEquals((char) 34, map.get(new CharAttribute("ff", (char) 44) {}, (char) 34));
+        assertEquals(Character.MIN_VALUE, map.get(new CharAttribute("ff", (char) 44) {},
+                Character.MIN_VALUE));
+        assertEquals(l, map.get(la));
+        assertEquals((char) 44, map.get(new CharAttribute("ff", (char) 44) {}));
+
+        // put
+        if (i.isMutable()) {
+            assertEquals(l, map.put(la, (char) 111));
+            assertEquals((char) 111, map.get(la));
+            assertEquals((char) 111, map.get(la, (char) 34));
+        } else {
+            try {
+                map.put(la, (char) 34);
+                throw new AssertionError("should fail");
+            } catch (UnsupportedOperationException ok) {
+            }
+        }
+        try {
+            map.remove(la);
+            throw new AssertionError("should fail");
+        } catch (UnsupportedOperationException ok) {
+        }
+
+        initMap();
+    }
+
+    void check(DefaultAttributeConfiguration i, DoubleAttribute la, double l) {
+        assertEquals(l, map.get(la, -565656), 0);
+        assertEquals(l, map.get(la, l), 0);
+        assertEquals(34d, map.get(new DoubleAttribute("ff", 44) {}, 34), 0);
+        assertEquals(Double.MIN_VALUE, map.get(new DoubleAttribute("ff", 44) {}, Double.MIN_VALUE),
+                0);
+        assertEquals(l, map.get(la), 0);
+        assertEquals(44d, map.get(new DoubleAttribute("ff", 44) {}), 0);
+
+        // put
+        if (i.isMutable()) {
+            assertEquals(l, map.put(la, 242374634), 0);
+            assertEquals(242374634d, map.get(la), 0);
+            assertEquals(242374634d, map.get(la, 234), 0);
+        } else {
+            try {
+                map.put(la, 345345);
+                throw new AssertionError("should fail");
+            } catch (UnsupportedOperationException ok) {
+            }
+        }
+        try {
+            map.remove(la);
+            throw new AssertionError("should fail");
+        } catch (UnsupportedOperationException ok) {
+        }
+
+        initMap();
+    }
+
+    void check(DefaultAttributeConfiguration i, FloatAttribute la, float l) {
+        assertEquals(l, map.get(la, -565656), 0);
+        assertEquals(l, map.get(la, l), 0);
+        assertEquals(34f, map.get(new FloatAttribute("ff", 44) {}, 34), 0);
+        assertEquals(Float.MIN_VALUE, map.get(new FloatAttribute("ff", 44) {}, Float.MIN_VALUE), 0);
+        assertEquals(l, map.get(la), 0);
+        assertEquals(44f, map.get(new FloatAttribute("ff", 44) {}), 0);
+
+        // put
+        if (i.isMutable()) {
+            assertEquals(l, map.put(la, 242374634), 0);
+            assertEquals(242374634f, map.get(la), 0);
+            assertEquals(242374634f, map.get(la, 234), 0);
+        } else {
+            try {
+                map.put(la, 345345);
+                throw new AssertionError("should fail");
+            } catch (UnsupportedOperationException ok) {
+            }
+        }
+        try {
+            map.remove(la);
+            throw new AssertionError("should fail");
+        } catch (UnsupportedOperationException ok) {
+        }
+
+        initMap();
+    }
+
+    void check(DefaultAttributeConfiguration i, IntAttribute la, int l) {
+        assertEquals(l, map.get(la, -565656));
+        assertEquals(l, map.get(la, l));
+        assertEquals(34, map.get(new IntAttribute("ff", 44) {}, 34));
+        assertEquals(Integer.MIN_VALUE, map.get(new IntAttribute("ff", 44) {}, Integer.MIN_VALUE));
+        assertEquals(l, map.get(la));
+        assertEquals(44, map.get(new IntAttribute("ff", 44) {}));
+
+        // put
+        if (i.isMutable()) {
+            assertEquals(l, map.put(la, 242374634));
+            assertEquals(242374634, map.get(la));
+            assertEquals(242374634, map.get(la, 234));
+        } else {
+            try {
+                map.put(la, 345345);
+                throw new AssertionError("should fail");
+            } catch (UnsupportedOperationException ok) {
+            }
+        }
+        try {
+            map.remove(la);
+            throw new AssertionError("should fail");
+        } catch (UnsupportedOperationException ok) {
+        }
+
+        initMap();
+    }
+
+    void check(DefaultAttributeConfiguration i, LongAttribute la, long l) {
+        assertEquals(l, map.get(la, -565656));
+        assertEquals(l, map.get(la, l));
+        assertEquals(34L, map.get(new LongAttribute("ff", 44) {}, 34));
+        assertEquals(Long.MIN_VALUE, map.get(new LongAttribute("ff", 44) {}, Long.MIN_VALUE));
+        assertEquals(l, map.get(la));
+        assertEquals(44L, map.get(new LongAttribute("ff", 44) {}));
+
+        // put
+        if (i.isMutable()) {
+            assertEquals(l, map.put(la, 242374634));
+            assertEquals(242374634L, map.get(la));
+            assertEquals(242374634L, map.get(la, 234));
+        } else {
+            try {
+                map.put(la, 345345);
+                throw new AssertionError("should fail");
+            } catch (UnsupportedOperationException ok) {
+            }
+        }
+        try {
+            map.remove(la);
+            throw new AssertionError("should fail");
+        } catch (UnsupportedOperationException ok) {
+        }
+
+        initMap();
+    }
+
     void check(DefaultAttributeConfiguration i, Object value) {
         // System.out.println(map);
         Attribute<?> a = i.getAttribute();
@@ -122,135 +310,6 @@ public class Checker {
         initMap();
     }
 
-    void check(DefaultAttributeConfiguration i, LongAttribute la, long l) {
-        assertEquals(l, map.get(la, -565656));
-        assertEquals(l, map.get(la, l));
-        assertEquals(34L, map.get(new LongAttribute("ff", 44) {}, 34));
-        assertEquals(Long.MIN_VALUE, map.get(new LongAttribute("ff", 44) {}, Long.MIN_VALUE));
-        assertEquals(l, map.get(la));
-        assertEquals(44L, map.get(new LongAttribute("ff", 44) {}));
-
-        // put
-        if (i.isMutable()) {
-            assertEquals(l, map.put(la, 242374634));
-            assertEquals(242374634L, map.get(la));
-            assertEquals(242374634L, map.get(la, 234));
-        } else {
-            try {
-                map.put(la, 345345);
-                throw new AssertionError("should fail");
-            } catch (UnsupportedOperationException ok) {
-            }
-        }
-        try {
-            map.remove(la);
-            throw new AssertionError("should fail");
-        } catch (UnsupportedOperationException ok) {
-        }
-
-        initMap();
-    }
-
-    void check(DefaultAttributeConfiguration i, IntAttribute la, int l) {
-        assertEquals(l, map.get(la, -565656));
-        assertEquals(l, map.get(la, l));
-        assertEquals(34, map.get(new IntAttribute("ff", 44) {}, 34));
-        assertEquals(Integer.MIN_VALUE, map.get(new IntAttribute("ff", 44) {}, Integer.MIN_VALUE));
-        assertEquals(l, map.get(la));
-        assertEquals(44, map.get(new IntAttribute("ff", 44) {}));
-
-        // put
-        if (i.isMutable()) {
-            assertEquals(l, map.put(la, 242374634));
-            assertEquals(242374634, map.get(la));
-            assertEquals(242374634, map.get(la, 234));
-        } else {
-            try {
-                map.put(la, 345345);
-                throw new AssertionError("should fail");
-            } catch (UnsupportedOperationException ok) {
-            }
-        }
-        try {
-            map.remove(la);
-            throw new AssertionError("should fail");
-        } catch (UnsupportedOperationException ok) {
-        }
-
-        initMap();
-    }
-
-    void check(DefaultAttributeConfiguration i, BooleanAttribute la, boolean l) {
-        assertEquals(l, map.get(la, false));
-        assertEquals(l, map.get(la, true));
-        assertEquals(l, map.get(la));
-        assertEquals(false, map.get(new BooleanAttribute("ff", false) {}, false));
-        assertEquals(true, map.get(new BooleanAttribute("ff", false) {}, true));
-        assertEquals(false, map.get(new BooleanAttribute("ff", true) {}, false));
-        assertEquals(true, map.get(new BooleanAttribute("ff", true) {}, true));
-        assertEquals(false, map.get(new BooleanAttribute("ff", false) {}));
-        assertEquals(true, map.get(new BooleanAttribute("ff", true) {}));
-    }
-
-    void check(DefaultAttributeConfiguration i, ByteAttribute la, byte l) {
-        assertEquals(l, map.get(la, (byte) -56));
-        assertEquals(l, map.get(la, l));
-        assertEquals((byte) 34, map.get(new ByteAttribute("ff", (byte) 44) {}, (byte) 34));
-        assertEquals(Byte.MIN_VALUE, map.get(new ByteAttribute("ff", (byte) 44) {}, Byte.MIN_VALUE));
-        assertEquals(l, map.get(la));
-        assertEquals((byte) 44, map.get(new ByteAttribute("ff", (byte) 44) {}));
-
-        // put
-        if (i.isMutable()) {
-            assertEquals(l, map.put(la, (byte) 111));
-            assertEquals((byte) 111, map.get(la));
-            assertEquals((byte) 111, map.get(la, (byte) 34));
-        } else {
-            try {
-                map.put(la, (byte) 34);
-                throw new AssertionError("should fail");
-            } catch (UnsupportedOperationException ok) {
-            }
-        }
-        try {
-            map.remove(la);
-            throw new AssertionError("should fail");
-        } catch (UnsupportedOperationException ok) {
-        }
-
-        initMap();
-    }
-
-    void check(DefaultAttributeConfiguration i, CharAttribute la, char l) {
-        assertEquals(l, map.get(la, (char) -56));
-        assertEquals(l, map.get(la, l));
-        assertEquals((char) 34, map.get(new CharAttribute("ff", (char) 44) {}, (char) 34));
-        assertEquals(Character.MIN_VALUE, map.get(new CharAttribute("ff", (char) 44) {},
-                Character.MIN_VALUE));
-        assertEquals(l, map.get(la));
-        assertEquals((char) 44, map.get(new CharAttribute("ff", (char) 44) {}));
-
-        // put
-        if (i.isMutable()) {
-            assertEquals(l, map.put(la, (char) 111));
-            assertEquals((char) 111, map.get(la));
-            assertEquals((char) 111, map.get(la, (char) 34));
-        } else {
-            try {
-                map.put(la, (char) 34);
-                throw new AssertionError("should fail");
-            } catch (UnsupportedOperationException ok) {
-            }
-        }
-        try {
-            map.remove(la);
-            throw new AssertionError("should fail");
-        } catch (UnsupportedOperationException ok) {
-        }
-
-        initMap();
-    }
-
     void check(DefaultAttributeConfiguration i, ShortAttribute la, short l) {
         assertEquals(l, map.get(la, (short) -56));
         assertEquals(l, map.get(la, l));
@@ -268,65 +327,6 @@ public class Checker {
         } else {
             try {
                 map.put(la, (short) 34);
-                throw new AssertionError("should fail");
-            } catch (UnsupportedOperationException ok) {
-            }
-        }
-        try {
-            map.remove(la);
-            throw new AssertionError("should fail");
-        } catch (UnsupportedOperationException ok) {
-        }
-
-        initMap();
-    }
-
-    void check(DefaultAttributeConfiguration i, DoubleAttribute la, double l) {
-        assertEquals(l, map.get(la, -565656), 0);
-        assertEquals(l, map.get(la, l), 0);
-        assertEquals(34d, map.get(new DoubleAttribute("ff", 44) {}, 34), 0);
-        assertEquals(Double.MIN_VALUE, map.get(new DoubleAttribute("ff", 44) {}, Double.MIN_VALUE),
-                0);
-        assertEquals(l, map.get(la), 0);
-        assertEquals(44d, map.get(new DoubleAttribute("ff", 44) {}), 0);
-
-        // put
-        if (i.isMutable()) {
-            assertEquals(l, map.put(la, 242374634), 0);
-            assertEquals(242374634d, map.get(la), 0);
-            assertEquals(242374634d, map.get(la, 234), 0);
-        } else {
-            try {
-                map.put(la, 345345);
-                throw new AssertionError("should fail");
-            } catch (UnsupportedOperationException ok) {
-            }
-        }
-        try {
-            map.remove(la);
-            throw new AssertionError("should fail");
-        } catch (UnsupportedOperationException ok) {
-        }
-
-        initMap();
-    }
-
-    void check(DefaultAttributeConfiguration i, FloatAttribute la, float l) {
-        assertEquals(l, map.get(la, -565656), 0);
-        assertEquals(l, map.get(la, l), 0);
-        assertEquals(34f, map.get(new FloatAttribute("ff", 44) {}, 34), 0);
-        assertEquals(Float.MIN_VALUE, map.get(new FloatAttribute("ff", 44) {}, Float.MIN_VALUE), 0);
-        assertEquals(l, map.get(la), 0);
-        assertEquals(44f, map.get(new FloatAttribute("ff", 44) {}), 0);
-
-        // put
-        if (i.isMutable()) {
-            assertEquals(l, map.put(la, 242374634), 0);
-            assertEquals(242374634f, map.get(la), 0);
-            assertEquals(242374634f, map.get(la, 234), 0);
-        } else {
-            try {
-                map.put(la, 345345);
                 throw new AssertionError("should fail");
             } catch (UnsupportedOperationException ok) {
             }
@@ -358,8 +358,67 @@ public class Checker {
         }
     }
 
-    static AttributeMap newInstance(LinkedHashMap<DefaultAttributeConfiguration, Object> params, Class c,
-            boolean tryClone) {
+    void run() {
+        try {
+            map.clear();
+            throw new AssertionError();
+        } catch (UnsupportedOperationException ok) {
+        }
+
+        assertEquals(visible.size(), map.size());
+        assertEquals(visible.size(), map.values().size());
+        assertEquals(visible.isEmpty(), map.isEmpty());
+        assertEquals(visible.keySet().size(), map.attributeSet().size());
+
+        Map tmp = new HashMap();
+        for (Map.Entry<DefaultAttributeConfiguration, Object> i : visible.entrySet()) {
+            tmp.put(i.getKey().getAttribute(), i.getValue());
+        }
+        assertEquals(tmp.entrySet(), map.entrySet());
+        assertEquals(map.entrySet(), tmp.entrySet());
+
+        assertTrue(visible.values().containsAll(map.values()));
+        assertTrue(map.values().containsAll(visible.values()));
+        assertEquals(visibleAttributes, map.attributeSet());
+        Map<Attribute, Object> hashCode = new HashMap<Attribute, Object>();
+        for (Map.Entry<DefaultAttributeConfiguration, Object> i : params.entrySet()) {
+            check(i.getKey(), i.getValue());
+            if (!i.getKey().isHidden()) {
+                hashCode.put(i.getKey().getAttribute(), i.getValue());
+            }
+        }
+        if (map.size() > 0) {
+            Iterator<?> iter = map.attributeSet().iterator();
+            iter.next();
+            try {
+                iter.remove();
+                throw new AssertionError();
+            } catch (UnsupportedOperationException ok) {
+            }
+        }
+        assertEquals(hashCode.hashCode(), map.hashCode());
+        assertEquals(map, map);
+        // no clone arguments
+        AttributeMap m = newInstance(params, map.getClass(), false);
+        assertEquals(m, map);
+        assertEquals(map, m);
+        initMap();
+        assertEquals(m.hashCode(), map.hashCode());
+        assertEquals(m, map);
+        assertEquals(map, m);
+        m = newInstance(params, map.getClass(), true);
+        assertEquals(m, map);
+        assertEquals(map, m);
+        initMap();
+        assertEquals(m.hashCode(), map.hashCode());
+        assertEquals(m, map);
+        assertEquals(map, m);
+        // /default
+        assertFalse(map.contains(new ObjectAttribute("dd", Object.class) {}));
+    }
+
+    static AttributeMap newInstance(LinkedHashMap<DefaultAttributeConfiguration, Object> params,
+            Class c, boolean tryClone) {
         Class<?>[] types = new Class[params.size()];
         Object[] args = new Object[params.size()];
         int count = 0;
@@ -426,80 +485,22 @@ public class Checker {
         }
     }
 
-    void run() {
-        try {
-            map.clear();
-            throw new AssertionError();
-        } catch (UnsupportedOperationException ok) {
-        }
-
-        assertEquals(visible.size(), map.size());
-        assertEquals(visible.size(), map.values().size());
-        assertEquals(visible.isEmpty(), map.isEmpty());
-        assertEquals(visible.keySet().size(), map.attributeSet().size());
-
-        Map tmp = new HashMap();
-        for (Map.Entry<DefaultAttributeConfiguration, Object> i : visible.entrySet()) {
-            tmp.put(i.getKey().getAttribute(), i.getValue());
-        }
-        assertEquals(tmp.entrySet(), map.entrySet());
-        assertEquals(map.entrySet(), tmp.entrySet());
-
-        assertTrue(visible.values().containsAll(map.values()));
-        assertTrue(map.values().containsAll(visible.values()));
-        assertEquals(visibleAttributes, map.attributeSet());
-        Map<Attribute, Object> hashCode = new HashMap<Attribute, Object>();
-        for (Map.Entry<DefaultAttributeConfiguration, Object> i : params.entrySet()) {
-            check(i.getKey(), i.getValue());
-            if (!i.getKey().isHidden()) {
-                hashCode.put(i.getKey().getAttribute(), i.getValue());
-            }
-        }
-        if (map.size() > 0) {
-            Iterator<?> iter = map.attributeSet().iterator();
-            iter.next();
-            try {
-                iter.remove();
-                throw new AssertionError();
-            } catch (UnsupportedOperationException ok) {
-            }
-        }
-        assertEquals(hashCode.hashCode(), map.hashCode());
-        assertEquals(map, map);
-        // no clone arguments
-        AttributeMap m = newInstance(params, map.getClass(), false);
-        assertEquals(m, map);
-        assertEquals(map, m);
-        initMap();
-        assertEquals(m.hashCode(), map.hashCode());
-        assertEquals(m, map);
-        assertEquals(map, m);
-        m = newInstance(params, map.getClass(), true);
-        assertEquals(m, map);
-        assertEquals(map, m);
-        initMap();
-        assertEquals(m.hashCode(), map.hashCode());
-        assertEquals(m, map);
-        assertEquals(map, m);
-        // /default
-        assertFalse(map.contains(new ObjectAttribute("dd", Object.class) {}));
-    }
-
     public static void run(DefaultAttributeConfiguration ai, Object value) {
         LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(ai, value);
         run(m);
     }
 
-    public static void run(DefaultAttributeConfiguration a1, Object v1, DefaultAttributeConfiguration a2, Object v2) {
+    public static void run(DefaultAttributeConfiguration a1, Object v1,
+            DefaultAttributeConfiguration a2, Object v2) {
         LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(a1, v1);
         m.put(a2, v2);
         run(m);
     }
 
-    public static void run(DefaultAttributeConfiguration a1, Object v1, DefaultAttributeConfiguration a2, Object v2,
-            DefaultAttributeConfiguration a3, Object v3) {
+    public static void run(DefaultAttributeConfiguration a1, Object v1,
+            DefaultAttributeConfiguration a2, Object v2, DefaultAttributeConfiguration a3, Object v3) {
         LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(a1, v1);
         m.put(a2, v2);
@@ -507,8 +508,9 @@ public class Checker {
         run(m);
     }
 
-    public static void run(DefaultAttributeConfiguration a1, Object v1, DefaultAttributeConfiguration a2, Object v2,
-            DefaultAttributeConfiguration a3, Object v3, DefaultAttributeConfiguration a4, Object v4) {
+    public static void run(DefaultAttributeConfiguration a1, Object v1,
+            DefaultAttributeConfiguration a2, Object v2, DefaultAttributeConfiguration a3,
+            Object v3, DefaultAttributeConfiguration a4, Object v4) {
         LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(a1, v1);
         m.put(a2, v2);
@@ -517,8 +519,10 @@ public class Checker {
         run(m);
     }
 
-    public static void run(DefaultAttributeConfiguration a1, Object v1, DefaultAttributeConfiguration a2, Object v2,
-            DefaultAttributeConfiguration a3, Object v3, DefaultAttributeConfiguration a4, Object v4, DefaultAttributeConfiguration a5, Object v5) {
+    public static void run(DefaultAttributeConfiguration a1, Object v1,
+            DefaultAttributeConfiguration a2, Object v2, DefaultAttributeConfiguration a3,
+            Object v3, DefaultAttributeConfiguration a4, Object v4,
+            DefaultAttributeConfiguration a5, Object v5) {
         LinkedHashMap<DefaultAttributeConfiguration, Object> m = new LinkedHashMap<DefaultAttributeConfiguration, Object>();
         m.put(a1, v1);
         m.put(a2, v2);

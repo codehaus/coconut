@@ -6,6 +6,13 @@ import java.util.Map.Entry;
 
 public class AttributeHelper {
     /**
+     * Returns true if the specified arguments are equal, or both null.
+     */
+    public static boolean eq(Object o1, Object o2) {
+        return o1 == null ? o2 == null : o1.equals(o2);
+    }
+
+    /**
      * An Entry maintaining an immutable key and value. This class does not support method
      * <tt>setValue</tt>. This class may be convenient in methods that return thread-safe
      * snapshots of key-value mappings.
@@ -81,12 +88,5 @@ public class AttributeHelper {
         public String toString() {
             return key + "=" + value;
         }
-    }
-
-    /**
-     * Returns true if the specified arguments are equal, or both null.
-     */
-    public static boolean eq(Object o1, Object o2) {
-        return o1 == null ? o2 == null : o1.equals(o2);
     }
 }

@@ -38,59 +38,18 @@ import org.junit.Test;
 public class DefaultManagedGroupTest {
     private final static ObjectName ON;
 
-    static {
-        try {
-            ON = new ObjectName("example:name=hello");
-        } catch (MalformedObjectNameException e) {
-            throw new Error(e);
-        }
-    }
-
     DefaultManagedGroup dmg;
 
     private int initCount;
 
     private MBeanServer server;
 
-    @Before
-    public void setup() {
-        server = MBeanServerFactory.createMBeanServer();
-        initCount = server.getMBeanCount();
-        dmg = new DefaultManagedGroup("foo", "boo");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void defaultManagedGroupNPE1() {
-        new DefaultManagedGroup(null, "boo");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void defaultManagedGroupNPE2() {
-        new DefaultManagedGroup("foo", null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void defaultManagedGroupISE1() {
-        new DefaultManagedGroup("", "d");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void defaultManagedGroupISE2() {
-        new DefaultManagedGroup("foo´+", "boo");
-    }
-
-    @Test
-    public void init() {
-        assertEquals("foo", dmg.getName());
-        assertEquals("boo", dmg.getDescription());
-        assertEquals(0, dmg.getChildren().size());
-        assertNull(dmg.getObjectName());
-        assertEquals(0, dmg.getObjects().size());
-        assertNull(dmg.getParent());
-        assertNull(dmg.getServer());
-        assertFalse(dmg.isRegistered());
-        dmg.toString(); // does not fail
-        assertNotNull(dmg.getLock());
+    static {
+        try {
+            ON = new ObjectName("example:name=hello");
+        } catch (MalformedObjectNameException e) {
+            throw new Error(e);
+        }
     }
 
     @Test
@@ -114,42 +73,9 @@ public class DefaultManagedGroupTest {
         dmg.addChild("abb", "bcc");
     }
 
-    @Test
-    public void removeChild() {
-        ManagedGroup mg = dmg.addChild("abb", "bcc");
-        assertEquals(1, dmg.getChildren().size());
-        mg.remove();
-        assertEquals(0, dmg.getChildren().size());
-        mg.remove();// does not fail
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void registerServerNPE() throws JMException {
-        dmg.add(new MixedOperationsAttributes());
-        dmg.register(null, ON);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void registerObjectNameNPE() throws JMException {
-        dmg.add(new MixedOperationsAttributes());
-        dmg.register(server, null);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void noRegisterTwice() throws JMException {
-        dmg.add(new SingleOperation());
-        dmg.register(server, ON);
-        dmg.register(server, ON);
-    }
-
     @Test(expected = NullPointerException.class)
     public void addNPE() {
         dmg.add(null);
-    }
-
-    @Test
-    public void unregisterNoneRegistered() throws JMException {
-        dmg.unregister();// ignored
     }
 
     @Test(expected = IllegalStateException.class)
@@ -159,21 +85,38 @@ public class DefaultManagedGroupTest {
         dmg.add(new SingleAttribute());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void defaultManagedGroupISE1() {
+        new DefaultManagedGroup("", "d");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void defaultManagedGroupISE2() {
+        new DefaultManagedGroup("foo´+", "boo");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void defaultManagedGroupNPE1() {
+        new DefaultManagedGroup(null, "boo");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void defaultManagedGroupNPE2() {
+        new DefaultManagedGroup("foo", null);
+    }
+
     @Test
-    public void unregister() throws JMException {
-        dmg.add(new SingleOperation());
-        dmg.register(server, ON);
-        assertEquals(initCount + 1, server.getMBeanCount().intValue());
-        assertNotNull(server.getMBeanInfo(ON));
-        dmg.unregister();
+    public void init() {
+        assertEquals("foo", dmg.getName());
+        assertEquals("boo", dmg.getDescription());
+        assertEquals(0, dmg.getChildren().size());
+        assertNull(dmg.getObjectName());
+        assertEquals(0, dmg.getObjects().size());
         assertNull(dmg.getParent());
         assertNull(dmg.getServer());
         assertFalse(dmg.isRegistered());
-        assertEquals(initCount, server.getMBeanCount().intValue());
-        try {
-            server.getMBeanInfo(ON);
-            fail("should throw");
-        } catch (InstanceNotFoundException ok) {}
+        dmg.toString(); // does not fail
+        assertNotNull(dmg.getLock());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -186,6 +129,67 @@ public class DefaultManagedGroupTest {
         } catch (RuntimeMBeanException e) {
             throw e.getCause();
         }
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void noRegisterTwice() throws JMException {
+        dmg.add(new SingleOperation());
+        dmg.register(server, ON);
+        dmg.register(server, ON);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void registerObjectNameNPE() throws JMException {
+        dmg.add(new MixedOperationsAttributes());
+        dmg.register(server, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void registerServerNPE() throws JMException {
+        dmg.add(new MixedOperationsAttributes());
+        dmg.register(null, ON);
+    }
+
+    @Test
+    public void removeChild() {
+        ManagedGroup mg = dmg.addChild("abb", "bcc");
+        assertEquals(1, dmg.getChildren().size());
+        mg.remove();
+        assertEquals(0, dmg.getChildren().size());
+        mg.remove();// does not fail
+    }
+
+    @Before
+    public void setup() {
+        server = MBeanServerFactory.createMBeanServer();
+        initCount = server.getMBeanCount();
+        dmg = new DefaultManagedGroup("foo", "boo");
+    }
+
+    @Test
+    public void singleAttribute() throws JMException {
+        SingleAttribute o = new SingleAttribute();
+        dmg.add(o);
+        dmg.register(server, ON);
+        assertEquals(initCount + 1, server.getMBeanCount().intValue());
+        MBeanInfo info = server.getMBeanInfo(ON);
+        assertEquals(1, info.getAttributes().length);
+        assertEquals(0, info.getConstructors().length);
+        assertEquals(0, info.getOperations().length);
+        assertEquals(0, info.getNotifications().length);
+
+        MBeanAttributeInfo moi = info.getAttributes()[0];
+        assertEquals("String", moi.getName());
+        assertEquals("", moi.getDescription());
+        assertEquals("java.lang.String", moi.getType());
+        assertTrue(moi.isReadable());
+        assertTrue(moi.isWritable());
+        assertFalse(moi.isIs());
+
+        assertNull(server.getAttribute(ON, "String"));
+
+        server.setAttribute(ON, new Attribute("String", "foo"));
+        assertEquals("foo", server.getAttribute(ON, "String"));
     }
 
     @Test
@@ -218,57 +222,26 @@ public class DefaultManagedGroupTest {
     }
 
     @Test
-    public void variousOperations() throws JMException {
-        VariousOperations o = new VariousOperations();
-        dmg.add(o);
+    public void unregister() throws JMException {
+        dmg.add(new SingleOperation());
         dmg.register(server, ON);
         assertEquals(initCount + 1, server.getMBeanCount().intValue());
-        MBeanInfo info = server.getMBeanInfo(ON);
-        assertEquals(0, info.getAttributes().length);
-        assertEquals(0, info.getConstructors().length);
-        assertEquals(5, info.getOperations().length);
-        assertEquals(0, info.getNotifications().length);
-
-        MBeanOperationInfo moi = findOperation(info.getOperations(), "m2");
-        assertEquals(0, o.invokeCount);
-        server.invoke(ON, "m2", null, null);
-        assertEquals(1, o.invokeCount);
-        assertEquals("m3", server.invoke(ON, "method3", null, null));
-
-        assertEquals("FOO", server.invoke(ON, "method4", new Object[] { "foo" },
-                new String[] { "java.lang.String" }));
-
-        moi = findOperation(info.getOperations(), "method5");
-        assertEquals("desca", moi.getDescription());
-
-        moi = findOperation(info.getOperations(), "foo");
-        assertEquals("desc", moi.getDescription());
+        assertNotNull(server.getMBeanInfo(ON));
+        dmg.unregister();
+        assertNull(dmg.getParent());
+        assertNull(dmg.getServer());
+        assertFalse(dmg.isRegistered());
+        assertEquals(initCount, server.getMBeanCount().intValue());
+        try {
+            server.getMBeanInfo(ON);
+            fail("should throw");
+        } catch (InstanceNotFoundException ok) {
+        }
     }
 
     @Test
-    public void singleAttribute() throws JMException {
-        SingleAttribute o = new SingleAttribute();
-        dmg.add(o);
-        dmg.register(server, ON);
-        assertEquals(initCount + 1, server.getMBeanCount().intValue());
-        MBeanInfo info = server.getMBeanInfo(ON);
-        assertEquals(1, info.getAttributes().length);
-        assertEquals(0, info.getConstructors().length);
-        assertEquals(0, info.getOperations().length);
-        assertEquals(0, info.getNotifications().length);
-
-        MBeanAttributeInfo moi = info.getAttributes()[0];
-        assertEquals("String", moi.getName());
-        assertEquals("", moi.getDescription());
-        assertEquals("java.lang.String", moi.getType());
-        assertTrue(moi.isReadable());
-        assertTrue(moi.isWritable());
-        assertFalse(moi.isIs());
-
-        assertNull(server.getAttribute(ON, "String"));
-
-        server.setAttribute(ON, new Attribute("String", "foo"));
-        assertEquals("foo", server.getAttribute(ON, "String"));
+    public void unregisterNoneRegistered() throws JMException {
+        dmg.unregister();// ignored
     }
 
     @Test
@@ -294,12 +267,40 @@ public class DefaultManagedGroupTest {
 
         list = server.getAttributes(ON, new String[] { "ReadWrite", "WriteOnly", "ReadOnly" });
         assertEquals(2, list.size());
-// System.out.println(list.get(0).getClass());
+        // System.out.println(list.get(0).getClass());
         assertEquals("ReadWrite", ((Attribute) list.get(0)).getName());
         assertEquals(123, ((Attribute) list.get(0)).getValue());
         assertEquals("ReadOnly", ((Attribute) list.get(1)).getName());
         assertEquals(false, ((Attribute) list.get(1)).getValue());
 
+    }
+
+    @Test
+    public void variousOperations() throws JMException {
+        VariousOperations o = new VariousOperations();
+        dmg.add(o);
+        dmg.register(server, ON);
+        assertEquals(initCount + 1, server.getMBeanCount().intValue());
+        MBeanInfo info = server.getMBeanInfo(ON);
+        assertEquals(0, info.getAttributes().length);
+        assertEquals(0, info.getConstructors().length);
+        assertEquals(5, info.getOperations().length);
+        assertEquals(0, info.getNotifications().length);
+
+        MBeanOperationInfo moi = findOperation(info.getOperations(), "m2");
+        assertEquals(0, o.invokeCount);
+        server.invoke(ON, "m2", null, null);
+        assertEquals(1, o.invokeCount);
+        assertEquals("m3", server.invoke(ON, "method3", null, null));
+
+        assertEquals("FOO", server.invoke(ON, "method4", new Object[] { "foo" },
+                new String[] { "java.lang.String" }));
+
+        moi = findOperation(info.getOperations(), "method5");
+        assertEquals("desca", moi.getDescription());
+
+        moi = findOperation(info.getOperations(), "foo");
+        assertEquals("desc", moi.getDescription());
     }
 
     static MBeanOperationInfo findOperation(MBeanOperationInfo[] operations, String name) {

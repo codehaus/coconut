@@ -64,9 +64,13 @@ public final class Procedures {
         return IGNORE_PROCEDURE;
     }
 
+    public static <F, T> Procedure<F> mapAndApply(final Op<F, T> mapper,
+            Procedure<? super T> procedure) {
+        return new MapAndApplyPredicate<F, T>(mapper, procedure);
+    }
+
     /**
-     * Returns a Procedure that calls {@link PrintStream#print(boolean)} on
-     * {@link System#out}.
+     * Returns a Procedure that calls {@link PrintStream#print(boolean)} on {@link System#out}.
      * 
      * @return an eventhandler that prints all processed elements to {@link System#out}
      * @param <E>
@@ -77,8 +81,7 @@ public final class Procedures {
     }
 
     /**
-     * Returns a Procedure that calls {@link PrintStream#println(boolean)} on
-     * {@link System#out}.
+     * Returns a Procedure that calls {@link PrintStream#println(boolean)} on {@link System#out}.
      * 
      * @return an eventhandler that prints all processed elements to {@link System#out}
      * @param <E>
@@ -86,68 +89,6 @@ public final class Procedures {
      */
     public static <E> Procedure<E> systemOutPrintln() {
         return SYS_OUT_PRINTLN_PROCEDURE;
-    }
-
-    public static <F, T> Procedure<F> mapAndApply(final Op<F, T> mapper,
-            Procedure<? super T> procedure) {
-        return new MapAndApplyPredicate<F, T>(mapper, procedure);
-    }
-
-    /**
-     * A Predicate that first applies the specified mapper to the argument before
-     * evaluating the specified predicate.
-     */
-    final static class MapAndApplyPredicate<F, T> implements Procedure<F>, Serializable {
-
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -6292758840373110577L;
-
-        /** The mapper used to map the element. */
-        private final Op<F, T> mapper;
-
-        /** The procedure to to apply the mapped value on. */
-        private final Procedure<? super T> procedure;
-
-        /**
-         * Creates a new MapAndEvaluatePredicate.
-         * 
-         * @param mapper
-         *            the mapper used to first map the argument
-         * @param procedure
-         *            the predicate used to evaluate the mapped argument
-         */
-        public MapAndApplyPredicate(Op<F, T> mapper, Procedure<? super T> procedure) {
-            if (mapper == null) {
-                throw new NullPointerException("mapper is null");
-            } else if (procedure == null) {
-                throw new NullPointerException("procedure is null");
-            }
-            this.procedure = procedure;
-            this.mapper = mapper;
-        }
-
-        public void op(F element) {
-            procedure.op(mapper.op(element));
-        }
-
-        /**
-         * Returns the mapper that will map the object before applying the predicate on
-         * it.
-         * 
-         * @return the mapper that will map the object before applying the predicate on it
-         */
-        public Op<F, T> getMapper() {
-            return mapper;
-        }
-
-        /**
-         * Returns the Procedure we are testing against.
-         * 
-         * @return the Procedure we are testing against.
-         */
-        public Procedure<? super T> getProcedure() {
-            return procedure;
-        }
     }
 
     /**
@@ -178,6 +119,62 @@ public final class Procedures {
         /** {@inheritDoc} */
         public void op(E element) {
             collection.add(element); // ignore return value
+        }
+    }
+
+    /**
+     * A Predicate that first applies the specified mapper to the argument before evaluating the
+     * specified predicate.
+     */
+    final static class MapAndApplyPredicate<F, T> implements Procedure<F>, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -6292758840373110577L;
+
+        /** The mapper used to map the element. */
+        private final Op<F, T> mapper;
+
+        /** The procedure to to apply the mapped value on. */
+        private final Procedure<? super T> procedure;
+
+        /**
+         * Creates a new MapAndEvaluatePredicate.
+         * 
+         * @param mapper
+         *            the mapper used to first map the argument
+         * @param procedure
+         *            the predicate used to evaluate the mapped argument
+         */
+        public MapAndApplyPredicate(Op<F, T> mapper, Procedure<? super T> procedure) {
+            if (mapper == null) {
+                throw new NullPointerException("mapper is null");
+            } else if (procedure == null) {
+                throw new NullPointerException("procedure is null");
+            }
+            this.procedure = procedure;
+            this.mapper = mapper;
+        }
+
+        /**
+         * Returns the mapper that will map the object before applying the predicate on it.
+         * 
+         * @return the mapper that will map the object before applying the predicate on it
+         */
+        public Op<F, T> getMapper() {
+            return mapper;
+        }
+
+        /**
+         * Returns the Procedure we are testing against.
+         * 
+         * @return the Procedure we are testing against.
+         */
+        public Procedure<? super T> getProcedure() {
+            return procedure;
+        }
+
+        public void op(F element) {
+            procedure.op(mapper.op(element));
         }
     }
 

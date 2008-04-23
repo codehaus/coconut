@@ -25,20 +25,26 @@ public final class Managements {
 
     // /CLOVER:ON
 
+    static <T> T[] copyOf(T[] original) {
+        return (T[]) copyOf(original, original.length, original.getClass());
+    }
+
+    @SuppressWarnings("cast")
+    static <T, U> T[] copyOf(U[] original, int newLength, Class<? extends T[]> newType) {
+        T[] copy = (Object) newType == (Object) Object[].class ? (T[]) new Object[newLength]
+                : (T[]) Array.newInstance(newType.getComponentType(), newLength);
+        System.arraycopy(original, 0, copy, 0, Math.min(original.length, newLength));
+        return copy;
+    }
+
     /**
-     * A wrapper class that exposes only the ManagedGroup methods of a ManagedGroup
-     * implementation.
+     * A wrapper class that exposes only the ManagedGroup methods of a ManagedGroup implementation.
      */
     public static ManagedGroup delegatedManagedGroup(final ManagedGroup group) {
         if (group == null) {
             throw new NullPointerException("group is null");
         }
         return new ManagedGroup() {
-
-            @Override
-            public String toString() {
-                return group.toString();
-            }
 
             @Override
             public ManagedGroup add(Object o) {
@@ -93,7 +99,7 @@ public final class Managements {
 
             @Override
             public void register(MBeanServer server, ObjectName objectName) throws JMException {
-              group.register(server, objectName);
+                group.register(server, objectName);
             }
 
             @Override
@@ -102,22 +108,15 @@ public final class Managements {
             }
 
             @Override
+            public String toString() {
+                return group.toString();
+            }
+
+            @Override
             public void unregister() throws JMException {
-               group.unregister();
+                group.unregister();
             }
         };
-    }
-
-    /**
-     * Returns a ManagedVisitor that will unregister a ManagedGroup and all its children.
-     * The map returned from the {@link ManagedVisitor#traverse(Object)} method will
-     * contain a mapping from any group that failed to unregister to the cause of the
-     * failure. If all groups where succesfully unregistered the returned map is empty.
-     * 
-     * @return a ManagedVisitor that will unregister a ManagedGroup and all its children.
-     */
-    public static ManagedVisitor<Map<ManagedGroup, Exception>> unregister() {
-        return new UnregisterAll();
     }
 
     public static ManagedVisitor hierarchicalRegistrant(MBeanServer server, String domain,
@@ -125,46 +124,26 @@ public final class Managements {
         return new HierarchicalRegistrant(server, domain, levels);
     }
 
-    static class UnregisterAll implements ManagedVisitor<Map<ManagedGroup, Exception>> {
-        /** {@inheritDoc} */
-        public void visitManagedGroup(ManagedGroup mg) throws JMException {
-            mg.unregister();
-        }
-
-        /** {@inheritDoc} */
-        // /CLOVER:OFF
-        public void visitManagedObject(Object o) throws JMException {}
-
-        // /CLOVER:ON
-        private void depthFirstVisit(ManagedGroup group, Map<ManagedGroup, Exception> map) {
-            for (ManagedGroup child : group.getChildren()) {
-                depthFirstVisit(child, map);
-            }
-            try {
-                visitManagedGroup(group);
-            } catch (Exception e) {
-                map.put(group, e);
-            }
-        }
-
-        /** {@inheritDoc} */
-        public Map<ManagedGroup, Exception> traverse(Object node) throws JMException {
-            Map<ManagedGroup, Exception> map = new HashMap<ManagedGroup, Exception>();
-            ManagedGroup group = (ManagedGroup) node;
-            depthFirstVisit(group, map);
-            return map;
-        }
-
+    /**
+     * Returns a ManagedVisitor that will unregister a ManagedGroup and all its children. The map
+     * returned from the {@link ManagedVisitor#traverse(Object)} method will contain a mapping from
+     * any group that failed to unregister to the cause of the failure. If all groups where
+     * succesfully unregistered the returned map is empty.
+     * 
+     * @return a ManagedVisitor that will unregister a ManagedGroup and all its children.
+     */
+    public static ManagedVisitor<Map<ManagedGroup, Exception>> unregister() {
+        return new UnregisterAll();
     }
 
     static class HierarchicalRegistrant implements ManagedVisitor {
-        /** The MBeanServer to register with. */
-        private final MBeanServer server;
-
         /** The base domain to register at. */
         private final String domain;
 
         private final String[] levels;
+
+        /** The MBeanServer to register with. */
+        private final MBeanServer server;
 
         HierarchicalRegistrant(MBeanServer server, String domain, String... levels) {
             if (server == null) {
@@ -182,6 +161,13 @@ public final class Managements {
             this.server = server;
             this.domain = domain;
             this.levels = copyOf(levels);
+        }
+
+        // /CLOVER:ON
+        /** {@inheritDoc} */
+        public Object traverse(Object node) throws JMException {
+            visitManagedGroup((ManagedGroup) node);
+            return Void.TYPE;
         }
 
         /** {@inheritDoc} */
@@ -205,24 +191,37 @@ public final class Managements {
         // /CLOVER:OFF
         /** {@inheritDoc} */
         public void visitManagedObject(Object o) throws JMException {}
+    }
 
+    static class UnregisterAll implements ManagedVisitor<Map<ManagedGroup, Exception>> {
         // /CLOVER:ON
-        /** {@inheritDoc} */
-        public Object traverse(Object node) throws JMException {
-            visitManagedGroup((ManagedGroup) node);
-            return Void.TYPE;
+        private void depthFirstVisit(ManagedGroup group, Map<ManagedGroup, Exception> map) {
+            for (ManagedGroup child : group.getChildren()) {
+                depthFirstVisit(child, map);
+            }
+            try {
+                visitManagedGroup(group);
+            } catch (Exception e) {
+                map.put(group, e);
+            }
         }
-    }
-    static <T> T[] copyOf(T[] original) {
-        return (T[]) copyOf(original, original.length, original.getClass());
-    }
 
+        /** {@inheritDoc} */
+        public Map<ManagedGroup, Exception> traverse(Object node) throws JMException {
+            Map<ManagedGroup, Exception> map = new HashMap<ManagedGroup, Exception>();
+            ManagedGroup group = (ManagedGroup) node;
+            depthFirstVisit(group, map);
+            return map;
+        }
 
-    @SuppressWarnings("cast")
-    static <T, U> T[] copyOf(U[] original, int newLength, Class<? extends T[]> newType) {
-        T[] copy = (Object) newType == (Object) Object[].class ? (T[]) new Object[newLength]
-                : (T[]) Array.newInstance(newType.getComponentType(), newLength);
-        System.arraycopy(original, 0, copy, 0, Math.min(original.length, newLength));
-        return copy;
+        /** {@inheritDoc} */
+        public void visitManagedGroup(ManagedGroup mg) throws JMException {
+            mg.unregister();
+        }
+
+        /** {@inheritDoc} */
+        // /CLOVER:OFF
+        public void visitManagedObject(Object o) throws JMException {}
+
     }
 }

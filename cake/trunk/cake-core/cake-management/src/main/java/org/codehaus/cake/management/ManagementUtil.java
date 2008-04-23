@@ -76,18 +76,37 @@ final class ManagementUtil {
     }
 
     /**
+     * Returns information about the parameters of the specified method.
+     * 
+     * @param method
+     *            the method to return parameter info about
+     * @return information about the parameters of the specified method
+     */
+    static MBeanParameterInfo[] methodSignature(Method method) {
+        Class[] classes = method.getParameterTypes();
+        MBeanParameterInfo[] params = new MBeanParameterInfo[classes.length];
+
+        for (int i = 0; i < classes.length; i++) {
+            String parameterName = "p" + (i + 1);
+            params[i] = new MBeanParameterInfo(parameterName, classes[i].getName(), "");
+        }
+
+        return params;
+    }
+
+    /**
      * The DynamicMBean that is used to expose this group.
      */
     static class MBean implements DynamicMBean {
 
-        /** The name of this MBean. */
-        private final String name;
+        /** A map of all attributes. */
+        private final Map<String, AbstractManagedAttribute> attributes;
 
         /** The description of this MBean. */
         private final String description;
 
-        /** A map of all attributes. */
-        private final Map<String, AbstractManagedAttribute> attributes;
+        /** The name of this MBean. */
+        private final String name;
 
         /** A map of all operations. */
         private final Map<OperationKey, AbstractManagedOperation> ops;
@@ -111,6 +130,25 @@ final class ManagementUtil {
             this.description = description;
             this.attributes = attributes;
             this.ops = ops;
+        }
+
+        /**
+         * Finds and returns the an attribute with the specified name, or throws an Exception.
+         * 
+         * @param attribute
+         *            the name of the attribute
+         * @return the attribute with the specified name
+         * @throws AttributeNotFoundException
+         *             if no such attribute existed
+         */
+        private AbstractManagedAttribute findAttribute(String attribute)
+                throws AttributeNotFoundException {
+            AbstractManagedAttribute att = attributes.get(attribute);
+            if (att == null) {
+                throw new AttributeNotFoundException("Attribute " + attribute
+                        + " could not be found");
+            }
+            return att;
         }
 
         /** {@inheritDoc} */
@@ -191,45 +229,6 @@ final class ManagementUtil {
             }
             return result;
         }
-
-        /**
-         * Finds and returns the an attribute with the specified name, or throws an
-         * Exception.
-         * 
-         * @param attribute
-         *            the name of the attribute
-         * @return the attribute with the specified name
-         * @throws AttributeNotFoundException
-         *             if no such attribute existed
-         */
-        private AbstractManagedAttribute findAttribute(String attribute)
-                throws AttributeNotFoundException {
-            AbstractManagedAttribute att = attributes.get(attribute);
-            if (att == null) {
-                throw new AttributeNotFoundException("Attribute " + attribute
-                        + " could not be found");
-            }
-            return att;
-        }
-    }
-
-    /**
-     * Returns information about the parameters of the specified method.
-     * 
-     * @param method
-     *            the method to return parameter info about
-     * @return information about the parameters of the specified method
-     */
-    static MBeanParameterInfo[] methodSignature(Method method) {
-        Class[] classes = method.getParameterTypes();
-        MBeanParameterInfo[] params = new MBeanParameterInfo[classes.length];
-
-        for (int i = 0; i < classes.length; i++) {
-            String parameterName = "p" + (i + 1);
-            params[i] = new MBeanParameterInfo(parameterName, classes[i].getName(), "");
-        }
-
-        return params;
     }
 
 }

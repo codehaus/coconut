@@ -37,39 +37,6 @@ import org.codehaus.cake.ops.Ops.Op;
 public final class Comparators {
 
     /**
-     * A comparator for doubles relying on natural ordering. The comparator is Serializable.
-     */
-    public static final DoubleComparator DOUBLE_COMPARATOR = new NaturalDoubleComparator();
-
-    /**
-     * A comparator that imposes the reverse of the <i>natural ordering</i> on doubles. The
-     * comparator is Serializable.
-     */
-    public static final DoubleComparator DOUBLE_REVERSE_COMPARATOR = new NaturalDoubleReverseComparator();
-
-    /**
-     * A comparator for ints relying on natural ordering. The comparator is Serializable.
-     */
-    public static final IntComparator INT_COMPARATOR = new NaturalIntComparator();
-
-    /**
-     * A comparator that imposes the reverse of the <i>natural ordering</i> on ints. The comparator
-     * is Serializable.
-     */
-    public static final IntComparator INT_REVERSE_COMPARATOR = new NaturalIntReverseComparator();
-
-    /**
-     * A comparator for longs relying on natural ordering. The comparator is Serializable.
-     */
-    public static final LongComparator LONG_COMPARATOR = new NaturalLongComparator();
-
-    /**
-     * A comparator that imposes the reverse of the <i>natural ordering</i> on longs. The
-     * comparator is Serializable.
-     */
-    public static final LongComparator LONG_REVERSE_COMPARATOR = new NaturalLongReverseComparator();
-
-    /**
      * A Comparator for Comparable.objects using their <i>natural ordering</i>. The comparator is
      * Serializable.
      */
@@ -92,7 +59,7 @@ public final class Comparators {
     private Comparators() {}
 
     public static <T> Comparator<T> mappedComparator(ObjectToLong<? super T> mapper) {
-        return mappedComparator(mapper, LONG_COMPARATOR);
+        throw new UnsupportedOperationException();
     }
 
     public static <T> Comparator<T> mappedComparator(ObjectToLong<? super T> mapper,
@@ -187,48 +154,6 @@ public final class Comparators {
         return Collections.reverseOrder(comparator);
     }
 
-    /**
-     * Creates a comparator that imposes the reverse ordering of the specified comparator.
-     * <p>
-     * The returned comparator is serializable (assuming the specified comparator is also
-     * serializable).
-     * 
-     * @param comparator
-     *            the DoubleComparator to reverse
-     * @return a comparator that imposes the reverse ordering of the specified comparator.
-     */
-    public static DoubleComparator reverseOrder(DoubleComparator comparator) {
-        return new ReverseDoubleComparator(comparator);
-    }
-
-    /**
-     * Creates a comparator that imposes the reverse ordering of the specified comparator.
-     * <p>
-     * The returned comparator is serializable (assuming the specified comparator is also
-     * serializable).
-     * 
-     * @param comparator
-     *            the IntComparator to reverse
-     * @return a comparator that imposes the reverse ordering of the specified comparator.
-     */
-    public static IntComparator reverseOrder(IntComparator comparator) {
-        return new ReverseIntComparator(comparator);
-    }
-
-    /**
-     * Creates a comparator that imposes the reverse ordering of the specified comparator.
-     * <p>
-     * The returned comparator is serializable (assuming the specified comparator is also
-     * serializable).
-     * 
-     * @param comparator
-     *            the LongComparator to reverse
-     * @return a comparator that imposes the reverse ordering of the specified comparator.
-     */
-    public static LongComparator reverseOrder(LongComparator comparator) {
-        return new ReverseLongComparator(comparator);
-    }
-
     /** A Comparator for Comparable.objects. */
     static final class MappedComparator<T, U> implements Comparator<T>, Serializable {
         /** serialVersionUID. */
@@ -270,102 +195,6 @@ public final class Comparators {
         /** @return Preserves singleton property */
         private Object readResolve() {
             return NATURAL_COMPARATOR;
-        }
-    }
-
-    /** A comparator for doubles relying on natural ordering. */
-    static final class NaturalDoubleComparator implements DoubleComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 8763765406476535022L;
-
-        /** {@inheritDoc} */
-        public int compare(double a, double b) {
-            return Double.compare(a, b);
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return DOUBLE_COMPARATOR;
-        }
-    }
-
-    /** A comparator for doubles relying on natural ordering. */
-    static final class NaturalDoubleReverseComparator implements DoubleComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -7289505884757339069L;
-
-        /** {@inheritDoc} */
-        public int compare(double a, double b) {
-            return -Double.compare(a, b);
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return DOUBLE_REVERSE_COMPARATOR;
-        }
-    }
-
-    /** A comparator for ints relying on natural ordering. */
-    static final class NaturalIntComparator implements IntComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -937141628195281323L;
-
-        /** {@inheritDoc} */
-        public int compare(int a, int b) {
-            return a < b ? -1 : a > b ? 1 : 0;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return INT_COMPARATOR;
-        }
-    }
-
-    /** A comparator for ints relying on natural ordering. */
-    static final class NaturalIntReverseComparator implements IntComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -94614177221491910L;
-
-        /** {@inheritDoc} */
-        public int compare(int a, int b) {
-            return a < b ? 1 : a > b ? -1 : 0;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return INT_REVERSE_COMPARATOR;
-        }
-    }
-
-    /** A comparator for longs relying on natural ordering. */
-    static final class NaturalLongComparator implements LongComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 948562823440773841L;
-
-        /** {@inheritDoc} */
-        public int compare(long a, long b) {
-            return a < b ? -1 : a > b ? 1 : 0;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return LONG_COMPARATOR;
-        }
-    }
-
-    /** A comparator for longs relying on natural ordering. */
-    static final class NaturalLongReverseComparator implements LongComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -5519000744406211184L;
-
-        /** {@inheritDoc} */
-        public int compare(long a, long b) {
-            return a < b ? 1 : a > b ? -1 : 0;
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return LONG_REVERSE_COMPARATOR;
         }
     }
 
@@ -437,88 +266,6 @@ public final class Comparators {
         /** @return Preserves singleton property */
         private Object readResolve() {
             return NULL_LEAST_ORDER;
-        }
-    }
-
-    /** A comparator that reserves the result of another DoubleComparator. */
-    static final class ReverseDoubleComparator implements DoubleComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 1585665469031127321L;
-
-        /** The DoubleComparator to reverse. */
-        private final DoubleComparator comparator;
-
-        /**
-         * Creates a new ReverseDoubleComparator.
-         * 
-         * @param comparator
-         *            the comparator to reverse
-         */
-        ReverseDoubleComparator(DoubleComparator comparator) {
-            if (comparator == null) {
-                throw new NullPointerException("comparator is null");
-            }
-            this.comparator = comparator;
-        }
-
-        /** {@inheritDoc} */
-        public int compare(double a, double b) {
-            return -comparator.compare(a, b);
-        }
-    }
-
-    /** A comparator that reserves the result of another LongComparator. */
-    static final class ReverseIntComparator implements IntComparator, Serializable {
-
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 4013898636057466724L;
-
-        /** The IntComparator to reverse. */
-        private final IntComparator comparator;
-
-        /**
-         * Creates a new ReverseIntComparator.
-         * 
-         * @param comparator
-         *            the comparator to reverse
-         */
-        ReverseIntComparator(IntComparator comparator) {
-            if (comparator == null) {
-                throw new NullPointerException("comparator is null");
-            }
-            this.comparator = comparator;
-        }
-
-        /** {@inheritDoc} */
-        public int compare(int a, int b) {
-            return -comparator.compare(a, b);
-        }
-    }
-
-    /** A comparator that reserves the result of another LongComparator. */
-    static final class ReverseLongComparator implements LongComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -3870535703169514045L;
-
-        /** The LongComparator to reverse. */
-        private final LongComparator comparator;
-
-        /**
-         * Creates a new ReverseLongComparator.
-         * 
-         * @param comparator
-         *            the comparator to reverse
-         */
-        ReverseLongComparator(LongComparator comparator) {
-            if (comparator == null) {
-                throw new NullPointerException("comparator is null");
-            }
-            this.comparator = comparator;
-        }
-
-        /** {@inheritDoc} */
-        public int compare(long a, long b) {
-            return -comparator.compare(a, b);
         }
     }
 }

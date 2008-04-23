@@ -19,32 +19,14 @@ import junit.framework.TestCase;
 public class AtomicDoubleTest extends TestCase {
 
     /**
-     * constructor initializes to given value
+     * addAndGet adds given value to current, and returns current value
      */
-    public void testConstructor() {
+    public void testAddAndGet() {
         AtomicDouble ai = new AtomicDouble(1);
-        assertEquals(1.0, ai.get());
-    }
-
-    /**
-     * default constructed initializes to zero
-     */
-    public void testConstructor2() {
-        AtomicDouble ai = new AtomicDouble();
-        assertEquals(0.0, ai.get());
-    }
-
-    /**
-     * get returns the last value set
-     */
-    public void testGetSet() {
-        AtomicDouble ai = new AtomicDouble(1);
-        assertEquals(1.0, ai.get());
-        ai.set(2.5);
-        assertEquals(2.5, ai.get());
-        ai.set(-3.5);
-        assertEquals(-3.5, ai.get());
-
+        assertEquals(3.0, ai.addAndGet(2));
+        assertEquals(3.0, ai.get());
+        assertEquals(-1.0, ai.addAndGet(-4));
+        assertEquals(-1.0, ai.get());
     }
 
     /**
@@ -82,29 +64,52 @@ public class AtomicDoubleTest extends TestCase {
     }
 
     /**
-     * repeated weakCompareAndSet succeeds in changing value when equal to
-     * expected
+     * constructor initializes to given value
      */
-    public void testWeakCompareAndSet() {
+    public void testConstructor() {
         AtomicDouble ai = new AtomicDouble(1);
-        while (!ai.weakCompareAndSet(1, 2)){}
-
-        while (!ai.weakCompareAndSet(2, -4)){}
-
-        assertEquals(-4.0, ai.get());
-        while (!ai.weakCompareAndSet(-4, 7)){}
-
-        assertEquals(7.0, ai.get());
+        assertEquals(1.0, ai.get());
     }
 
     /**
-     * getAndSet returns previous value and sets to given value
+     * default constructed initializes to zero
      */
-    public void testGetAndSet() {
+    public void testConstructor2() {
+        AtomicDouble ai = new AtomicDouble();
+        assertEquals(0.0, ai.get());
+    }
+
+    /**
+     * decrementAndGet decrements and returns current value
+     */
+    public void testDecrementAndGet() {
         AtomicDouble ai = new AtomicDouble(1);
-        assertEquals(1.0, ai.getAndSet(0));
-        assertEquals(0.0, ai.getAndSet(-10));
-        assertEquals(-10.0, ai.getAndSet(1));
+        assertEquals(0.0, ai.decrementAndGet());
+        assertEquals(-1.0, ai.decrementAndGet());
+        assertEquals(-2.0, ai.decrementAndGet());
+        assertEquals(-2.0, ai.get());
+    }
+
+    /**
+     * doubleValue returns current value.
+     */
+    public void testDoubleValue() {
+        AtomicDouble ai = new AtomicDouble();
+        for (int i = -12; i < 6; ++i) {
+            ai.set(i);
+            assertEquals((double) i, ai.doubleValue());
+        }
+    }
+
+    /**
+     * floatValue returns current value.
+     */
+    public void testFloatValue() {
+        AtomicDouble ai = new AtomicDouble();
+        for (int i = -12; i < 6; ++i) {
+            ai.set(i);
+            assertEquals((float) i, ai.floatValue());
+        }
     }
 
     /**
@@ -118,15 +123,6 @@ public class AtomicDoubleTest extends TestCase {
         assertEquals(-1.0, ai.get());
     }
 
-    public static void main(String[] args) {
-        AtomicLong al=new AtomicLong();
-        al.getAndAdd(2);
-        System.out.println(AtomicDouble.c(5));
-        System.out.println(AtomicDouble.c(4));
-        System.out.println(AtomicDouble.c(9));
-
-        System.out.println(al);
-    }
     /**
      * getAndDecrement returns previous value and decrements
      */
@@ -152,25 +148,26 @@ public class AtomicDoubleTest extends TestCase {
     }
 
     /**
-     * addAndGet adds given value to current, and returns current value
+     * getAndSet returns previous value and sets to given value
      */
-    public void testAddAndGet() {
+    public void testGetAndSet() {
         AtomicDouble ai = new AtomicDouble(1);
-        assertEquals(3.0, ai.addAndGet(2));
-        assertEquals(3.0, ai.get());
-        assertEquals(-1.0, ai.addAndGet(-4));
-        assertEquals(-1.0, ai.get());
+        assertEquals(1.0, ai.getAndSet(0));
+        assertEquals(0.0, ai.getAndSet(-10));
+        assertEquals(-10.0, ai.getAndSet(1));
     }
 
     /**
-     * decrementAndGet decrements and returns current value
+     * get returns the last value set
      */
-    public void testDecrementAndGet() {
+    public void testGetSet() {
         AtomicDouble ai = new AtomicDouble(1);
-        assertEquals(0.0, ai.decrementAndGet());
-        assertEquals(-1.0, ai.decrementAndGet());
-        assertEquals(-2.0, ai.decrementAndGet());
-        assertEquals(-2.0, ai.get());
+        assertEquals(1.0, ai.get());
+        ai.set(2.5);
+        assertEquals(2.5, ai.get());
+        ai.set(-3.5);
+        assertEquals(-3.5, ai.get());
+
     }
 
     /**
@@ -185,6 +182,28 @@ public class AtomicDoubleTest extends TestCase {
         assertEquals(0.0, ai.incrementAndGet());
         assertEquals(1.0, ai.incrementAndGet());
         assertEquals(1.0, ai.get());
+    }
+
+    /**
+     * intValue returns current value.
+     */
+    public void testIntValue() {
+        AtomicDouble ai = new AtomicDouble();
+        for (int i = -12; i < 6; ++i) {
+            ai.set(i);
+            assertEquals(i, ai.intValue());
+        }
+    }
+
+    /**
+     * longValue returns current value.
+     */
+    public void testLongValue() {
+        AtomicDouble ai = new AtomicDouble();
+        for (int i = -12; i < 6; ++i) {
+            ai.set(i);
+            assertEquals(i, ai.longValue());
+        }
     }
 
     /**
@@ -218,46 +237,31 @@ public class AtomicDoubleTest extends TestCase {
     }
 
     /**
-     * intValue returns current value.
+     * repeated weakCompareAndSet succeeds in changing value when equal to expected
      */
-    public void testIntValue() {
-        AtomicDouble ai = new AtomicDouble();
-        for (int i = -12; i < 6; ++i) {
-            ai.set(i);
-            assertEquals(i, ai.intValue());
+    public void testWeakCompareAndSet() {
+        AtomicDouble ai = new AtomicDouble(1);
+        while (!ai.weakCompareAndSet(1, 2)) {
         }
-    }
-    /**
-     * longValue returns current value.
-     */
-    public void testLongValue() {
-        AtomicDouble ai = new AtomicDouble();
-        for (int i = -12; i < 6; ++i) {
-            ai.set(i);
-            assertEquals(i, ai.longValue());
+
+        while (!ai.weakCompareAndSet(2, -4)) {
         }
+
+        assertEquals(-4.0, ai.get());
+        while (!ai.weakCompareAndSet(-4, 7)) {
+        }
+
+        assertEquals(7.0, ai.get());
     }
 
-    /**
-     * floatValue returns current value.
-     */
-    public void testFloatValue() {
-        AtomicDouble ai = new AtomicDouble();
-        for (int i = -12; i < 6; ++i) {
-            ai.set(i);
-            assertEquals((float) i, ai.floatValue());
-        }
-    }
+    public static void main(String[] args) {
+        AtomicLong al = new AtomicLong();
+        al.getAndAdd(2);
+        System.out.println(AtomicDouble.c(5));
+        System.out.println(AtomicDouble.c(4));
+        System.out.println(AtomicDouble.c(9));
 
-    /**
-     * doubleValue returns current value.
-     */
-    public void testDoubleValue() {
-        AtomicDouble ai = new AtomicDouble();
-        for (int i = -12; i < 6; ++i) {
-            ai.set(i);
-            assertEquals((double) i, ai.doubleValue());
-        }
+        System.out.println(al);
     }
 
 }

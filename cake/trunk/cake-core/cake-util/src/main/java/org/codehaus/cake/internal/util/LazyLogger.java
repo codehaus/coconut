@@ -8,9 +8,8 @@ import java.util.logging.Logger;
 import org.codehaus.cake.internal.util.LogHelper.AbstractLogger;
 
 /**
- * Returns the exception logger configured for this cache. Or initializes the default
- * logger if no logger has been defined and the default logger has not already been
- * initialized
+ * Returns the exception logger configured for this cache. Or initializes the default logger if no
+ * logger has been defined and the default logger has not already been initialized
  */
 public class LazyLogger extends AbstractLogger {
 
@@ -23,6 +22,26 @@ public class LazyLogger extends AbstractLogger {
     public LazyLogger(String jdkLoggerName, String msg) {
         this.msg = msg;
         this.jdkLoggerName = jdkLoggerName;
+    }
+
+    private Logger getLogger() {
+        Logger logger = this.logger;
+        if (logger != null) {
+            return logger;
+        }
+        synchronized (this) {
+            if (this.logger == null) {
+                logger = LogManager.getLogManager().getLogger(jdkLoggerName);
+                if (logger == null) {
+                    logger = java.util.logging.Logger.getLogger(jdkLoggerName);
+                    logger.setLevel(java.util.logging.Level.ALL);
+                    logger.info(msg);
+                    logger.setLevel(java.util.logging.Level.WARNING);
+                }
+                this.logger = logger;
+            }
+            return logger;
+        }
     }
 
     @Override
@@ -44,25 +63,5 @@ public class LazyLogger extends AbstractLogger {
     /** {@inheritDoc} */
     public void log(Level level, String message, Throwable cause) {
         getLogger().log(LogHelper.toJdkLevel(level), message, cause);
-    }
-
-    private Logger getLogger() {
-        Logger logger = this.logger;
-        if (logger != null) {
-            return logger;
-        }
-        synchronized (this) {
-            if (this.logger == null) {
-                logger = LogManager.getLogManager().getLogger(jdkLoggerName);
-                if (logger == null) {
-                    logger = java.util.logging.Logger.getLogger(jdkLoggerName);
-                    logger.setLevel(java.util.logging.Level.ALL);
-                    logger.info(msg);
-                    logger.setLevel(java.util.logging.Level.WARNING);
-                }
-                this.logger = logger;
-            }
-            return logger;
-        }
     }
 }
