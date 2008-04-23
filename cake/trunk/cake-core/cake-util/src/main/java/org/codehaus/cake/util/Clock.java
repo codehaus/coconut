@@ -101,7 +101,8 @@ public abstract class Clock {
     }
 
     /**
-     * DeterministicClock is useful for testing components that rely on time.
+     * DeterministicClock is useful for testing components that rely on precise time interleavings.
+     * This class is safe for use between multiple threads.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
      * @version $Id: Clock.java 542 2008-01-02 21:50:05Z kasper $

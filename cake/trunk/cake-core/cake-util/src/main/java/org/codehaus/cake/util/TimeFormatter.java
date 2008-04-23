@@ -23,10 +23,19 @@ public abstract class TimeFormatter {
 
     private final static String[] SI_NAMES = new String[] { "ns", "µs", "ms", "s", "min", "h", "d" };
 
+    /**
+     * A <tt>TimeFormatter</tt> that will format time the same was as the unix 'uptime' command.
+     */
     public static TimeFormatter UPTIME_TIME_FORMATTER = new UptimeFormatter();
 
     private final static DecimalFormat Z = new DecimalFormat("##0.000");
 
+    /**
+     * Formats the specified time parameters.
+     * 
+     * @param nano
+     * @return the formatter string
+     */
     protected String doFormat(int nano) {
         return doFormat(0, nano);
     }
@@ -56,14 +65,37 @@ public abstract class TimeFormatter {
         throw new IllegalArgumentException("Cannot format the specified time");
     }
 
+    /**
+     * Formats the specified time to produce a string.
+     * 
+     * @param time
+     *            the amount of time
+     * @param unit
+     *            the unit of the specified time
+     * @return the formatting string
+     */
     public String format(long time, TimeUnit unit) {
         return formatNanos(unit.toNanos(time));
     }
 
+    /**
+     * Formats the specified time to produce a string.
+     * 
+     * @param time
+     *            the amount of time in milliseconds
+     * @return the formatting string
+     */
     public String formatMillies(long millies) {
         return formatNanos(TimeUnit.MILLISECONDS.toNanos(millies));
     }
 
+    /**
+     * Formats the specified time to produce a string.
+     * 
+     * @param time
+     *            the amount of time in nanoseconds
+     * @return the formatting string
+     */
     public String formatNanos(long nanos) {
         int nano = (int) (nanos % 1000);
         int micro = (int) (nanos / 1000 % 1000);
