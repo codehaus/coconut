@@ -11,24 +11,29 @@
   <name>Cake Service API</name>
   <dependencies>
     <dependency>
+      <groupId>org.codehaus.cake.internal</groupId>
+      <artifactId>cake-forkjoin</artifactId>
+      <version>0.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.cake.test</groupId>
       <artifactId>cake-test-util</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.cake.jsr166y</groupId>
-      <artifactId>jsr166yops</artifactId>
+      <groupId>org.codehaus.cake.core</groupId>
+      <artifactId>cake-ops</artifactId>
     </dependency>
-        <dependency>
-      <groupId>org.codehaus.cake</groupId>
+    <dependency>
+      <groupId>org.codehaus.cake.core</groupId>
       <artifactId>cake-attribute</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.cake</groupId>
+      <groupId>org.codehaus.cake.core</groupId>
       <artifactId>cake-management</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.cake</groupId>
+      <groupId>org.codehaus.cake.core</groupId>
       <artifactId>cake-util</artifactId>
     </dependency>
   </dependencies>

@@ -5,9 +5,8 @@ package org.codehaus.cake.service.executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import jsr166y.forkjoin.ForkJoinExecutor;
-
 import org.codehaus.cake.attribute.AttributeMap;
+import org.codehaus.cake.forkjoin.ForkJoinExecutor;
 import org.codehaus.cake.service.ServiceManager;
 
 /**

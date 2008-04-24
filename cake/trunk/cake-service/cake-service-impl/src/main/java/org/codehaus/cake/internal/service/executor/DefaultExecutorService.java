@@ -3,13 +3,12 @@ package org.codehaus.cake.internal.service.executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import jsr166y.forkjoin.ForkJoinExecutor;
-
 import org.codehaus.cake.attribute.AttributeMap;
 import org.codehaus.cake.attribute.Attributes;
 import org.codehaus.cake.container.ContainerConfiguration;
 import org.codehaus.cake.container.lifecycle.Startable;
 import org.codehaus.cake.container.lifecycle.StartableService;
+import org.codehaus.cake.forkjoin.ForkJoinExecutor;
 import org.codehaus.cake.service.ServiceRegistrant;
 import org.codehaus.cake.service.executor.ExecutorsConfiguration;
 import org.codehaus.cake.service.executor.ExecutorsManager;
